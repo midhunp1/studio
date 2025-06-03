@@ -162,7 +162,7 @@ export default function TopDishPage() {
           <CardContent>
             <ChartContainer 
               config={pieChartConfig} 
-              className="mx-auto aspect-square max-h-[350px] sm:max-h-[400px] md:max-h-[450px] lg:max-h-[500px]"
+              className="mx-auto aspect-square h-[420px]"
             >
               <PieChart accessibilityLayer>
                 <ChartTooltip
@@ -175,8 +175,8 @@ export default function TopDishPage() {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={170} 
-                  innerRadius={75} 
+                  outerRadius={190} 
+                  innerRadius={80} 
                   activeIndex={activeIndex ?? undefined}
                   activeShape={renderActiveShape}
                   onMouseEnter={onPieEnter}

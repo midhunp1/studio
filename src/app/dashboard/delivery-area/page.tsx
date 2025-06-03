@@ -2,7 +2,7 @@
 "use client";
 
 import { PageHeader } from '@/components/dashboard/page-header';
-import { MapPlaceholder } from '@/components/dashboard/map-placeholder';
+import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -31,7 +31,7 @@ export default function DeliveryAreaPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <MapPlaceholder title="UK Order Density Heatmap" height="500px" dataAiHint="UK map heatmap" />
+          <InteractiveHeatmapPlaceholder title="UK Order Density Heatmap" height="500px" dataAiHint="UK map interactive" />
         </div>
         <div className="space-y-6">
           <Card>
@@ -73,4 +73,3 @@ export default function DeliveryAreaPage() {
     </div>
   );
 }
-

@@ -8,14 +8,14 @@ interface MapPlaceholderProps {
   dataAiHint?: string;
 }
 
-export function MapPlaceholder({ title = "Map Data Visualization", height = "400px", dataAiHint = "map abstract" }: MapPlaceholderProps) {
+export function MapPlaceholder({ title = "Map Data Visualization", height = "400px", dataAiHint = "London heatmap" }: MapPlaceholderProps) {
   return (
-    <div 
+    <div
       className="w-full bg-muted/50 border border-dashed border-border rounded-lg flex flex-col items-center justify-center p-8 text-center shadow-inner"
       style={{ height }}
       aria-label={title}
     >
-      <Image 
+      <Image
         src={`https://placehold.co/600x${Math.max(100, parseInt(height) * 0.6)}.png`} // Ensure placeholder image height is reasonable
         alt="Abstract map placeholder"
         width={600}
@@ -29,3 +29,4 @@ export function MapPlaceholder({ title = "Map Data Visualization", height = "400
     </div>
   );
 }
+

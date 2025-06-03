@@ -51,6 +51,16 @@ const allDailyOrdersData: { [postcode: string]: { day: string; orders: number }[
     { day: "Thu", orders: 45 }, { day: "Fri", orders: 65 }, { day: "Sat", orders: 80 },
     { day: "Sun", orders: 55 },
   ],
+  "M4 4AB": [
+    { day: "Mon", orders: 15 }, { day: "Tue", orders: 25 }, { day: "Wed", orders: 30 },
+    { day: "Thu", orders: 20 }, { day: "Fri", orders: 50 }, { day: "Sat", orders: 60 },
+    { day: "Sun", orders: 40 },
+  ],
+  "M5 5CD": [
+    { day: "Mon", orders: 10 }, { day: "Tue", orders: 15 }, { day: "Wed", orders: 20 },
+    { day: "Thu", orders: 18 }, { day: "Fri", orders: 40 }, { day: "Sat", orders: 55 },
+    { day: "Sun", orders: 30 },
+  ],
 };
 
 const barChartConfig = {
@@ -132,7 +142,7 @@ export default function DeliveryAreaPage() {
                     <LineChartIcon className="mr-2 h-5 w-5 text-accent" />
                     Daily Orders - {selectedPostcodeForDaily}
                   </CardTitle>
-                  <CardDescription>Order trend for postcode {selectedPostcodeForDaily} over the past week.</CardDescription>
+                  <CardDescription>Order trend for the selected postcode over the past week.</CardDescription>
                 </div>
                 <div className="w-full sm:w-auto mt-2 sm:mt-0">
                   <Label htmlFor="postcode-select-daily" className="sr-only">Select Postcode</Label>
@@ -187,4 +197,3 @@ export default function DeliveryAreaPage() {
     </div>
   );
 }
-

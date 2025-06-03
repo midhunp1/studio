@@ -17,8 +17,8 @@ const customerDataByArea = [
 ];
 
 const chartConfig = {
-  newCustomers: { label: "New Customers", color: "hsl(var(--chart-1))" },
-  repeatCustomers: { label: "Repeat Customers", color: "hsl(var(--primary))" },
+  newCustomers: { label: "New Customers", color: "hsl(var(--chart-1))" }, // Teal variant
+  repeatCustomers: { label: "Repeat Customers", color: "hsl(var(--chart-2))" }, // Gold variant
 } satisfies ChartConfig;
 
 export default function CustomerMapPage() {
@@ -66,8 +66,8 @@ export default function CustomerMapPage() {
                 <div key={area.postcode} className="p-3 bg-muted/30 rounded-lg">
                   <h4 className="font-semibold text-primary">{area.postcode}</h4>
                   <p className="text-sm">
-                    <UserPlus className="inline h-4 w-4 mr-1 text-green-500" /> New: {area.newCustomers} | 
-                    <Repeat className="inline h-4 w-4 ml-2 mr-1 text-blue-500" /> Repeat: {area.repeatCustomers}
+                    <UserPlus className="inline h-4 w-4 mr-1 text-primary" /> New: {area.newCustomers} | 
+                    <Repeat className="inline h-4 w-4 ml-2 mr-1 text-accent" /> Repeat: {area.repeatCustomers}
                   </p>
                   <p className="text-sm text-muted-foreground">Churn Rate: {area.churnRate}</p>
                 </div>

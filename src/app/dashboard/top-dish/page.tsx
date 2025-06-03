@@ -151,7 +151,7 @@ export default function TopDishPage() {
       </div> 
 
       {pieChartData.length > 0 && (
-        <Card className="mt-6 lg:w-2/3 lg:mx-auto">
+        <Card className="mt-6 lg:w-2/3">
           <CardHeader>
             <CardTitle className="font-headline flex items-center">
               <PieChartIcon className="mr-2 h-5 w-5 text-primary" />

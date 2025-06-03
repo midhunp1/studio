@@ -2,7 +2,7 @@
 "use client";
 
 import { PageHeader } from '@/components/dashboard/page-header';
-import { MapPlaceholder } from '@/components/dashboard/map-placeholder'; // Changed from InteractiveHeatmapPlaceholder
+import { CssStylizedHeatmap } from '@/components/dashboard/css-stylized-heatmap'; // Updated import
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -31,8 +31,8 @@ export default function DeliveryAreaPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          {/* Changed to MapPlaceholder */}
-          <MapPlaceholder title="UK Order Density Heatmap" height="500px" dataAiHint="UK heatmap" />
+          {/* Changed to CssStylizedHeatmap */}
+          <CssStylizedHeatmap title="Manchester Area Heatmap (CSS Demo)" height="500px" dataAiHint="Manchester heatmap stylized" />
         </div>
         <div className="space-y-6">
           <Card>

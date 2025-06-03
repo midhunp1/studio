@@ -8,7 +8,7 @@ interface MapPlaceholderProps {
   dataAiHint?: string;
 }
 
-export function MapPlaceholder({ title = "Map Data Visualization", height = "400px", dataAiHint = "custom map" }: MapPlaceholderProps) {
+export function MapPlaceholder({ title = "Map Data Visualization", height = "400px", dataAiHint = "London heatmap" }: MapPlaceholderProps) {
   return (
     <div
       className="w-full bg-muted/50 border border-dashed border-border rounded-lg flex flex-col items-center justify-center p-6 text-center shadow-inner"
@@ -17,7 +17,7 @@ export function MapPlaceholder({ title = "Map Data Visualization", height = "400
     >
       <div className="relative w-full h-3/5 mb-3"> {/* Adjusted spacing */}
         <Image
-          src="/uk-heatmap-demo.png"
+          src="/uk-heatmap-demo.png" // Corrected to .png
           alt={title || "UK Heatmap Demo"}
           fill
           className="rounded-md object-cover opacity-90" /* Increased opacity for demo */
@@ -27,7 +27,7 @@ export function MapPlaceholder({ title = "Map Data Visualization", height = "400
       <MapPin className="h-8 w-8 text-primary mb-2" /> {/* Slightly smaller icon */}
       <h3 className="text-lg font-semibold text-foreground mb-1">{title}</h3>
       <p className="text-xs text-muted-foreground px-2">
-        Displaying <code className="text-xs bg-muted p-0.5 rounded">uk-heatmap-demo.png</code>. Place your image with this name in the <code className="text-xs bg-muted p-0.5 rounded">public</code> folder.
+        Displaying <code className="text-xs bg-muted p-0.5 rounded">uk-heatmap-demo.png</code>. Ensure this image is in your <code className="text-xs bg-muted p-0.5 rounded">public</code> folder.
       </p>
     </div>
   );

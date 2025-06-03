@@ -108,7 +108,7 @@ export default function TopDishPage() {
         <div className="lg:col-span-2">
           <InteractiveHeatmapPlaceholder title="Dish Popularity by Area" height="500px" dataAiHint="food map items" />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6"> {/* This div is for the right column */}
           <Card>
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -149,74 +149,73 @@ export default function TopDishPage() {
               )}
             </CardContent>
           </Card>
+        </div> {/* End of right column div */}
+      </div> {/* End of grid */}
 
-          {pieChartData.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-headline flex items-center">
-                  <PieChartIcon className="mr-2 h-5 w-5 text-primary" />
-                  Dish Order Breakdown for {selectedArea}
-                </CardTitle>
-                <CardDescription>Proportion of orders by dish. Hover for details.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer config={pieChartConfig} className="mx-auto aspect-square max-h-[300px]">
-                  <PieChart accessibilityLayer>
-                    <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent hideLabel />}
-                    />
-                    <Pie
-                      data={pieChartData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      innerRadius={50} 
-                      activeIndex={activeIndex ?? undefined} // Pass activeIndex
-                      activeShape={renderActiveShape} // Pass custom active shape
-                      onMouseEnter={onPieEnter}
-                      onMouseLeave={onPieLeave}
-                      label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-                        // Hide label for active slice (activeShape handles it) or for very small slices
-                        if (index === activeIndex || percent < 0.05) return null;
-                        const RADIAN = Math.PI / 180;
-                        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                        return (
-                          <text x={x} y={y} fill="hsl(var(--card-foreground))" textAnchor="middle" dominantBaseline="central" className="text-xs font-medium pointer-events-none">
-                            {`${(percent * 100).toFixed(0)}%`}
-                          </text>
-                        );
-                      }}
-                    >
-                      {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={pieChartConfig[entry.name]?.color || "hsl(var(--muted))"} />
+      {/* Pie Chart Card - Moved below the grid, will be full-width */}
+      {pieChartData.length > 0 && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="font-headline flex items-center">
+              <PieChartIcon className="mr-2 h-5 w-5 text-primary" />
+              Dish Order Breakdown for {selectedArea}
+            </CardTitle>
+            <CardDescription>Proportion of orders by dish. Hover for details.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={pieChartConfig} className="mx-auto aspect-square max-h-[300px] sm:max-h-[400px] lg:max-h-[500px]">
+              <PieChart accessibilityLayer>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={pieChartData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100} // Adjust as needed, e.g. 120 or 150 for larger chart
+                  innerRadius={50} // Adjust for donut thickness, e.g. 60 or 70
+                  activeIndex={activeIndex ?? undefined}
+                  activeShape={renderActiveShape}
+                  onMouseEnter={onPieEnter}
+                  onMouseLeave={onPieLeave}
+                  label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                    if (index === activeIndex || percent < 0.05) return null;
+                    const RADIAN = Math.PI / 180;
+                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                    return (
+                      <text x={x} y={y} fill="hsl(var(--card-foreground))" textAnchor="middle" dominantBaseline="central" className="text-xs font-medium pointer-events-none">
+                        {`${(percent * 100).toFixed(0)}%`}
+                      </text>
+                    );
+                  }}
+                >
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={pieChartConfig[entry.name]?.color || "hsl(var(--muted))"} />
+                  ))}
+                </Pie>
+                <Legend content={({ payload }) => {
+                  if (!payload) return null;
+                  return (
+                    <ul className="flex flex-wrap gap-x-4 gap-y-1 justify-center text-xs mt-4">
+                      {payload.map((entry, index) => (
+                        <li key={`item-${index}`} className="flex items-center gap-1.5">
+                          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                          <span>{entry.value}</span>
+                        </li>
                       ))}
-                    </Pie>
-                    <Legend content={({ payload }) => {
-                      if (!payload) return null;
-                      return (
-                        <ul className="flex flex-wrap gap-x-4 gap-y-1 justify-center text-xs mt-4">
-                          {payload.map((entry, index) => (
-                            <li key={`item-${index}`} className="flex items-center gap-1.5">
-                              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                              <span>{entry.value}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      );
-                    }} />
-                  </PieChart>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-          )}
-
-        </div>
-      </div>
+                    </ul>
+                  );
+                }} />
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="mt-6">
         <CardHeader>
@@ -257,3 +256,4 @@ export default function TopDishPage() {
   );
 }
 
+    

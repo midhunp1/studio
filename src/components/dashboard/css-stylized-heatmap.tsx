@@ -13,18 +13,30 @@ interface CssStylizedHeatmapProps {
 }
 
 // 0: very light, 1: light, 2: medium, 3: high, 4: very high intensity
+// New 20x30 pattern for higher resolution
 const defaultHeatmapPattern = [
-  [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-  [0, 1, 2, 2, 1, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0],
-  [1, 2, 3, 3, 2, 1, 0, 0, 1, 2, 3, 2, 1, 0, 0],
-  [1, 2, 4, 4, 3, 1, 0, 1, 2, 3, 4, 3, 2, 1, 0],
-  [0, 1, 3, 4, 3, 2, 1, 1, 3, 4, 3, 2, 1, 0, 0],
-  [0, 1, 2, 3, 2, 1, 0, 0, 2, 3, 2, 1, 0, 0, 0],
-  [0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,1,1,2,2,3,3,4,4,4,4,3,3,2,2,1,1,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,1,2,2,3,3,4,4,4,4,4,4,4,4,3,3,2,2,1,0,0,0,0,0,0],
+  [0,0,0,0,0,1,2,3,3,4,4,4,3,3,3,3,3,3,4,4,4,3,3,2,1,0,0,0,0,0],
+  [0,0,0,0,1,2,3,4,4,3,3,2,1,1,1,1,1,1,2,3,3,4,4,3,2,1,0,0,0,0],
+  [0,0,0,1,2,3,4,3,2,1,0,0,0,0,0,0,0,0,0,1,2,3,4,3,2,1,0,0,0,0],
+  [0,0,1,2,3,4,3,2,1,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,3,2,1,0,0,0],
+  [0,0,1,2,3,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0,0],
+  [0,0,1,2,3,3,2,1,0,0,0,0,1,1,1,1,0,0,0,0,0,1,2,3,3,2,1,0,0,0],
+  [0,0,1,2,3,4,3,2,1,0,0,0,1,2,2,1,0,0,0,0,1,2,3,4,3,2,1,0,0,0],
+  [0,0,0,1,2,3,4,3,2,1,0,0,1,2,3,2,1,0,0,1,2,3,4,3,2,1,0,0,0,0],
+  [0,0,0,0,1,2,3,4,4,3,1,1,2,3,3,3,2,1,1,3,4,4,3,2,1,0,0,0,0,0],
+  [0,0,0,0,0,1,2,3,3,4,4,2,3,4,4,4,3,2,4,4,3,3,2,1,0,0,0,0,0,0],
+  [0,0,0,0,0,0,1,2,2,3,3,4,4,4,4,4,4,4,4,3,3,2,2,1,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,1,1,2,2,3,3,4,4,4,4,3,3,2,2,1,1,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ];
+
 
 const intensityColors = [
   'bg-muted/10',       // 0 - very light
@@ -37,12 +49,16 @@ const intensityColors = [
 export function CssStylizedHeatmap({
   title = "Stylized CSS Heatmap",
   height = "500px",
-  rows = defaultHeatmapPattern.length,
-  cols = defaultHeatmapPattern[0]?.length || 15,
-  dataAiHint = "stylized heatmap",
+  rows = 20, // Increased default rows
+  cols = 30, // Increased default columns
+  dataAiHint = "stylized heatmap high resolution",
 }: CssStylizedHeatmapProps) {
   
-  const heatmapPattern = defaultHeatmapPattern;
+  const heatmapPattern = defaultHeatmapPattern; // Using the new 20x30 pattern
+
+  // Ensure the provided rows/cols match the pattern dimensions or fallback gracefully
+  const effectiveRows = heatmapPattern.length;
+  const effectiveCols = heatmapPattern[0]?.length || cols;
 
   return (
     <div
@@ -59,13 +75,13 @@ export function CssStylizedHeatmap({
       <div
         className="grid w-full flex-grow border border-border/50 rounded overflow-hidden shadow-inner"
         style={{
-          gridTemplateColumns: `repeat(${cols}, 1fr)`,
-          gridTemplateRows: `repeat(${rows}, 1fr)`,
-          aspectRatio: `${cols}/${rows}`, // Maintain aspect ratio
+          gridTemplateColumns: `repeat(${effectiveCols}, 1fr)`,
+          gridTemplateRows: `repeat(${effectiveRows}, 1fr)`,
+          aspectRatio: `${effectiveCols}/${effectiveRows}`, // Maintain aspect ratio
         }}
       >
-        {Array.from({ length: rows }).map((_, rowIndex) =>
-          Array.from({ length: cols }).map((_, colIndex) => {
+        {Array.from({ length: effectiveRows }).map((_, rowIndex) =>
+          Array.from({ length: effectiveCols }).map((_, colIndex) => {
             const intensity = heatmapPattern[rowIndex]?.[colIndex] ?? 0;
             const colorClass = intensityColors[intensity] || intensityColors[0];
             return (
@@ -86,3 +102,4 @@ export function CssStylizedHeatmap({
     </div>
   );
 }
+

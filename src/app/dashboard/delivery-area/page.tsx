@@ -9,6 +9,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { List, BarChartHorizontalBig, LineChart as LineChartIcon } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line, LineChart as RechartsLineChart, Legend } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import React from 'react';
 
 const topPostcodesRaw = [
@@ -33,15 +35,23 @@ const lowConversionAreas = [
   { postcode: "M5 5EE", views: 350, orders: 5 },
 ];
 
-const dailyOrdersData = [
-  { day: "Mon", orders: 30 },
-  { day: "Tue", orders: 45 },
-  { day: "Wed", orders: 55 },
-  { day: "Thu", orders: 40 },
-  { day: "Fri", orders: 70 },
-  { day: "Sat", orders: 90 },
-  { day: "Sun", orders: 60 },
-];
+const allDailyOrdersData: { [postcode: string]: { day: string; orders: number }[] } = {
+  "M1 1AA": [
+    { day: "Mon", orders: 30 }, { day: "Tue", orders: 45 }, { day: "Wed", orders: 55 },
+    { day: "Thu", orders: 40 }, { day: "Fri", orders: 70 }, { day: "Sat", orders: 90 },
+    { day: "Sun", orders: 60 },
+  ],
+  "M2 2BB": [
+    { day: "Mon", orders: 20 }, { day: "Tue", orders: 30 }, { day: "Wed", orders: 40 },
+    { day: "Thu", orders: 35 }, { day: "Fri", orders: 60 }, { day: "Sat", orders: 75 },
+    { day: "Sun", orders: 50 },
+  ],
+  "M3 3CC": [
+    { day: "Mon", orders: 25 }, { day: "Tue", orders: 35 }, { day: "Wed", orders: 50 },
+    { day: "Thu", orders: 45 }, { day: "Fri", orders: 65 }, { day: "Sat", orders: 80 },
+    { day: "Sun", orders: 55 },
+  ],
+};
 
 const barChartConfig = {
   revenue: { label: "Revenue (£)", color: "hsl(var(--primary))" },
@@ -53,6 +63,11 @@ const lineChartConfig = {
 
 
 export default function DeliveryAreaPage() {
+  const [selectedPostcodeForDaily, setSelectedPostcodeForDaily] = React.useState<string>("M1 1AA");
+
+  const dailyOrdersDataForSelectedPostcode = allDailyOrdersData[selectedPostcodeForDaily] || [];
+  const availablePostcodesForDailyChart = Object.keys(allDailyOrdersData);
+
   return (
     <div>
       <PageHeader
@@ -111,15 +126,32 @@ export default function DeliveryAreaPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline flex items-center">
-                <LineChartIcon className="mr-2 h-5 w-5 text-accent" />
-                Daily Orders - M1 1AA
-              </CardTitle>
-              <CardDescription>Order trend for postcode M1 1AA over the past week.</CardDescription>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <CardTitle className="font-headline flex items-center">
+                    <LineChartIcon className="mr-2 h-5 w-5 text-accent" />
+                    Daily Orders - {selectedPostcodeForDaily}
+                  </CardTitle>
+                  <CardDescription>Order trend for postcode {selectedPostcodeForDaily} over the past week.</CardDescription>
+                </div>
+                <div className="w-full sm:w-auto mt-2 sm:mt-0">
+                  <Label htmlFor="postcode-select-daily" className="sr-only">Select Postcode</Label>
+                  <Select value={selectedPostcodeForDaily} onValueChange={setSelectedPostcodeForDaily}>
+                    <SelectTrigger id="postcode-select-daily" className="w-full sm:w-[150px]">
+                      <SelectValue placeholder="Select Postcode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availablePostcodesForDailyChart.map(pc => (
+                        <SelectItem key={pc} value={pc}>{pc}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <ChartContainer config={lineChartConfig} className="h-[250px] w-full">
-                <RechartsLineChart data={dailyOrdersData} margin={{ left: 0, right: 20 }} accessibilityLayer>
+                <RechartsLineChart data={dailyOrdersDataForSelectedPostcode} margin={{ left: 0, right: 20 }} accessibilityLayer>
                   <CartesianGrid vertical={false} />
                   <XAxis
                     dataKey="day"
@@ -130,6 +162,7 @@ export default function DeliveryAreaPage() {
                   />
                   <YAxis tickLine={false} axisLine={false} tickMargin={8} />
                   <ChartTooltip content={<ChartTooltipContent />} />
+                  <Legend />
                   <Line type="monotone" dataKey="orders" stroke="var(--color-orders)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-orders)" }} activeDot={{r: 6}} />
                 </RechartsLineChart>
               </ChartContainer>
@@ -154,3 +187,4 @@ export default function DeliveryAreaPage() {
     </div>
   );
 }
+

@@ -88,9 +88,9 @@ export function FilterControls({ onApplyFilters }: FilterControlsProps) {
                 <SelectValue placeholder="Select platform" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">All Platforms</SelectItem>
                 <SelectItem value="foodhub">Foodhub</SelectItem>
                 <SelectItem value="own_website">Own Website</SelectItem>
-                <SelectItem value="all">All Platforms</SelectItem>
                 <SelectItem value="justeat">JustEat</SelectItem>
                 <SelectItem value="ubereats">UberEats</SelectItem>
                 <SelectItem value="deliveroo">Deliveroo</SelectItem>

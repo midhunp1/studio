@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -91,6 +92,7 @@ export function FilterControls({ onApplyFilters }: FilterControlsProps) {
                 <SelectItem value="justeat">JustEat</SelectItem>
                 <SelectItem value="ubereats">UberEats</SelectItem>
                 <SelectItem value="deliveroo">Deliveroo</SelectItem>
+                <SelectItem value="foodhub">Foodhub</SelectItem>
                 <SelectItem value="own_website">Own Website</SelectItem>
               </SelectContent>
             </Select>

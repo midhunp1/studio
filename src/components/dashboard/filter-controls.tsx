@@ -89,7 +89,7 @@ export function FilterControls({ onApplyFilters }: FilterControlsProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Platforms</SelectItem>
-                <SelectItem value="foodhub" className="text-destructive">Foodhub</SelectItem>
+                <SelectItem value="foodhub" className="text-destructive data-[highlighted]:bg-destructive data-[highlighted]:text-destructive-foreground">Foodhub</SelectItem>
                 <SelectItem value="own_website">Own Website</SelectItem>
                 <SelectItem value="justeat">JustEat</SelectItem>
                 <SelectItem value="ubereats">UberEats</SelectItem>
@@ -126,4 +126,3 @@ export function FilterControls({ onApplyFilters }: FilterControlsProps) {
 // Re-add Card components as they are used within FilterControls
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-

@@ -15,19 +15,24 @@ export function MapPlaceholder({ title = "Map Data Visualization", height = "400
       style={{ height }}
       aria-label={title}
     >
-      <div className="relative w-full h-3/5 mb-3"> {/* Adjusted spacing */}
+      <div className="w-full flex justify-center mb-3">
         <Image
-          src="/uk-heatmap-demo.jpg" // Changed to .jpg
+          src="/uk-heatmap-demo.jpg" 
           alt={title || "UK Heatmap Demo"}
-          fill
-          className="rounded-md object-cover opacity-90" /* Increased opacity for demo */
-          data-ai-hint={dataAiHint} /* Use the passed dataAiHint or a default */
+          width={400} 
+          height={300} 
+          className="rounded-md opacity-90 border-4 border-red-500" // Added prominent border for visibility
+          data-ai-hint={dataAiHint}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            console.error('Image failed to load:', target.src);
+          }}
         />
       </div>
-      <MapPin className="h-8 w-8 text-primary mb-2" /> {/* Slightly smaller icon */}
+      <MapPin className="h-8 w-8 text-primary mb-2" />
       <h3 className="text-lg font-semibold text-foreground mb-1">{title}</h3>
       <p className="text-xs text-muted-foreground px-2">
-        Displaying <code className="text-xs bg-muted p-0.5 rounded">uk-heatmap-demo.jpg</code>. Ensure this image is in your <code className="text-xs bg-muted p-0.5 rounded">public</code> folder.
+        Attempting to display <code className="text-xs bg-muted p-0.5 rounded">uk-heatmap-demo.jpg</code> from the <code className="text-xs bg-muted p-0.5 rounded">public</code> folder.
       </p>
     </div>
   );

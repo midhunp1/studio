@@ -1,7 +1,8 @@
+
 "use client";
 
 import { PageHeader } from '@/components/dashboard/page-header';
-import { MapPlaceholder } from '@/components/dashboard/map-placeholder';
+import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, UserPlus, Repeat } from 'lucide-react';
@@ -31,7 +32,7 @@ export default function CustomerMapPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <MapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="people map customer types" />
+          <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="people map customer types" />
         </div>
         <div className="space-y-6">
           <Card>
@@ -61,7 +62,7 @@ export default function CustomerMapPage() {
               <CardTitle className="font-headline">Retention Insights</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {customerDataByArea.slice(0,2).map(area => ( // Show a couple of examples
+              {customerDataByArea.slice(0,2).map(area => ( 
                 <div key={area.postcode} className="p-3 bg-muted/30 rounded-lg">
                   <h4 className="font-semibold text-primary">{area.postcode}</h4>
                   <p className="text-sm">

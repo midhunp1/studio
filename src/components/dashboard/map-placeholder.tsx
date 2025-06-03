@@ -1,3 +1,4 @@
+
 import { MapPin } from 'lucide-react';
 import Image from 'next/image';
 
@@ -15,16 +16,16 @@ export function MapPlaceholder({ title = "Map Data Visualization", height = "400
       aria-label={title}
     >
       <Image 
-        src={`https://placehold.co/600x${parseInt(height) * 0.8}.png`}
+        src={`https://placehold.co/600x${Math.max(100, parseInt(height) * 0.6)}.png`} // Ensure placeholder image height is reasonable
         alt="Abstract map placeholder"
         width={600}
-        height={parseInt(height) * 0.8}
-        className="rounded-md mb-4 opacity-70"
+        height={Math.max(100, parseInt(height) * 0.6)} // Ensure placeholder image height is reasonable
+        className="rounded-md mb-4 opacity-70 object-cover" // Added object-cover
         data-ai-hint={dataAiHint}
       />
       <MapPin className="h-12 w-12 text-primary mb-4" />
       <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
-      <p className="text-muted-foreground">Interactive map will be displayed here.</p>
+      <p className="text-muted-foreground">Static map placeholder. Interactive version coming soon.</p>
     </div>
   );
 }

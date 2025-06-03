@@ -1,7 +1,8 @@
+
 "use client";
 
 import { PageHeader } from '@/components/dashboard/page-header';
-import { MapPlaceholder } from '@/components/dashboard/map-placeholder';
+import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -22,7 +23,6 @@ const chartConfig = {
   revenueLift: { label: "Revenue Lift (£)", color: "hsl(var(--accent))" },
 } satisfies ChartConfig;
 
-// Simplified data for chart (summing up for each promo code for example)
 const chartData = [
     { promoCode: "SAVE10", redemptions: 120 + 90 + 50, revenueLiftNumeric: 600 + 400 + 200},
     { promoCode: "FREEPIZZA", redemptions: 80, revenueLiftNumeric: 450},
@@ -41,7 +41,7 @@ export default function PromoPerformancePage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <MapPlaceholder title="Promo Effectiveness by Zone" height="500px" dataAiHint="map discount offer" />
+          <InteractiveHeatmapPlaceholder title="Promo Effectiveness by Zone" height="500px" dataAiHint="map discount offer" />
         </div>
         <Card>
           <CardHeader>

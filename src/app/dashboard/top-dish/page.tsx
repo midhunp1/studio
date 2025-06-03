@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Utensils, Star, TrendingUp, PieChart as PieChartIcon } from 'lucide-react';
 import Image from 'next/image';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { PieChart, Pie, Cell, Legend, Sector } from "recharts"; // Added Sector
+import { PieChart, Pie, Cell, Legend, Sector } from "recharts"; 
 import React from 'react';
 
 export default function TopDishPage() {
@@ -60,7 +60,6 @@ export default function TopDishPage() {
     const RADIAN = Math.PI / 180;
     const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent } = props;
     
-    // Label position for active shape
     const labelRadius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const lx = cx + labelRadius * Math.cos(-midAngle * RADIAN);
     const ly = cy + labelRadius * Math.sin(-midAngle * RADIAN);
@@ -70,20 +69,19 @@ export default function TopDishPage() {
         <Sector
           cx={cx}
           cy={cy}
-          innerRadius={innerRadius - 2} // Make inner radius slightly smaller to enhance pop
-          outerRadius={outerRadius + 6} // Make outer radius slightly larger for zoom
+          innerRadius={innerRadius - 2} 
+          outerRadius={outerRadius + 6} 
           startAngle={startAngle}
           endAngle={endAngle}
           fill={fill}
-          stroke="hsl(var(--accent))" // Use accent color for border
+          stroke="hsl(var(--accent))" 
           strokeWidth={2}
         />
-         {/* Label for active sector */}
         {percent > 0.05 && (
            <text 
             x={lx} 
             y={ly} 
-            fill="hsl(var(--accent-foreground))" // Use a color that contrasts with typical chart fills
+            fill="hsl(var(--accent-foreground))" 
             textAnchor="middle" 
             dominantBaseline="central" 
             className="text-xs font-bold pointer-events-none"
@@ -108,7 +106,7 @@ export default function TopDishPage() {
         <div className="lg:col-span-2">
           <InteractiveHeatmapPlaceholder title="Dish Popularity by Area" height="500px" dataAiHint="food map items" />
         </div>
-        <div className="space-y-6"> {/* This div is for the right column */}
+        <div className="space-y-6"> 
           <Card>
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -149,10 +147,9 @@ export default function TopDishPage() {
               )}
             </CardContent>
           </Card>
-        </div> {/* End of right column div */}
-      </div> {/* End of grid */}
+        </div> 
+      </div> 
 
-      {/* Pie Chart Card - Moved below the grid, will be full-width */}
       {pieChartData.length > 0 && (
         <Card className="mt-6">
           <CardHeader>
@@ -163,7 +160,10 @@ export default function TopDishPage() {
             <CardDescription>Proportion of orders by dish. Hover for details.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={pieChartConfig} className="mx-auto aspect-square max-h-[300px] sm:max-h-[400px] lg:max-h-[500px]">
+            <ChartContainer 
+              config={pieChartConfig} 
+              className="mx-auto aspect-square max-h-[350px] sm:max-h-[450px] md:max-h-[550px] lg:max-h-[600px]"
+            >
               <PieChart accessibilityLayer>
                 <ChartTooltip
                   cursor={false}
@@ -175,8 +175,8 @@ export default function TopDishPage() {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={100} // Adjust as needed, e.g. 120 or 150 for larger chart
-                  innerRadius={50} // Adjust for donut thickness, e.g. 60 or 70
+                  outerRadius={200} 
+                  innerRadius={90} 
                   activeIndex={activeIndex ?? undefined}
                   activeShape={renderActiveShape}
                   onMouseEnter={onPieEnter}

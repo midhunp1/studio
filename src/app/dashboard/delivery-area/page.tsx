@@ -136,17 +136,17 @@ export default function DeliveryAreaPage() {
 
           <Card>
             <CardHeader>
-              <div> {/* Simplified container for title and description */}
-                <CardTitle className="font-headline flex items-baseline flex-wrap gap-x-1.5"> {/* Use items-baseline for text alignment, flex-wrap for responsiveness */}
+              <div> 
+                <CardTitle className="font-headline flex items-baseline flex-wrap gap-x-1.5">
                   <LineChartIcon className="mr-1 h-6 w-6 text-accent self-center flex-shrink-0" />
                   <span>Daily Orders - </span>
                   <Select value={selectedPostcodeForDaily} onValueChange={setSelectedPostcodeForDaily}>
                     <SelectTrigger
                       id="postcode-select-daily-title"
                       className="w-auto h-auto p-0 pr-1 m-0 bg-transparent border-0 shadow-none 
-                                 font-headline text-2xl font-bold text-primary hover:text-primary/80 
+                                 font-headline text-2xl font-bold text-accent hover:text-accent/80 
                                  focus:ring-0 focus:outline-none 
-                                 inline-flex items-center gap-1" // Ensure text and chevron are nicely spaced
+                                 inline-flex items-center gap-1"
                     >
                       <SelectValue placeholder="Select Postcode" />
                     </SelectTrigger>
@@ -200,3 +200,4 @@ export default function DeliveryAreaPage() {
     </div>
   );
 }
+

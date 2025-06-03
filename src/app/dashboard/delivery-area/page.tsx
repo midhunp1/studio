@@ -136,18 +136,18 @@ export default function DeliveryAreaPage() {
 
           <Card>
             <CardHeader>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div>
-                  <CardTitle className="font-headline flex items-center">
-                    <LineChartIcon className="mr-2 h-5 w-5 text-accent" />
-                    Daily Orders - {selectedPostcodeForDaily}
-                  </CardTitle>
-                  <CardDescription>Order trend for the selected postcode over the past week.</CardDescription>
-                </div>
-                <div className="w-full sm:w-auto mt-2 sm:mt-0">
-                  <Label htmlFor="postcode-select-daily" className="sr-only">Select Postcode</Label>
+              <div> {/* Simplified container for title and description */}
+                <CardTitle className="font-headline flex items-baseline flex-wrap gap-x-1.5"> {/* Use items-baseline for text alignment, flex-wrap for responsiveness */}
+                  <LineChartIcon className="mr-1 h-6 w-6 text-accent self-center flex-shrink-0" />
+                  <span>Daily Orders - </span>
                   <Select value={selectedPostcodeForDaily} onValueChange={setSelectedPostcodeForDaily}>
-                    <SelectTrigger id="postcode-select-daily" className="w-full sm:w-[150px]">
+                    <SelectTrigger
+                      id="postcode-select-daily-title"
+                      className="w-auto h-auto p-0 pr-1 m-0 bg-transparent border-0 shadow-none 
+                                 font-headline text-2xl font-bold text-primary hover:text-primary/80 
+                                 focus:ring-0 focus:outline-none 
+                                 inline-flex items-center gap-1" // Ensure text and chevron are nicely spaced
+                    >
                       <SelectValue placeholder="Select Postcode" />
                     </SelectTrigger>
                     <SelectContent>
@@ -156,7 +156,10 @@ export default function DeliveryAreaPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  Order trend for the selected postcode over the past week.
+                </CardDescription>
               </div>
             </CardHeader>
             <CardContent>

@@ -2,7 +2,7 @@
 "use client";
 
 import { PageHeader } from '@/components/dashboard/page-header';
-import { CssStylizedHeatmap } from '@/components/dashboard/css-stylized-heatmap'; // Updated import
+import { CssStylizedHeatmap } from '@/components/dashboard/css-stylized-heatmap';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -31,8 +31,14 @@ export default function DeliveryAreaPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          {/* Changed to CssStylizedHeatmap */}
-          <CssStylizedHeatmap title="Manchester Area Heatmap (CSS Demo)" height="500px" dataAiHint="Manchester heatmap stylized" />
+          <CssStylizedHeatmap 
+            title="Manchester Area Heatmap Overlay" 
+            height="500px" 
+            // You can replace this URL with a local image e.g., "/manchester_map.png" if you add it to your public folder
+            backgroundImageUrl="https://placehold.co/1200x800.png" 
+            backgroundMapDataAiHint="Manchester street map satellite"
+            dataAiHint="Manchester heatmap overlay" 
+          />
         </div>
         <div className="space-y-6">
           <Card>

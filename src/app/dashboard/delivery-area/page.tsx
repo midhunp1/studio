@@ -31,7 +31,7 @@ export default function DeliveryAreaPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <InteractiveHeatmapPlaceholder title="UK Order Density Heatmap" height="500px" dataAiHint="UK map interactive" />
+          <InteractiveHeatmapPlaceholder title="UK Order Density Heatmap" height="500px" dataAiHint="UK heatmap" />
         </div>
         <div className="space-y-6">
           <Card>

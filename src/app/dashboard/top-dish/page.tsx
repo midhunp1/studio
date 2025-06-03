@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Utensils, Star, TrendingUp, PieChart as PieChartIcon } from 'lucide-react';
 import Image from 'next/image';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, Legend, Sector } from "recharts"; // Added Sector
 import React from 'react';
 
 export default function TopDishPage() {
@@ -26,6 +26,8 @@ export default function TopDishPage() {
   // Assume a selected area or show overall top dishes
   const selectedArea = "M1 1AA"; 
   const dishesForSelectedArea = topDishesByArea.filter(d => d.postcode === selectedArea);
+
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
   const pieChartData = React.useMemo(() => {
     return dishesForSelectedArea.map(dish => ({
@@ -45,6 +47,53 @@ export default function TopDishPage() {
     });
     return config;
   }, [dishesForSelectedArea]);
+
+  const onPieEnter = React.useCallback((_: any, index: number) => {
+    setActiveIndex(index);
+  }, [setActiveIndex]);
+
+  const onPieLeave = React.useCallback(() => {
+    setActiveIndex(null);
+  }, [setActiveIndex]);
+
+  const renderActiveShape = (props: any) => {
+    const RADIAN = Math.PI / 180;
+    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent } = props;
+    
+    // Label position for active shape
+    const labelRadius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const lx = cx + labelRadius * Math.cos(-midAngle * RADIAN);
+    const ly = cy + labelRadius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <g>
+        <Sector
+          cx={cx}
+          cy={cy}
+          innerRadius={innerRadius - 2} // Make inner radius slightly smaller to enhance pop
+          outerRadius={outerRadius + 6} // Make outer radius slightly larger for zoom
+          startAngle={startAngle}
+          endAngle={endAngle}
+          fill={fill}
+          stroke="hsl(var(--accent))" // Use accent color for border
+          strokeWidth={2}
+        />
+         {/* Label for active sector */}
+        {percent > 0.05 && (
+           <text 
+            x={lx} 
+            y={ly} 
+            fill="hsl(var(--accent-foreground))" // Use a color that contrasts with typical chart fills
+            textAnchor="middle" 
+            dominantBaseline="central" 
+            className="text-xs font-bold pointer-events-none"
+          >
+            {`${(percent * 100).toFixed(0)}%`}
+          </text>
+        )}
+      </g>
+    );
+  };
 
 
   return (
@@ -108,7 +157,7 @@ export default function TopDishPage() {
                   <PieChartIcon className="mr-2 h-5 w-5 text-primary" />
                   Dish Order Breakdown for {selectedArea}
                 </CardTitle>
-                <CardDescription>Proportion of orders by dish.</CardDescription>
+                <CardDescription>Proportion of orders by dish. Hover for details.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={pieChartConfig} className="mx-auto aspect-square max-h-[300px]">
@@ -125,15 +174,19 @@ export default function TopDishPage() {
                       cy="50%"
                       outerRadius={100}
                       innerRadius={50} 
-                      labelLine={false}
-                      label={({ cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-                        if (percent < 0.05) return null; // Hide label for very small slices
+                      activeIndex={activeIndex ?? undefined} // Pass activeIndex
+                      activeShape={renderActiveShape} // Pass custom active shape
+                      onMouseEnter={onPieEnter}
+                      onMouseLeave={onPieLeave}
+                      label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                        // Hide label for active slice (activeShape handles it) or for very small slices
+                        if (index === activeIndex || percent < 0.05) return null;
                         const RADIAN = Math.PI / 180;
                         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                        const x = cy + radius * Math.cos(-midAngle * RADIAN);
+                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
                         const y = cy + radius * Math.sin(-midAngle * RADIAN);
                         return (
-                          <text x={x} y={y} fill="hsl(var(--card-foreground))" textAnchor={x > cy ? 'start' : 'end'} dominantBaseline="central" className="text-xs font-medium">
+                          <text x={x} y={y} fill="hsl(var(--card-foreground))" textAnchor="middle" dominantBaseline="central" className="text-xs font-medium pointer-events-none">
                             {`${(percent * 100).toFixed(0)}%`}
                           </text>
                         );

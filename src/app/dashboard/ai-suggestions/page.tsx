@@ -27,8 +27,29 @@ type ComboSuggestionFormValues = z.infer<typeof comboSuggestionSchema>;
 
 const adBoostSchema = z.object({
   postcode: z.string().min(1, "Postcode is required"),
-  orderData: z.string().min(10, "Order data is required (JSON format preferred, e.g., timestamps, order values)"),
+  order1_date: z.string().optional(),
+  order1_time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time (HH:MM)").optional(),
+  order1_value: z.coerce.number().positive("Value must be positive").optional(),
+  order2_date: z.string().optional(),
+  order2_time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time (HH:MM)").optional(),
+  order2_value: z.coerce.number().positive("Value must be positive").optional(),
+  order3_date: z.string().optional(),
+  order3_time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time (HH:MM)").optional(),
+  order3_value: z.coerce.number().positive("Value must be positive").optional(),
+})
+.refine(data => !(data.order1_date && (!data.order1_time || data.order1_value === undefined || isNaN(data.order1_value))), {
+  path: ["order1_date"], // Or a more general path / message
+  message: "If Order 1 Date is filled, Time and Value are also required.",
+})
+.refine(data => !(data.order2_date && (!data.order2_time || data.order2_value === undefined || isNaN(data.order2_value))), {
+  path: ["order2_date"],
+  message: "If Order 2 Date is filled, Time and Value are also required.",
+})
+.refine(data => !(data.order3_date && (!data.order3_time || data.order3_value === undefined || isNaN(data.order3_value))), {
+  path: ["order3_date"],
+  message: "If Order 3 Date is filled, Time and Value are also required.",
 });
+
 type AdBoostFormValues = z.infer<typeof adBoostSchema>;
 
 export default function AISuggestionsPage() {
@@ -45,7 +66,12 @@ export default function AISuggestionsPage() {
 
   const adBoostForm = useForm<AdBoostFormValues>({
     resolver: zodResolver(adBoostSchema),
-    defaultValues: { postcode: "", orderData: "" },
+    defaultValues: {
+      postcode: "",
+      order1_date: "", order1_time: "", order1_value: undefined,
+      order2_date: "", order2_time: "", order2_value: undefined,
+      order3_date: "", order3_time: "", order3_value: undefined,
+    },
   });
 
   const onComboSubmit: SubmitHandler<ComboSuggestionFormValues> = async (data) => {
@@ -63,11 +89,35 @@ export default function AISuggestionsPage() {
     }
   };
 
-  const onAdBoostSubmit: SubmitHandler<AdBoostFormValues> = async (data) => {
+  const onAdBoostSubmit: SubmitHandler<AdBoostFormValues> = async (formData) => {
     setAdBoostError(null);
     setAdBoostResult(null);
+
+    const orders = [];
+    const processOrder = (dateStr?: string, timeStr?: string, value?: number) => {
+      if (dateStr && timeStr && value !== undefined && !isNaN(value) && value > 0) {
+        // Construct timestamp in YYYY-MM-DDTHH:MM:SS format (AI might be flexible)
+        // For simplicity, not adding 'Z' or handling timezones explicitly here.
+        orders.push({ timestamp: `${dateStr}T${timeStr}:00`, value });
+      }
+    };
+
+    processOrder(formData.order1_date, formData.order1_time, formData.order1_value);
+    processOrder(formData.order2_date, formData.order2_time, formData.order2_value);
+    processOrder(formData.order3_date, formData.order3_time, formData.order3_value);
+
+    if (orders.length === 0) {
+      const errMessage = "Please provide at least one complete order entry (date, time, and value).";
+      setAdBoostError(errMessage);
+      toast({ variant: "destructive", title: "Input Error", description: errMessage });
+      adBoostForm.trigger(); // Re-trigger validation to show specific field errors if `refine` caught them
+      return;
+    }
+
+    const orderDataJSON = JSON.stringify(orders);
+
     try {
-      const result = await generateAdBoostTimeSuggestion(data);
+      const result = await generateAdBoostTimeSuggestion({ postcode: formData.postcode, orderData: orderDataJSON });
       setAdBoostResult(result);
       toast({ title: "Ad Boost Suggestion Generated!", description: "Check the card below for details." });
     } catch (error) {
@@ -145,11 +195,11 @@ export default function AISuggestionsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="font-headline">Suggest Ad Boost Time</CardTitle>
-              <CardDescription>Input postcode and order data to find the optimal time for an ad boost.</CardDescription>
+              <CardDescription>Input postcode and sample order data (up to 3 entries) to find the optimal time for an ad boost.</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...adBoostForm}>
-                <form onSubmit={adBoostForm.handleSubmit(onAdBoostSubmit)} className="space-y-4">
+                <form onSubmit={adBoostForm.handleSubmit(onAdBoostSubmit)} className="space-y-6">
                   <FormField
                     control={adBoostForm.control}
                     name="postcode"
@@ -163,20 +213,62 @@ export default function AISuggestionsPage() {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={adBoostForm.control}
-                    name="orderData"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Order Data (JSON format recommended)</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder='e.g., [{"timestamp": "2023-10-26T19:00:00Z", "value": 25.50}, ...]' {...field} rows={4} />
-                        </FormControl>
-                        <FormDescription>Provide order history with timestamps and values for the specified postcode.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  
+                  <FormDescription>Enter up to 3 sample orders. Date, Time (HH:MM), and Value are required for each entered order.</FormDescription>
+
+                  {/* Order Entry 1 */}
+                  <div className="space-y-3 p-4 border rounded-md">
+                    <h4 className="text-sm font-medium text-muted-foreground">Order 1</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <FormField control={adBoostForm.control} name="order1_date" render={({ field }) => (
+                        <FormItem> <FormLabel>Date</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                      <FormField control={adBoostForm.control} name="order1_time" render={({ field }) => (
+                        <FormItem> <FormLabel>Time (HH:MM)</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                      <FormField control={adBoostForm.control} name="order1_value" render={({ field }) => (
+                        <FormItem> <FormLabel>Value (£)</FormLabel> <FormControl><Input type="number" step="0.01" placeholder="e.g., 25.50" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                    </div>
+                  </div>
+
+                  {/* Order Entry 2 */}
+                   <div className="space-y-3 p-4 border rounded-md">
+                    <h4 className="text-sm font-medium text-muted-foreground">Order 2 (Optional)</h4>
+                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <FormField control={adBoostForm.control} name="order2_date" render={({ field }) => (
+                        <FormItem> <FormLabel>Date</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                      <FormField control={adBoostForm.control} name="order2_time" render={({ field }) => (
+                        <FormItem> <FormLabel>Time (HH:MM)</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                      <FormField control={adBoostForm.control} name="order2_value" render={({ field }) => (
+                        <FormItem> <FormLabel>Value (£)</FormLabel> <FormControl><Input type="number" step="0.01" placeholder="e.g., 15.75" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                    </div>
+                  </div>
+
+                  {/* Order Entry 3 */}
+                  <div className="space-y-3 p-4 border rounded-md">
+                    <h4 className="text-sm font-medium text-muted-foreground">Order 3 (Optional)</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <FormField control={adBoostForm.control} name="order3_date" render={({ field }) => (
+                        <FormItem> <FormLabel>Date</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                      <FormField control={adBoostForm.control} name="order3_time" render={({ field }) => (
+                        <FormItem> <FormLabel>Time (HH:MM)</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                      <FormField control={adBoostForm.control} name="order3_value" render={({ field }) => (
+                        <FormItem> <FormLabel>Value (£)</FormLabel> <FormControl><Input type="number" step="0.01" placeholder="e.g., 32.00" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} /></FormControl> <FormMessage /> </FormItem>
+                      )}/>
+                    </div>
+                  </div>
+                  
+                  {(adBoostForm.formState.errors.order1_date?.message && adBoostForm.formState.errors.order1_date.type === 'custom') && <FormMessage>{adBoostForm.formState.errors.order1_date.message}</FormMessage>}
+                  {(adBoostForm.formState.errors.order2_date?.message && adBoostForm.formState.errors.order2_date.type === 'custom') && <FormMessage>{adBoostForm.formState.errors.order2_date.message}</FormMessage>}
+                  {(adBoostForm.formState.errors.order3_date?.message && adBoostForm.formState.errors.order3_date.type === 'custom') && <FormMessage>{adBoostForm.formState.errors.order3_date.message}</FormMessage>}
+
+
                   <Button type="submit" disabled={adBoostForm.formState.isSubmitting} className="w-full bg-primary hover:bg-primary/90">
                     {adBoostForm.formState.isSubmitting ? "Generating..." : "Suggest Ad Boost Time"}
                     <Brain className="ml-2 h-4 w-4" />
@@ -197,3 +289,5 @@ export default function AISuggestionsPage() {
     </div>
   );
 }
+
+    

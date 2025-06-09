@@ -1,6 +1,6 @@
 
 import { PageHeader } from '@/components/dashboard/page-header';
-import { Card, CardTitle } from '@/components/ui/card'; // CardContent and CardHeader might not be explicitly needed depending on final structure
+import { Card, CardTitle } from '@/components/ui/card'; 
 import Link from 'next/link';
 import {
   Map,
@@ -74,10 +74,13 @@ export default function DashboardOverviewPage() {
     },
   ];
 
+  // Mock current takeaway name
+  const currentTakeawayName = "Speedy Eats";
+
   return (
     <div>
       <PageHeader
-        title="OrderLens Dashboard"
+        title={`${currentTakeawayName} Dashboard`}
         description="Explore your hyperlocal takeaway insights. Select a module below to get started."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

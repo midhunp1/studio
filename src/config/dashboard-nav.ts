@@ -8,7 +8,8 @@ import {
   Brain,
   AlertTriangle,
   BadgePercent,
-  Settings, // Example for a potential settings page
+  Replace, // Added for Switch Takeaway
+  Settings, 
 } from 'lucide-react';
 
 export interface NavItem {
@@ -66,6 +67,12 @@ export const dashboardNavItems: NavItem[] = [
     label: 'AI Suggestions',
     icon: Brain,
     group: 'Tools',
+  },
+  {
+    href: '/takeaways', // New route for takeaway selection
+    label: 'Switch Takeaway',
+    icon: Replace, 
+    group: 'Configuration',
   },
   // Example for a potential future settings page
   // {

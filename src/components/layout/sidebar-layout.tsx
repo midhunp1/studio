@@ -33,12 +33,15 @@ export function DashboardSidebarLayout({ children }: { children: React.ReactNode
     }, {} as Record<string, NavItem[]>);
   }, []);
 
+  // Mock current takeaway name
+  const currentTakeawayName = "Speedy Eats";
+
   return (
     <SidebarProvider defaultOpen>
       <Sidebar>
         <SidebarHeader className="p-4 border-b border-sidebar-border">
           <div className="flex items-center justify-between">
-            <OrderLensLogo />
+            <OrderLensLogo takeawayName={currentTakeawayName} />
             <SidebarTrigger className="md:hidden" />
           </div>
         </SidebarHeader>

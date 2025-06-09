@@ -11,7 +11,7 @@ import { AlertTriangle, XCircle, AlertCircle, ThumbsDown, Brain, ListChecks, Spa
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { generateFailureAnalysis, type GenerateFailureAnalysisOutput } from '@/ai/flows/generate-failure-analysis';
-import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
 
@@ -144,7 +144,7 @@ export default function OrderFailurePage() {
                 <Brain className="mr-2 h-6 w-6 text-accent" />
                 AI Failure Analysis & Recommendations
               </CardTitle>
-              <CardDescription>Get AI-driven insights into failure reasons and suggestions for improvement.</CardDescription>
+              <CardDescription>Get AI-driven insights into failure reasons and suggestions for improvement. Click titles to expand.</CardDescription>
             </div>
             <Button onClick={handleAnalyzeFailures} disabled={analysisLoading} className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground">
               {analysisLoading ? (
@@ -181,43 +181,51 @@ export default function OrderFailurePage() {
             </div>
           )}
           {analysisResult && !analysisLoading && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-3 flex items-center">
-                  <ListChecks className="mr-2 h-6 w-6" />
-                  Potentially Problematic Items/Categories
-                </h3>
-                {analysisResult.problematicItems && analysisResult.problematicItems.length > 0 ? (
-                  <ul className="space-y-4">
-                    {analysisResult.problematicItems.map((item, index) => (
-                      <li key={index} className="p-4 bg-muted/50 rounded-lg border border-border">
-                        <p className="font-semibold text-foreground">{item.itemOrCategoryGuess}</p>
-                        <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/80">Reason:</span> {item.associatedFailureReason}</p>
-                        <p className="text-sm text-primary mt-1"><span className="font-medium">Suggestion:</span> {item.suggestedAction}</p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-muted-foreground">No specific problematic items identified by AI, or data was too sparse for item-level analysis.</p>
-                )}
-              </div>
-              <Separator />
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-3 flex items-center">
-                  <Sparkles className="mr-2 h-6 w-6" />
-                  Overall Fulfillment Suggestions
-                </h3>
-                {analysisResult.overallSuggestions && analysisResult.overallSuggestions.length > 0 ? (
-                  <ul className="space-y-3 list-disc list-inside text-muted-foreground">
-                    {analysisResult.overallSuggestions.map((suggestion, index) => (
-                      <li key={index} className="text-foreground/90">{suggestion}</li>
-                    ))}
-                  </ul>
-                ) : (
-                   <p className="text-muted-foreground">No overall suggestions provided by AI at this time.</p>
-                )}
-              </div>
-            </div>
+             <Accordion type="multiple" className="w-full space-y-4" defaultValue={["item-suggestions", "overall-suggestions"]}>
+              <AccordionItem value="item-suggestions">
+                <AccordionTrigger className="text-xl font-semibold text-primary hover:no-underline p-4 bg-muted/20 rounded-t-lg">
+                  <div className="flex items-center">
+                    <ListChecks className="mr-2 h-6 w-6" />
+                    Potentially Problematic Items/Categories
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-4 border border-t-0 rounded-b-lg border-muted/50">
+                  {analysisResult.problematicItems && analysisResult.problematicItems.length > 0 ? (
+                    <ul className="space-y-4">
+                      {analysisResult.problematicItems.map((item, index) => (
+                        <li key={index} className="p-4 bg-muted/50 rounded-lg border border-border">
+                          <p className="font-semibold text-foreground">{item.itemOrCategoryGuess}</p>
+                          <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground/80">Reason:</span> {item.associatedFailureReason}</p>
+                          <p className="text-sm text-primary mt-1"><span className="font-medium">Suggestion:</span> {item.suggestedAction}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted-foreground">No specific problematic items identified by AI, or data was too sparse for item-level analysis.</p>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="overall-suggestions">
+                <AccordionTrigger className="text-xl font-semibold text-primary hover:no-underline p-4 bg-muted/20 rounded-t-lg">
+                   <div className="flex items-center">
+                    <Sparkles className="mr-2 h-6 w-6" />
+                    Overall Fulfillment Suggestions
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-4 border border-t-0 rounded-b-lg border-muted/50">
+                  {analysisResult.overallSuggestions && analysisResult.overallSuggestions.length > 0 ? (
+                    <ul className="space-y-3 list-disc list-inside text-muted-foreground">
+                      {analysisResult.overallSuggestions.map((suggestion, index) => (
+                        <li key={index} className="text-foreground/90">{suggestion}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                     <p className="text-muted-foreground">No overall suggestions provided by AI at this time.</p>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           )}
           {!analysisResult && !analysisLoading && !analysisError && (
             <p className="text-muted-foreground text-center py-4">Click "Get AI Analysis" to generate insights.</p>
@@ -332,5 +340,3 @@ export default function OrderFailurePage() {
     </div>
   );
 }
-
-      

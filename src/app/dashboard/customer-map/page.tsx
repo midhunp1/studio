@@ -1,15 +1,18 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, Repeat, UserMinus, Ticket, Send } from 'lucide-react';
+import { Users, UserPlus, Repeat, UserMinus, Ticket, Send, Edit3, Eye } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
 const customerDataByArea = [
@@ -31,14 +34,65 @@ const chartConfig = {
   repeatCustomers: { label: "Repeat Customers", color: "hsl(var(--chart-2))" }, // Gold variant
 } satisfies ChartConfig;
 
+const existingCoupons = [
+  { id: "SAVE15", name: "15% Off Next Order", code: "SAVE15NOW" },
+  { id: "FREEFRIES", name: "Free Fries with Purchase", code: "GETFRIES" },
+  { id: "20OFF50", name: "£20 Off Orders over £50", code: "BIGSAVE20" },
+];
+
 export default function CustomerMapPage() {
   const { toast } = useToast();
+  const [selectedCouponId, setSelectedCouponId] = useState<string>(existingCoupons[0]?.id || "");
+  const [smsTemplate, setSmsTemplate] = useState<string>(
+    "Hi [Customer Name]! We've missed you. Enjoy {couponDescription} (Code: {couponCode}) on your next order with OrderLens!"
+  );
+
+  const selectedCoupon = useMemo(() => {
+    return existingCoupons.find(c => c.id === selectedCouponId);
+  }, [selectedCouponId]);
+
+  const formattedSmsTemplate = useMemo(() => {
+    let template = smsTemplate;
+    if (selectedCoupon) {
+      template = template.replace("{couponDescription}", selectedCoupon.name);
+      template = template.replace("{couponCode}", selectedCoupon.code);
+    } else {
+      template = template.replace("{couponDescription}", "a special discount");
+      template = template.replace("{couponCode}", "SPECIALOFFER");
+    }
+    return template.replace("[Customer Name]", "Valued Customer"); // Generic placeholder for preview
+  }, [smsTemplate, selectedCoupon]);
 
   const handleSendPromoSmS = () => {
+    const couponDescription = selectedCoupon ? selectedCoupon.name : "a special discount";
     toast({
       title: "Promotional SMS Sent (Simulated)",
-      description: `Successfully sent promo codes to ${atRiskCustomerExamples.length} lapsed customers.`,
+      description: `Successfully sent "${couponDescription}" to ${atRiskCustomerExamples.length} lapsed customers.`,
       action: <ToastAction altText="Dismiss">Dismiss</ToastAction>,
+    });
+  };
+
+  const handleCreateNewCoupon = () => {
+    toast({
+      title: "Create New Coupon",
+      description: "This feature to create coupons on-the-fly is coming soon!",
+      variant: "default",
+    });
+  };
+
+  const handleEditTemplate = () => {
+     toast({
+      title: "Edit SMS Template",
+      description: "SMS template editing functionality will be available here.",
+      variant: "default",
+    });
+  };
+
+  const handlePreviewSms = () => {
+    toast({
+      title: "SMS Preview",
+      description: <pre className="whitespace-pre-wrap text-xs">{formattedSmsTemplate}</pre>,
+      duration: 9000, // Longer duration for preview
     });
   };
 
@@ -102,43 +156,87 @@ export default function CustomerMapPage() {
               ))}
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline flex items-center">
-                <UserMinus className="mr-2 h-5 w-5 text-destructive" />
-                Engage Lapsed Customers
-              </CardTitle>
-              <CardDescription>Identify and re-engage customers who haven't ordered recently.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 mb-4">
-                <p className="text-sm text-muted-foreground">
-                  Consider sending a special offer to customers who haven't ordered in over 40 days.
-                </p>
-                {atRiskCustomerExamples.slice(0, 3).map(customer => (
-                  <div key={customer.id} className="p-3 bg-muted/50 rounded-md text-sm">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-foreground">{customer.name} ({customer.postcode})</span>
-                      <span className="text-xs text-destructive">{customer.lastOrderDaysAgo} days ago</span>
-                    </div>
-                    <p className="text-muted-foreground text-xs">Phone: {customer.phonePreview}</p>
-                  </div>
-                ))}
-                {atRiskCustomerExamples.length > 3 && (
-                   <p className="text-xs text-center text-muted-foreground">...and {atRiskCustomerExamples.length - 3} more.</p>
-                )}
-              </div>
-              <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground whitespace-normal h-auto py-2">
-                <Send className="mr-2 h-4 w-4" />
-                Send Promo SMS to Lapsed Customers
-                <Ticket className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
-
         </div>
       </div>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="font-headline flex items-center">
+            <UserMinus className="mr-2 h-5 w-5 text-destructive" />
+            Engage Lapsed Customers
+          </CardTitle>
+          <CardDescription>Identify and re-engage customers who haven't ordered recently with targeted promotions.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Showing {atRiskCustomerExamples.slice(0, 3).length} example customers who haven't ordered in over 40 days.
+            </p>
+            {atRiskCustomerExamples.slice(0, 3).map(customer => (
+              <div key={customer.id} className="p-3 bg-muted/50 rounded-md text-sm border border-border">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-foreground">{customer.name} ({customer.postcode})</span>
+                  <span className="text-xs text-destructive">{customer.lastOrderDaysAgo} days ago</span>
+                </div>
+                <p className="text-muted-foreground text-xs">Phone: {customer.phonePreview}</p>
+              </div>
+            ))}
+            {atRiskCustomerExamples.length > 3 && (
+                <p className="text-xs text-center text-muted-foreground">...and {atRiskCustomerExamples.length - 3} more.</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border pt-6">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="coupon-select" className="font-semibold">Choose Coupon</Label>
+                <Select value={selectedCouponId} onValueChange={setSelectedCouponId}>
+                  <SelectTrigger id="coupon-select" className="mt-1">
+                    <SelectValue placeholder="Select a coupon" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {existingCoupons.map(coupon => (
+                      <SelectItem key={coupon.id} value={coupon.id}>
+                        {coupon.name} ({coupon.code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button onClick={handleCreateNewCoupon} variant="outline" className="w-full">
+                <Ticket className="mr-2 h-4 w-4" /> Create New Coupon
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="sms-template-preview" className="font-semibold">SMS Template</Label>
+                <Textarea
+                  id="sms-template-preview"
+                  value={formattedSmsTemplate}
+                  readOnly
+                  rows={4}
+                  className="mt-1 bg-muted/30 text-sm"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleEditTemplate} variant="outline" className="flex-1">
+                  <Edit3 className="mr-2 h-4 w-4" /> Edit
+                </Button>
+                <Button onClick={handlePreviewSms} variant="outline" className="flex-1">
+                  <Eye className="mr-2 h-4 w-4" /> Preview
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground whitespace-normal h-auto py-3 text-base mt-4">
+            <Send className="mr-2 h-5 w-5" />
+            Send Promo SMS to {atRiskCustomerExamples.length} Lapsed Customers
+            <Ticket className="ml-2 h-5 w-5" />
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

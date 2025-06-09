@@ -8,6 +8,55 @@ body {
 
 @layer base {
   :root {
+    --background: 0 0% 100%; /* Light Mode: white */
+    --foreground: 220 10% 10%; /* Light Mode: near black */
+
+    --card: 0 0% 98%; /* Light Mode: very light grey */
+    --card-foreground: 220 10% 10%;
+
+    --popover: 0 0% 98%;
+    --popover-foreground: 220 10% 10%;
+
+    --primary: 195 37% 43%; /* Deep teal - consistent */
+    --primary-foreground: 0 0% 100%; /* White text on teal */
+
+    --secondary: 0 0% 94%; /* Light Mode: light grey */
+    --secondary-foreground: 220 10% 10%;
+
+    --muted: 0 0% 90%; /* Light Mode: lighter grey */
+    --muted-foreground: 220 10% 40%; /* Light Mode: mid-grey text */
+
+    --accent: 45 100% 44%; /* Bright gold - consistent */
+    --accent-foreground: 220 10% 10%; /* Dark text on gold */
+
+    --destructive: 0 84% 60%; /* Light Mode: standard red */
+    --destructive-foreground: 0 0% 98%; /* Light Mode: very light text on red */
+
+    --border: 0 0% 85%; /* Light Mode: light grey border */
+    --input: 0 0% 85%; /* Light Mode: light grey input border */
+    --ring: 195 37% 53%; /* Lighter teal for focus rings - consistent */
+
+    --radius: 0.5rem;
+
+    /* Chart colors for light theme */
+    --chart-1: 195 37% 50%; /* Teal variant 1 */
+    --chart-2: 45 100% 50%;  /* Gold variant 1 */
+    --chart-3: 195 37% 60%; /* Teal variant 2 */
+    --chart-4: 45 100% 60%;  /* Gold variant 2 */
+    --chart-5: 220 10% 70%; /* Light grey for charts */
+
+    /* Sidebar specific colors for light theme */
+    --sidebar-background: 0 0% 96%; /* Light grey sidebar */
+    --sidebar-foreground: 220 10% 20%; /* Darker text for sidebar */
+    --sidebar-primary: 45 100% 44%; /* Gold for active/important sidebar items */
+    --sidebar-primary-foreground: 220 10% 10%; /* Dark text on gold */
+    --sidebar-accent: 195 37% 88%; /* Very light teal for hover */
+    --sidebar-accent-foreground: 195 37% 20%; /* Darker teal text on hover */
+    --sidebar-border: 0 0% 88%; /* Light border for sidebar */
+    --sidebar-ring: 45 100% 54%; /* Gold for focus rings in sidebar */
+  }
+
+  .dark {
     --background: 210 10% 18%; /* Dark grey #292F36 */
     --foreground: 210 10% 90%; /* Light grey for text */
 
@@ -36,16 +85,14 @@ body {
     --input: 210 10% 30%;
     --ring: 195 37% 53%; /* Lighter teal for focus rings */
 
-    --radius: 0.5rem;
-
-    /* Chart colors (can be adjusted for better visibility on dark theme) */
+    /* Chart colors for dark theme */
     --chart-1: 195 37% 50%; /* Teal variant 1 */
     --chart-2: 45 100% 50%;  /* Gold variant 1 */
     --chart-3: 195 37% 60%; /* Teal variant 2 */
     --chart-4: 45 100% 60%;  /* Gold variant 2 */
     --chart-5: 210 10% 70%; /* Light grey for charts */
 
-    /* Sidebar specific colors */
+    /* Sidebar specific colors for dark theme */
     --sidebar-background: 210 10% 15%;
     --sidebar-foreground: 210 10% 85%;
     --sidebar-primary: 45 100% 44%; /* Gold for active/important sidebar items */
@@ -55,52 +102,6 @@ body {
     --sidebar-border: 210 10% 25%;
     --sidebar-ring: 45 100% 54%; /* Gold for focus rings in sidebar */
   }
-
-  .dark {
-    /* Keep dark mode consistent with the default theme */
-    --background: 210 10% 18%;
-    --foreground: 210 10% 90%;
-
-    --card: 210 10% 22%;
-    --card-foreground: 210 10% 90%;
-
-    --popover: 210 10% 15%;
-    --popover-foreground: 210 10% 90%;
-
-    --primary: 195 37% 43%;
-    --primary-foreground: 210 10% 90%;
-
-    --secondary: 210 10% 30%;
-    --secondary-foreground: 210 10% 90%;
-
-    --muted: 210 10% 25%;
-    --muted-foreground: 210 10% 60%;
-
-    --accent: 45 100% 44%;
-    --accent-foreground: 210 10% 10%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 210 10% 30%;
-    --input: 210 10% 30%;
-    --ring: 195 37% 53%;
-
-    --chart-1: 195 37% 50%;
-    --chart-2: 45 100% 50%;
-    --chart-3: 195 37% 60%;
-    --chart-4: 45 100% 60%;
-    --chart-5: 210 10% 70%;
-
-    --sidebar-background: 210 10% 15%;
-    --sidebar-foreground: 210 10% 85%;
-    --sidebar-primary: 45 100% 44%;
-    --sidebar-primary-foreground: 210 10% 10%;
-    --sidebar-accent: 195 37% 38%;
-    --sidebar-accent-foreground: 210 10% 90%;
-    --sidebar-border: 210 10% 25%;
-    --sidebar-ring: 45 100% 54%;
-  }
 }
 
 @layer base {
@@ -109,7 +110,5 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    /* Ensure the theme is applied by default */
-    /* The .dark class can be added to html tag if a theme switcher is implemented */
   }
 }

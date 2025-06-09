@@ -18,6 +18,7 @@ import { OrderLensLogo } from '@/components/icons/logo';
 import { dashboardNavItems, type NavItem } from '@/config/dashboard-nav';
 import { SidebarNavItem } from './sidebar-nav-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ThemeToggle } from '@/components/theme-toggle'; // Import ThemeToggle
 import { LogOut } from 'lucide-react';
 
 export function DashboardSidebarLayout({ children }: { children: React.ReactNode }) {
@@ -69,9 +70,16 @@ export function DashboardSidebarLayout({ children }: { children: React.ReactNode
         </SidebarFooter> */}
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 py-4 md:hidden">
-          <SidebarTrigger />
-          <OrderLensLogo iconOnly />
+        <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background px-4 sm:px-6">
+          {/* Left side: Mobile trigger and placeholder for desktop content */}
+          <div className="flex items-center">
+            <SidebarTrigger className="md:hidden" />
+            <div className="hidden md:block">
+              {/* This space can be used for breadcrumbs or a dynamic page title if needed later */}
+            </div>
+          </div>
+          {/* Right side: Theme Toggle */}
+          <ThemeToggle />
         </header>
         <main className="flex-1 p-6">
           {children}

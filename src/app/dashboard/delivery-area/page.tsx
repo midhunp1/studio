@@ -10,7 +10,6 @@ import { List, BarChartHorizontalBig, LineChart as LineChartIcon } from 'lucide-
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line, LineChart as RechartsLineChart, Legend } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import React from 'react';
 
 const topPostcodesRaw = [
@@ -67,16 +66,34 @@ const barChartConfig = {
   revenue: { label: "Revenue (£)", color: "hsl(var(--primary))" },
 } satisfies ChartConfig;
 
-const lineChartConfig = {
-  orders: { label: "Orders", color: "hsl(var(--accent))" },
-} satisfies ChartConfig;
-
 
 export default function DeliveryAreaPage() {
-  const [selectedPostcodeForDaily, setSelectedPostcodeForDaily] = React.useState<string>("M1 1AA");
-
-  const dailyOrdersDataForSelectedPostcode = allDailyOrdersData[selectedPostcodeForDaily] || [];
+  const [selectedPostcode1, setSelectedPostcode1] = React.useState<string>("M1 1AA");
+  const [selectedPostcode2, setSelectedPostcode2] = React.useState<string>("M2 2BB");
+  
   const availablePostcodesForDailyChart = Object.keys(allDailyOrdersData);
+
+  const combinedDailyOrdersData = React.useMemo(() => {
+    const dataPC1 = allDailyOrdersData[selectedPostcode1] || [];
+    const dataPC2 = allDailyOrdersData[selectedPostcode2] || [];
+    const daysOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+    return daysOrder.map(day => {
+        const entryPC1 = dataPC1.find(d => d.day === day);
+        const entryPC2 = dataPC2.find(d => d.day === day);
+        return {
+            day,
+            ordersPC1: entryPC1 ? entryPC1.orders : null,
+            ordersPC2: entryPC2 ? entryPC2.orders : null,
+        };
+    });
+  }, [selectedPostcode1, selectedPostcode2]);
+
+  const lineChartConfig = React.useMemo(() => ({
+    ordersPC1: { label: selectedPostcode1, color: "hsl(var(--accent))" }, // Gold
+    ordersPC2: { label: selectedPostcode2, color: "hsl(var(--chart-1))" }, // Teal variant
+  }), [selectedPostcode1, selectedPostcode2]) satisfies ChartConfig;
+
 
   return (
     <div>
@@ -152,35 +169,47 @@ export default function DeliveryAreaPage() {
 
       <Card className="mt-6">
         <CardHeader>
-          <div> 
-            <CardTitle className="font-headline flex items-baseline flex-wrap gap-x-1.5">
-              <LineChartIcon className="mr-1 h-6 w-6 text-accent self-center flex-shrink-0" />
-              <span>Daily Orders - </span>
-              <Select value={selectedPostcodeForDaily} onValueChange={setSelectedPostcodeForDaily}>
-                <SelectTrigger
-                  id="postcode-select-daily-title"
-                  className="w-auto h-auto p-0 pr-1 m-0 bg-transparent border-0 shadow-none 
-                             font-headline text-2xl font-bold text-accent hover:text-accent/80 
-                             focus:ring-0 focus:outline-none 
-                             inline-flex items-center gap-1"
-                >
-                  <SelectValue placeholder="Select Postcode" />
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <CardTitle className="font-headline flex items-center">
+                <LineChartIcon className="mr-2 h-6 w-6 text-primary" />
+                Daily Orders Comparison
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Compare daily order trends for two selected postcodes over the past week.
+              </CardDescription>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Select value={selectedPostcode1} onValueChange={setSelectedPostcode1}>
+                <SelectTrigger id="postcode-select-1" className="w-full sm:w-[150px]">
+                  <SelectValue placeholder="Select Postcode 1" />
                 </SelectTrigger>
                 <SelectContent>
                   {availablePostcodesForDailyChart.map(pc => (
-                    <SelectItem key={pc} value={pc}>{pc}</SelectItem>
+                    <SelectItem key={`pc1-${pc}`} value={pc} disabled={pc === selectedPostcode2}>
+                      {pc}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </CardTitle>
-            <CardDescription className="mt-1">
-              Order trend for the selected postcode over the past week.
-            </CardDescription>
+              <Select value={selectedPostcode2} onValueChange={setSelectedPostcode2}>
+                <SelectTrigger id="postcode-select-2" className="w-full sm:w-[150px]">
+                  <SelectValue placeholder="Select Postcode 2" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availablePostcodesForDailyChart.map(pc => (
+                    <SelectItem key={`pc2-${pc}`} value={pc} disabled={pc === selectedPostcode1}>
+                      {pc}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={lineChartConfig} className="h-[350px] w-full"> {/* Increased height a bit for better visibility */}
-            <RechartsLineChart data={dailyOrdersDataForSelectedPostcode} margin={{ left: 0, right: 20 }} accessibilityLayer>
+          <ChartContainer config={lineChartConfig} className="h-[350px] w-full">
+            <RechartsLineChart data={combinedDailyOrdersData} margin={{ left: 0, right: 20 }} accessibilityLayer>
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="day"
@@ -192,7 +221,26 @@ export default function DeliveryAreaPage() {
               <YAxis tickLine={false} axisLine={false} tickMargin={8} />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
-              <Line type="monotone" dataKey="orders" stroke="var(--color-orders)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-orders)" }} activeDot={{r: 6}} />
+              <Line 
+                type="monotone" 
+                dataKey="ordersPC1" 
+                name={selectedPostcode1} 
+                stroke="var(--color-ordersPC1)" 
+                strokeWidth={2} 
+                dot={{ r: 4, fill: "var(--color-ordersPC1)" }} 
+                activeDot={{r: 6}} 
+                connectNulls 
+              />
+              <Line 
+                type="monotone" 
+                dataKey="ordersPC2" 
+                name={selectedPostcode2} 
+                stroke="var(--color-ordersPC2)" 
+                strokeWidth={2} 
+                dot={{ r: 4, fill: "var(--color-ordersPC2)" }} 
+                activeDot={{r: 6}} 
+                connectNulls 
+              />
             </RechartsLineChart>
           </ChartContainer>
         </CardContent>
@@ -200,4 +248,3 @@ export default function DeliveryAreaPage() {
     </div>
   );
 }
-

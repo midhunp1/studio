@@ -17,8 +17,8 @@ body {
     --popover: 0 0% 98%;
     --popover-foreground: 220 10% 10%;
 
-    --primary: 195 37% 43%; /* Deep teal - consistent */
-    --primary-foreground: 0 0% 100%; /* White text on teal */
+    --primary: 0 75% 55%; /* Light Mode: Red */
+    --primary-foreground: 0 0% 100%; /* White text on red */
 
     --secondary: 0 0% 94%; /* Light Mode: light grey */
     --secondary-foreground: 220 10% 10%;
@@ -34,26 +34,26 @@ body {
 
     --border: 0 0% 85%; /* Light Mode: light grey border */
     --input: 0 0% 85%; /* Light Mode: light grey input border */
-    --ring: 195 37% 53%; /* Lighter teal for focus rings - consistent */
+    --ring: 0 75% 65%; /* Light Mode: Lighter red for focus rings */
 
     --radius: 0.5rem;
 
     /* Chart colors for light theme */
-    --chart-1: 195 37% 50%; /* Teal variant 1 */
+    --chart-1: 0 75% 60%; /* Red variant 1 */
     --chart-2: 45 100% 50%;  /* Gold variant 1 */
-    --chart-3: 195 37% 60%; /* Teal variant 2 */
+    --chart-3: 0 75% 70%; /* Red variant 2 */
     --chart-4: 45 100% 60%;  /* Gold variant 2 */
     --chart-5: 220 10% 70%; /* Light grey for charts */
 
     /* Sidebar specific colors for light theme */
     --sidebar-background: 0 0% 96%; /* Light grey sidebar */
     --sidebar-foreground: 220 10% 20%; /* Darker text for sidebar */
-    --sidebar-primary: 45 100% 44%; /* Gold for active/important sidebar items */
-    --sidebar-primary-foreground: 220 10% 10%; /* Dark text on gold */
-    --sidebar-accent: 195 37% 88%; /* Very light teal for hover */
-    --sidebar-accent-foreground: 195 37% 20%; /* Darker teal text on hover */
+    --sidebar-primary: 0 75% 55%; /* Red for active/important sidebar items */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on red */
+    --sidebar-accent: 0 75% 92%; /* Light red/pink for hover */
+    --sidebar-accent-foreground: 0 75% 35%; /* Darker red text on hover */
     --sidebar-border: 0 0% 88%; /* Light border for sidebar */
-    --sidebar-ring: 45 100% 54%; /* Gold for focus rings in sidebar */
+    --sidebar-ring: 0 75% 65%; /* Red for focus rings in sidebar */
   }
 
   .dark {

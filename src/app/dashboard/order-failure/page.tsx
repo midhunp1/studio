@@ -7,33 +7,48 @@ import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactiv
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertTriangle, XCircle, AlertCircle, ThumbsDown, Brain, ListChecks, Sparkles, AlertOctagon } from 'lucide-react';
+import { AlertTriangle, XCircle, AlertCircle, ThumbsDown, Brain, ListChecks, Sparkles, AlertOctagon, PackageX, BarChartHorizontalBig } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { generateFailureAnalysis, type GenerateFailureAnalysisOutput } from '@/ai/flows/generate-failure-analysis';
 import { Separator } from '@/components/ui/separator';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
+
+// Placeholder data
+const failureDataByArea = [
+  { postcode: "M4 4DD", type: "Cancelled", count: 15, reason: "Customer request", dataAiHint: "map cancel" },
+  { postcode: "M5 5EE", type: "Rejected", count: 25, reason: "Restaurant too busy", dataAiHint: "map reject" },
+  { postcode: "M4 4DD", type: "Refunded", count: 8, reason: "Late delivery", dataAiHint: "map refund" },
+  { postcode: "M6 6FF", type: "Rejected", count: 12, reason: "Item unavailable", dataAiHint: "map unavailable" },
+  { postcode: "M5 5EE", type: "Cancelled", count: 5, reason: "Payment issue", dataAiHint: "map payment issue" },
+];
+
+const commonFailureReasons = [
+  { reason: "Restaurant too busy", occurrences: 45, impact: "High" },
+  { reason: "Late delivery", occurrences: 30, impact: "Medium" },
+  { reason: "Item unavailable", occurrences: 22, impact: "Medium" },
+  { reason: "Customer request (pre-prep)", occurrences: 18, impact: "Low" },
+];
+
+const itemCancellationData = [
+  { id: "item1", itemName: "Spicy Pepperoni Pizza", category: "Pizza", cancellationCount: 8, commonReason: "Item unavailable (ingredient short)" },
+  { id: "item2", itemName: "King Prawn Curry", category: "Curry", cancellationCount: 6, commonReason: "Incorrectly listed as available" },
+  { id: "item3", itemName: "Large Diet Coke", category: "Drinks", cancellationCount: 5, commonReason: "Out of stock" },
+  { id: "item4", itemName: "Cheesecake Slice", category: "Desserts", cancellationCount: 3, commonReason: "Item unavailable" },
+  { id: "item5", itemName: "Garlic Bread with Cheese", category: "Sides", cancellationCount: 2, commonReason: "Preparation time too long" },
+];
+
+const itemCancellationChartConfig = {
+  cancellationCount: { label: "Cancellations", color: "hsl(var(--destructive))" },
+} satisfies ChartConfig;
+
 
 export default function OrderFailurePage() {
   const { toast } = useToast();
   const [analysisResult, setAnalysisResult] = useState<GenerateFailureAnalysisOutput | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
-
-  // Placeholder data
-  const failureDataByArea = [
-    { postcode: "M4 4DD", type: "Cancelled", count: 15, reason: "Customer request", dataAiHint: "map cancel" },
-    { postcode: "M5 5EE", type: "Rejected", count: 25, reason: "Restaurant too busy", dataAiHint: "map reject" },
-    { postcode: "M4 4DD", type: "Refunded", count: 8, reason: "Late delivery", dataAiHint: "map refund" },
-    { postcode: "M6 6FF", type: "Rejected", count: 12, reason: "Item unavailable", dataAiHint: "map unavailable" },
-    { postcode: "M5 5EE", type: "Cancelled", count: 5, reason: "Payment issue", dataAiHint: "map payment issue" },
-  ];
-
-  const commonFailureReasons = [
-    { reason: "Restaurant too busy", occurrences: 45, impact: "High" },
-    { reason: "Late delivery", occurrences: 30, impact: "Medium" },
-    { reason: "Item unavailable", occurrences: 22, impact: "Medium" },
-    { reason: "Customer request (pre-prep)", occurrences: 18, impact: "Low" },
-  ];
 
   const handleAnalyzeFailures = async () => {
     setAnalysisLoading(true);
@@ -44,7 +59,8 @@ export default function OrderFailurePage() {
       const inputForAI = {
         failureSummary: "Analyze order failures based on the provided area data and common reasons. Identify problematic items/categories and suggest operational improvements.",
         failureDataByArea: failureDataByArea,
-        commonFailureReasons: commonFailureReasons
+        commonFailureReasons: commonFailureReasons,
+        itemCancellationData: itemCancellationData, // Include item cancellation data for AI
       };
       const result = await generateFailureAnalysis({ failureDataJSON: JSON.stringify(inputForAI) });
       setAnalysisResult(result);
@@ -209,6 +225,71 @@ export default function OrderFailurePage() {
         </CardContent>
       </Card>
 
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="font-headline flex items-center">
+            <PackageX className="mr-2 h-6 w-6 text-destructive" />
+            Item-Specific Cancellation Insights
+          </CardTitle>
+          <CardDescription>Items frequently involved in cancellations and their common reasons.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-lg mb-2 text-primary">Cancellation Breakdown by Item</h4>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Item Name</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead className="text-right">Cancellations</TableHead>
+                  <TableHead>Common Reason</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {itemCancellationData.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.itemName}</TableCell>
+                    <TableCell>{item.category}</TableCell>
+                    <TableCell className="text-right text-destructive">{item.cancellationCount}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{item.commonReason}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div>
+             <h4 className="font-semibold text-lg mb-2 text-primary flex items-center">
+                <BarChartHorizontalBig className="mr-2 h-5 w-5" />
+                Cancellation Chart
+             </h4>
+            <ChartContainer config={itemCancellationChartConfig} className="h-[300px] w-full">
+              <RechartsBarChart
+                data={itemCancellationData}
+                layout="vertical"
+                margin={{ left: 20, right: 10 }}
+                accessibilityLayer
+              >
+                <CartesianGrid horizontal={false} />
+                <YAxis
+                  dataKey="itemName"
+                  type="category"
+                  tickLine={false}
+                  tickMargin={5}
+                  axisLine={false}
+                  className="text-xs truncate"
+                  width={120} // Adjust width to prevent long item names from being cut off
+                />
+                <XAxis dataKey="cancellationCount" type="number" />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="line" />}
+                />
+                <Bar dataKey="cancellationCount" fill="var(--color-cancellationCount)" radius={4} />
+              </RechartsBarChart>
+            </ChartContainer>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="mt-6">
         <CardHeader>
@@ -252,3 +333,4 @@ export default function OrderFailurePage() {
   );
 }
 
+      

@@ -2,12 +2,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import { PageHeader } from '@/components/dashboard/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Store, MapPin, Search as SearchIcon } from 'lucide-react';
-// import Link from 'next/link'; // Link is not used in the current version of button action
 
 const mockTakeawaysList = [
   { id: '1', name: 'Speedy Eats', address: '123 Main St, Anytown', description: 'Quick and delicious meals, delivered fast!' },
@@ -23,6 +23,7 @@ type Takeaway = typeof mockTakeawaysList[0];
 export default function TakeawaysPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTakeaways, setFilteredTakeaways] = useState<Takeaway[]>(mockTakeawaysList);
+  const router = useRouter(); // Initialize useRouter
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
@@ -34,10 +35,12 @@ export default function TakeawaysPage() {
     setFilteredTakeaways(filtered);
   }, [searchTerm]);
 
-  const handleSelectTakeaway = (id: string) => {
-    console.log("Selected takeaway ID:", id);
-    // Potentially: router.push('/dashboard'); // after setting active takeaway in global state/context
-    // For now, this action is a placeholder.
+  const handleSelectTakeaway = (takeaway: Takeaway) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedTakeawayId', takeaway.id);
+      localStorage.setItem('selectedTakeawayName', takeaway.name);
+    }
+    router.push('/dashboard');
   };
 
   return (
@@ -79,12 +82,10 @@ export default function TakeawaysPage() {
               </CardContent>
               <div className="p-6 pt-0 mt-auto">
                 <Button
-                  onClick={() => handleSelectTakeaway(takeaway.id)}
+                  onClick={() => handleSelectTakeaway(takeaway)} // Pass the whole takeaway object
                   className="w-full bg-primary hover:bg-primary/90 text-lg py-3"
-                  // asChild // To allow Link behavior if needed in future
                 >
-                  {/* <Link href="/dashboard">View Dashboard</Link> */}
-                   View Dashboard {/* For prototype, just a button */}
+                   View Dashboard
                 </Button>
               </div>
             </Card>

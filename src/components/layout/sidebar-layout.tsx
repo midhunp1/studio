@@ -1,6 +1,7 @@
+
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SidebarProvider,
   Sidebar,
@@ -18,10 +19,19 @@ import { OrderLensLogo } from '@/components/icons/logo';
 import { dashboardNavItems, type NavItem } from '@/config/dashboard-nav';
 import { SidebarNavItem } from './sidebar-nav-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ThemeToggle } from '@/components/theme-toggle'; // Import ThemeToggle
+import { ThemeToggle } from '@/components/theme-toggle';
 import { LogOut } from 'lucide-react';
 
 export function DashboardSidebarLayout({ children }: { children: React.ReactNode }) {
+  const [displayedTakeawayName, setDisplayedTakeawayName] = useState<string>("OrderLens");
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedName = localStorage.getItem('selectedTakeawayName');
+      setDisplayedTakeawayName(storedName || "Speedy Eats"); // Default if nothing is stored
+    }
+  }, []);
+
   const groupedNavItems = React.useMemo(() => {
     return dashboardNavItems.reduce((acc, item) => {
       const group = item.group || 'General';
@@ -33,15 +43,13 @@ export function DashboardSidebarLayout({ children }: { children: React.ReactNode
     }, {} as Record<string, NavItem[]>);
   }, []);
 
-  // Mock current takeaway name
-  const currentTakeawayName = "Speedy Eats";
 
   return (
     <SidebarProvider defaultOpen>
       <Sidebar>
         <SidebarHeader className="p-4 border-b border-sidebar-border">
           <div className="flex items-center justify-between">
-            <OrderLensLogo takeawayName={currentTakeawayName} />
+            <OrderLensLogo takeawayName={displayedTakeawayName} />
             <SidebarTrigger className="md:hidden" />
           </div>
         </SidebarHeader>

@@ -1,4 +1,7 @@
 
+"use client"; // Add this to make it a client component
+
+import React, { useState, useEffect } from 'react'; // Import useState and useEffect
 import { PageHeader } from '@/components/dashboard/page-header';
 import { Card, CardTitle } from '@/components/ui/card'; 
 import Link from 'next/link';
@@ -22,6 +25,15 @@ interface InsightCardItem {
 }
 
 export default function DashboardOverviewPage() {
+  const [displayedTakeawayName, setDisplayedTakeawayName] = useState<string>("Your Takeaway");
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedName = localStorage.getItem('selectedTakeawayName');
+      setDisplayedTakeawayName(storedName || "Speedy Eats"); // Default if nothing selected
+    }
+  }, []);
+
   const insightCards: InsightCardItem[] = [
     {
       title: 'Delivery Area Heatmap',
@@ -74,13 +86,10 @@ export default function DashboardOverviewPage() {
     },
   ];
 
-  // Mock current takeaway name
-  const currentTakeawayName = "Speedy Eats";
-
   return (
     <div>
       <PageHeader
-        title={`${currentTakeawayName} Dashboard`}
+        title={`${displayedTakeawayName} Dashboard`}
         description="Explore your hyperlocal takeaway insights. Select a module below to get started."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

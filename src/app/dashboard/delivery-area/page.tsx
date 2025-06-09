@@ -134,54 +134,6 @@ export default function DeliveryAreaPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <div> 
-                <CardTitle className="font-headline flex items-baseline flex-wrap gap-x-1.5">
-                  <LineChartIcon className="mr-1 h-6 w-6 text-accent self-center flex-shrink-0" />
-                  <span>Daily Orders - </span>
-                  <Select value={selectedPostcodeForDaily} onValueChange={setSelectedPostcodeForDaily}>
-                    <SelectTrigger
-                      id="postcode-select-daily-title"
-                      className="w-auto h-auto p-0 pr-1 m-0 bg-transparent border-0 shadow-none 
-                                 font-headline text-2xl font-bold text-accent hover:text-accent/80 
-                                 focus:ring-0 focus:outline-none 
-                                 inline-flex items-center gap-1"
-                    >
-                      <SelectValue placeholder="Select Postcode" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availablePostcodesForDailyChart.map(pc => (
-                        <SelectItem key={pc} value={pc}>{pc}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </CardTitle>
-                <CardDescription className="mt-1">
-                  Order trend for the selected postcode over the past week.
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={lineChartConfig} className="h-[250px] w-full">
-                <RechartsLineChart data={dailyOrdersDataForSelectedPostcode} margin={{ left: 0, right: 20 }} accessibilityLayer>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="day"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    className="text-xs"
-                  />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Legend />
-                  <Line type="monotone" dataKey="orders" stroke="var(--color-orders)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-orders)" }} activeDot={{r: 6}} />
-                </RechartsLineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
           <Alert>
             <List className="h-4 w-4" />
             <AlertTitle className="font-headline">Low Conversion Areas</AlertTitle>
@@ -197,6 +149,54 @@ export default function DeliveryAreaPage() {
           </Alert>
         </div>
       </div>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <div> 
+            <CardTitle className="font-headline flex items-baseline flex-wrap gap-x-1.5">
+              <LineChartIcon className="mr-1 h-6 w-6 text-accent self-center flex-shrink-0" />
+              <span>Daily Orders - </span>
+              <Select value={selectedPostcodeForDaily} onValueChange={setSelectedPostcodeForDaily}>
+                <SelectTrigger
+                  id="postcode-select-daily-title"
+                  className="w-auto h-auto p-0 pr-1 m-0 bg-transparent border-0 shadow-none 
+                             font-headline text-2xl font-bold text-accent hover:text-accent/80 
+                             focus:ring-0 focus:outline-none 
+                             inline-flex items-center gap-1"
+                >
+                  <SelectValue placeholder="Select Postcode" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availablePostcodesForDailyChart.map(pc => (
+                    <SelectItem key={pc} value={pc}>{pc}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </CardTitle>
+            <CardDescription className="mt-1">
+              Order trend for the selected postcode over the past week.
+            </CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={lineChartConfig} className="h-[350px] w-full"> {/* Increased height a bit for better visibility */}
+            <RechartsLineChart data={dailyOrdersDataForSelectedPostcode} margin={{ left: 0, right: 20 }} accessibilityLayer>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="day"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                className="text-xs"
+              />
+              <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Legend />
+              <Line type="monotone" dataKey="orders" stroke="var(--color-orders)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-orders)" }} activeDot={{r: 6}} />
+            </RechartsLineChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
     </div>
   );
 }

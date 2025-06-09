@@ -29,14 +29,17 @@ const commonFailureReasons = [
   { reason: "Late delivery", occurrences: 30, impact: "Medium" },
   { reason: "Item unavailable", occurrences: 22, impact: "Medium" },
   { reason: "Customer request (pre-prep)", occurrences: 18, impact: "Low" },
+  { reason: "Food quality complaint", occurrences: 15, impact: "High" },
 ];
 
 const itemCancellationData = [
   { id: "item1", itemName: "Spicy Pepperoni Pizza", category: "Pizza", cancellationCount: 8, commonReason: "Item unavailable (ingredient short)" },
-  { id: "item2", itemName: "King Prawn Curry", category: "Curry", cancellationCount: 6, commonReason: "Incorrectly listed as available" },
-  { id: "item3", itemName: "Large Diet Coke", category: "Drinks", cancellationCount: 5, commonReason: "Out of stock" },
-  { id: "item4", itemName: "Cheesecake Slice", category: "Desserts", cancellationCount: 3, commonReason: "Item unavailable" },
-  { id: "item5", itemName: "Garlic Bread with Cheese", category: "Sides", cancellationCount: 2, commonReason: "Preparation time too long" },
+  { id: "item2", itemName: "King Prawn Curry", category: "Curry", cancellationCount: 6, commonReason: "Customer complaint - food cold (long delivery)" },
+  { id: "item3", itemName: "Large Diet Coke", category: "Drinks", cancellationCount: 5, commonReason: "Missing item from order" },
+  { id: "item4", itemName: "Cheesecake Slice", category: "Desserts", cancellationCount: 4, commonReason: "Item damaged in transit" },
+  { id: "item5", itemName: "Garlic Bread with Cheese", category: "Sides", cancellationCount: 3, commonReason: "Preparation time too long" },
+  { id: "item6", itemName: "Chicken Tikka Masala", category: "Curry", cancellationCount: 7, commonReason: "Incorrect item sent" },
+  { id: "item7", itemName: "Mixed Kebab", category: "Starters", cancellationCount: 5, commonReason: "Item unavailable (ran out)" },
 ];
 
 const itemCancellationChartConfig = {
@@ -57,10 +60,10 @@ export default function OrderFailurePage() {
 
     try {
       const inputForAI = {
-        failureSummary: "Analyze order failures based on the provided area data and common reasons. Identify problematic items/categories and suggest operational improvements.",
+        failureSummary: "Analyze order failures based on the provided area data, common reasons, and item-specific cancellations. Identify problematic items/categories, explain why food might not reach customers as expected, and suggest operational improvements.",
         failureDataByArea: failureDataByArea,
         commonFailureReasons: commonFailureReasons,
-        itemCancellationData: itemCancellationData, // Include item cancellation data for AI
+        itemCancellationData: itemCancellationData, 
       };
       const result = await generateFailureAnalysis({ failureDataJSON: JSON.stringify(inputForAI) });
       setAnalysisResult(result);
@@ -241,40 +244,42 @@ export default function OrderFailurePage() {
           </CardTitle>
           <CardDescription>Items frequently involved in cancellations and their common reasons.</CardDescription>
         </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-6">
+        <CardContent className="space-y-6">
           <div>
             <h4 className="font-semibold text-lg mb-2 text-primary">Cancellation Breakdown by Item</h4>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Item Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Cancellations</TableHead>
-                  <TableHead>Common Reason</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {itemCancellationData.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.itemName}</TableCell>
-                    <TableCell>{item.category}</TableCell>
-                    <TableCell className="text-right text-destructive">{item.cancellationCount}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{item.commonReason}</TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Item Name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead className="text-right">Cancellations</TableHead>
+                    <TableHead>Common Reason</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {itemCancellationData.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium whitespace-nowrap">{item.itemName}</TableCell>
+                      <TableCell className="whitespace-nowrap">{item.category}</TableCell>
+                      <TableCell className="text-right text-destructive">{item.cancellationCount}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{item.commonReason}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
           <div>
              <h4 className="font-semibold text-lg mb-2 text-primary flex items-center">
                 <BarChartHorizontalBig className="mr-2 h-5 w-5" />
                 Cancellation Chart
              </h4>
-            <ChartContainer config={itemCancellationChartConfig} className="h-[300px] w-full">
+            <ChartContainer config={itemCancellationChartConfig} className="h-[400px] w-full"> {/* Increased height for better visibility with more items */}
               <RechartsBarChart
                 data={itemCancellationData}
                 layout="vertical"
-                margin={{ left: 20, right: 10 }}
+                margin={{ left: 20, right: 10, top: 5, bottom: 5 }} // Adjusted margins
                 accessibilityLayer
               >
                 <CartesianGrid horizontal={false} />
@@ -284,15 +289,16 @@ export default function OrderFailurePage() {
                   tickLine={false}
                   tickMargin={5}
                   axisLine={false}
-                  className="text-xs truncate"
-                  width={120} // Adjust width to prevent long item names from being cut off
+                  className="text-xs"
+                  width={150} // Increased width for longer item names
+                  interval={0} // Ensure all item names are displayed
                 />
                 <XAxis dataKey="cancellationCount" type="number" />
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent indicator="line" />}
                 />
-                <Bar dataKey="cancellationCount" fill="var(--color-cancellationCount)" radius={4} />
+                <Bar dataKey="cancellationCount" fill="var(--color-cancellationCount)" radius={4} barSize={20} />
               </RechartsBarChart>
             </ChartContainer>
           </div>
@@ -304,39 +310,42 @@ export default function OrderFailurePage() {
           <CardTitle className="font-headline">Detailed Failure Log</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Postcode</TableHead>
-                <TableHead>Failure Type</TableHead>
-                <TableHead className="text-right">Count</TableHead>
-                <TableHead>Most Common Reason</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {failureDataByArea.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{item.postcode}</TableCell>
-                  <TableCell>
-                     <span className={`flex items-center ${
-                        item.type === 'Cancelled' ? 'text-yellow-400' :
-                        item.type === 'Rejected' ? 'text-red-400' :
-                        'text-orange-400'
-                      }`}>
-                      {item.type === 'Cancelled' && <XCircle className="mr-2 h-4 w-4" />}
-                      {item.type === 'Rejected' && <AlertCircle className="mr-2 h-4 w-4" />}
-                      {item.type === 'Refunded' && <AlertTriangle className="mr-2 h-4 w-4" />}
-                      {item.type}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">{item.count}</TableCell>
-                  <TableCell>{item.reason}</TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Postcode</TableHead>
+                  <TableHead>Failure Type</TableHead>
+                  <TableHead className="text-right">Count</TableHead>
+                  <TableHead>Most Common Reason</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {failureDataByArea.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="whitespace-nowrap">{item.postcode}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                       <span className={`flex items-center ${
+                          item.type === 'Cancelled' ? 'text-yellow-400' :
+                          item.type === 'Rejected' ? 'text-red-400' :
+                          'text-orange-400'
+                        }`}>
+                        {item.type === 'Cancelled' && <XCircle className="mr-2 h-4 w-4" />}
+                        {item.type === 'Rejected' && <AlertCircle className="mr-2 h-4 w-4" />}
+                        {item.type === 'Refunded' && <AlertTriangle className="mr-2 h-4 w-4" />}
+                        {item.type}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">{item.count}</TableCell>
+                    <TableCell className="whitespace-nowrap">{item.reason}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+

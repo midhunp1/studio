@@ -129,7 +129,7 @@ export default function CustomerMapPage() {
                    <p className="text-xs text-center text-muted-foreground">...and {atRiskCustomerExamples.length - 3} more.</p>
                 )}
               </div>
-              <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground whitespace-normal h-auto py-2">
                 <Send className="mr-2 h-4 w-4" />
                 Send Promo SMS to Lapsed Customers
                 <Ticket className="ml-2 h-4 w-4" />

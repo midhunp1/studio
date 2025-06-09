@@ -1,88 +1,99 @@
+
 import { PageHeader } from '@/components/dashboard/page-header';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardTitle } from '@/components/ui/card'; // CardContent and CardHeader might not be explicitly needed depending on final structure
 import Link from 'next/link';
-import { ArrowRight, Map, Brain, Clock } from 'lucide-react';
-import Image from 'next/image';
+import {
+  Map,
+  Clock,
+  Utensils,
+  Users,
+  AlertTriangle,
+  BadgePercent,
+  Brain,
+  LayoutDashboard
+} from 'lucide-react';
+
+interface InsightCardItem {
+  title: string;
+  href: string;
+  icon: React.ElementType;
+  description: string;
+  dataAiHint: string;
+}
 
 export default function DashboardOverviewPage() {
-  const quickLinks = [
-    { title: 'Delivery Heatmap', href: '/dashboard/delivery-area', icon: Map, description: 'Visualize your hottest delivery zones.', dataAiHint: 'map location' },
-    { title: 'AI Suggestions', href: '/dashboard/ai-suggestions', icon: Brain, description: 'Get smart insights for your business.', dataAiHint: 'artificial intelligence' },
-    { title: 'Time-Based Insights', href: '/dashboard/time-based', icon: Clock, description: 'Discover your peak order times.', dataAiHint: 'clock time' },
+  const insightCards: InsightCardItem[] = [
+    {
+      title: 'Delivery Area Heatmap',
+      href: '/dashboard/delivery-area',
+      icon: Map,
+      description: 'Visualize order density by postcode, highlighting high-frequency and revenue areas.',
+      dataAiHint: 'map delivery orders',
+    },
+    {
+      title: 'Time-Based Heatmap',
+      href: '/dashboard/time-based',
+      icon: Clock,
+      description: 'Analyze peak hours and days by order volume and value to optimize staffing and promotions.',
+      dataAiHint: 'clock time orders',
+    },
+    {
+      title: 'Top Dish by Area',
+      href: '/dashboard/top-dish',
+      icon: Utensils,
+      description: 'Discover the most popular and profitable menu items in specific delivery zones.',
+      dataAiHint: 'food dish popularity',
+    },
+    {
+      title: 'Customer Map',
+      href: '/dashboard/customer-map',
+      icon: Users,
+      description: 'Distinguish loyal vs. one-time customers and track retention or churn rates by area.',
+      dataAiHint: 'customer user analytics',
+    },
+    {
+      title: 'Order Failure Heatmap',
+      href: '/dashboard/order-failure',
+      icon: AlertTriangle,
+      description: 'Identify zones where orders are frequently cancelled, rejected, or refunded, and get AI analysis.',
+      dataAiHint: 'map error alert analysis',
+    },
+    {
+      title: 'Promo Performance',
+      href: '/dashboard/promo-performance',
+      icon: BadgePercent,
+      description: 'Analyze which discounts worked best and where to optimize your promotion strategies.',
+      dataAiHint: 'discount promotion success',
+    },
+    {
+      title: 'AI Suggestions',
+      href: '/dashboard/ai-suggestions',
+      icon: Brain,
+      description: 'Get smart insights like ad boost times and combo meal ideas powered by generative AI.',
+      dataAiHint: 'brain artificial intelligence suggestions',
+    },
   ];
 
   return (
     <div>
       <PageHeader
-        title="Welcome to OrderLens"
-        description="Your command center for hyperlocal takeaway insights."
+        title="OrderLens Dashboard"
+        description="Explore your hyperlocal takeaway insights. Select a module below to get started."
       />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="font-headline">Unlock Your Data's Potential</CardTitle>
-            <CardDescription>
-              OrderLens helps you understand customer behavior, optimize operations, and boost profits by visualizing your order data in powerful new ways.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">
-              Navigate through the sidebar to explore various heatmaps, analyze top dishes, and get AI-powered suggestions tailored to your business.
-            </p>
-            <Image
-              src="https://placehold.co/600x300.png"
-              alt="Data visualization abstract"
-              width={600}
-              height={300}
-              className="rounded-lg object-cover w-full"
-              data-ai-hint="data visualization"
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-headline">Quick Links</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {quickLinks.map((link) => (
-              <Link href={link.href} key={link.href} legacyBehavior>
-                <a className="block p-4 rounded-lg border hover:bg-muted transition-colors">
-                  <div className="flex items-center gap-3">
-                    <link.icon className="h-6 w-6 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">{link.title}</h3>
-                      <p className="text-sm text-muted-foreground">{link.description}</p>
-                    </div>
-                    <ArrowRight className="ml-auto h-5 w-5 text-muted-foreground" />
-                  </div>
-                </a>
-              </Link>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="mt-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-headline">Getting Started</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
-              <li>Explore the <span className="text-primary font-semibold">Delivery Area Heatmap</span> to see where your orders are concentrated.</li>
-              <li>Check <span className="text-primary font-semibold">AI Suggestions</span> for tailored advice on promotions and operations.</li>
-              <li>Analyze <span className="text-primary font-semibold">Top Dishes by Area</span> to refine your menu for specific zones.</li>
-            </ol>
-            <Button asChild className="mt-6 bg-accent text-accent-foreground hover:bg-accent/90">
-              <Link href="/dashboard/ai-suggestions">
-                Get Your First AI Suggestion
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {insightCards.map((item) => (
+          <Link href={item.href} key={item.href} legacyBehavior>
+            <a className="block h-full" data-ai-hint={item.dataAiHint}>
+              <Card className="flex flex-col h-full p-6 text-center items-center justify-center hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out cursor-pointer bg-card hover:bg-muted/50">
+                <item.icon className="h-16 w-16 text-primary mb-4" />
+                <CardTitle className="font-headline text-xl mb-3">{item.title}</CardTitle>
+                <p className="text-sm text-muted-foreground leading-relaxed flex-grow">
+                  {item.description}
+                </p>
+              </Card>
+            </a>
+          </Link>
+        ))}
       </div>
     </div>
   );

@@ -169,7 +169,7 @@ export default function DeliveryAreaPage() {
 
       <Card className="mt-6">
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-col gap-4">
             <div>
               <CardTitle className="font-headline flex items-center">
                 <LineChartIcon className="mr-2 h-6 w-6 text-primary" />
@@ -179,9 +179,9 @@ export default function DeliveryAreaPage() {
                 Compare daily order trends for two selected postcodes over the past week.
               </CardDescription>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Select value={selectedPostcode1} onValueChange={setSelectedPostcode1}>
-                <SelectTrigger id="postcode-select-1" className="w-full sm:w-[150px]">
+                <SelectTrigger id="postcode-select-1" className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Select Postcode 1" />
                 </SelectTrigger>
                 <SelectContent>
@@ -193,7 +193,7 @@ export default function DeliveryAreaPage() {
                 </SelectContent>
               </Select>
               <Select value={selectedPostcode2} onValueChange={setSelectedPostcode2}>
-                <SelectTrigger id="postcode-select-2" className="w-full sm:w-[150px]">
+                <SelectTrigger id="postcode-select-2" className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Select Postcode 2" />
                 </SelectTrigger>
                 <SelectContent>
@@ -248,3 +248,4 @@ export default function DeliveryAreaPage() {
     </div>
   );
 }
+

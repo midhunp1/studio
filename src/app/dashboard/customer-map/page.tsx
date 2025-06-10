@@ -130,7 +130,7 @@ export default function CustomerMapPage() {
       />
       <FilterControls onApplyFilters={(filters) => console.log("Applying customer map filters:", filters)} />
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"> {/* Removed mb-6 here */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="customer distribution map" />
         </div>
@@ -177,7 +177,7 @@ export default function CustomerMapPage() {
         </div>
       </div>
 
-      <Card className="mb-6">
+      <Card className="mt-6 mb-6">
         <CardHeader>
           <CardTitle className="font-headline flex items-center">
             <TrendingUpIcon className="mr-2 h-6 w-6 text-primary" />

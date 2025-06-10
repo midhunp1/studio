@@ -177,150 +177,150 @@ export default function CustomerMapPage() {
         </div>
       </div>
 
-      <Card className="mt-6 mb-6">
-        <CardHeader>
-          <CardTitle className="font-headline flex items-center">
-            <TrendingUpIcon className="mr-2 h-6 w-6 text-primary" />
-            Customer Segments Overview
-          </CardTitle>
-          <CardDescription>Insights into new and repeat customer behaviors.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4 p-4 border rounded-lg bg-card shadow-sm">
-            <h3 className="text-lg font-semibold flex items-center text-primary">
-              <UserPlus className="mr-2 h-5 w-5" /> New Customers ({customerSegmentData.newCustomers.count})
-            </h3>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground flex items-center">
-                <ShoppingBag className="mr-2 h-4 w-4 text-accent" /> Top Categories:
-              </p>
-              <ul className="list-disc list-inside text-sm ml-4">
-                {customerSegmentData.newCustomers.topCategories.map(cat => <li key={`new-${cat}`}>{cat}</li>)}
-              </ul>
-            </div>
-            <p className="text-sm flex items-center">
-              <DollarSign className="mr-2 h-4 w-4 text-green-500" />
-              Avg. Order Value: <span className="font-semibold ml-1">£{customerSegmentData.newCustomers.avgOrderValue.toFixed(2)}</span>
-            </p>
-          </div>
-
-          <div className="space-y-4 p-4 border rounded-lg bg-card shadow-sm">
-            <h3 className="text-lg font-semibold flex items-center text-primary">
-              <Repeat className="mr-2 h-5 w-5" /> Repeat Customers ({customerSegmentData.repeatCustomers.count})
-            </h3>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground flex items-center">
-                <ShoppingBag className="mr-2 h-4 w-4 text-accent" /> Top Categories:
-              </p>
-              <ul className="list-disc list-inside text-sm ml-4">
-                {customerSegmentData.repeatCustomers.topCategories.map(cat => <li key={`repeat-${cat}`}>{cat}</li>)}
-              </ul>
-            </div>
-            <p className="text-sm flex items-center">
-               <DollarSign className="mr-2 h-4 w-4 text-green-500" />
-              Avg. Order Value: <span className="font-semibold ml-1">£{customerSegmentData.repeatCustomers.avgOrderValue.toFixed(2)}</span>
-            </p>
-          </div>
-          
-          <div className="md:col-span-2 mt-2 p-4 border rounded-lg bg-muted/50">
-             <h3 className="text-lg font-semibold flex items-center text-foreground mb-2">
-              <Users className="mr-2 h-5 w-5 text-primary" /> General Insights
-            </h3>
-            <p className="text-sm flex items-center">
-              <CalendarDays className="mr-2 h-4 w-4 text-accent" />
-              Most Active Day Overall: <span className="font-semibold ml-1">{customerSegmentData.overall.mostActiveDay}</span>
-            </p>
-             <p className="text-sm flex items-center mt-1">
-              <Users className="mr-2 h-4 w-4 text-primary" />
-              Total Unique Customers Profiled: <span className="font-semibold ml-1">{customerSegmentData.overall.totalCustomers}</span>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline flex items-center">
-            <UserMinus className="mr-2 h-5 w-5 text-destructive" />
-            Engage Lapsed Customers
-          </CardTitle>
-          <CardDescription>Identify and re-engage customers who haven't ordered recently with targeted promotions.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Showing {atRiskCustomerExamples.slice(0, 3).length} example customers who haven't ordered in over 40 days.
-            </p>
-            {atRiskCustomerExamples.slice(0, 3).map(customer => (
-              <div key={customer.id} className="p-3 bg-muted/50 rounded-md text-sm border border-border">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-foreground">{customer.name} ({customer.postcode})</span>
-                  <span className="text-xs text-destructive">{customer.lastOrderDaysAgo} days ago</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center">
+                <TrendingUpIcon className="mr-2 h-6 w-6 text-primary" />
+                Customer Segments Overview
+              </CardTitle>
+              <CardDescription>Insights into new and repeat customer behaviors.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4 p-4 border rounded-lg bg-card shadow-sm">
+                <h3 className="text-lg font-semibold flex items-center text-primary">
+                  <UserPlus className="mr-2 h-5 w-5" /> New Customers ({customerSegmentData.newCustomers.count})
+                </h3>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground flex items-center">
+                    <ShoppingBag className="mr-2 h-4 w-4 text-accent" /> Top Categories:
+                  </p>
+                  <ul className="list-disc list-inside text-sm ml-4">
+                    {customerSegmentData.newCustomers.topCategories.map(cat => <li key={`new-${cat}`}>{cat}</li>)}
+                  </ul>
                 </div>
-                <p className="text-muted-foreground text-xs">Phone: {customer.phonePreview}</p>
+                <p className="text-sm flex items-center">
+                  <DollarSign className="mr-2 h-4 w-4 text-green-500" />
+                  Avg. Order Value: <span className="font-semibold ml-1">£{customerSegmentData.newCustomers.avgOrderValue.toFixed(2)}</span>
+                </p>
               </div>
-            ))}
-            {atRiskCustomerExamples.length > 3 && (
-                <p className="text-xs text-center text-muted-foreground">...and {atRiskCustomerExamples.length - 3} more.</p>
-            )}
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border pt-6">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="coupon-select" className="font-semibold">Choose Coupon</Label>
-                <Select value={selectedCouponId} onValueChange={setSelectedCouponId}>
-                  <SelectTrigger id="coupon-select" className="mt-1">
-                    <SelectValue placeholder="Select a coupon" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {existingCoupons.map(coupon => (
-                      <SelectItem key={coupon.id} value={coupon.id}>
-                        {coupon.name} ({coupon.code})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-4 p-4 border rounded-lg bg-card shadow-sm">
+                <h3 className="text-lg font-semibold flex items-center text-primary">
+                  <Repeat className="mr-2 h-5 w-5" /> Repeat Customers ({customerSegmentData.repeatCustomers.count})
+                </h3>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground flex items-center">
+                    <ShoppingBag className="mr-2 h-4 w-4 text-accent" /> Top Categories:
+                  </p>
+                  <ul className="list-disc list-inside text-sm ml-4">
+                    {customerSegmentData.repeatCustomers.topCategories.map(cat => <li key={`repeat-${cat}`}>{cat}</li>)}
+                  </ul>
+                </div>
+                <p className="text-sm flex items-center">
+                   <DollarSign className="mr-2 h-4 w-4 text-green-500" />
+                  Avg. Order Value: <span className="font-semibold ml-1">£{customerSegmentData.repeatCustomers.avgOrderValue.toFixed(2)}</span>
+                </p>
               </div>
-              <Button onClick={handleCreateNewCoupon} variant="outline" className="w-full">
-                <Ticket className="mr-2 h-4 w-4" /> Create New Coupon
+              
+              <div className="md:col-span-2 mt-2 p-4 border rounded-lg bg-muted/50">
+                 <h3 className="text-lg font-semibold flex items-center text-foreground mb-2">
+                  <Users className="mr-2 h-5 w-5 text-primary" /> General Insights
+                </h3>
+                <p className="text-sm flex items-center">
+                  <CalendarDays className="mr-2 h-4 w-4 text-accent" />
+                  Most Active Day Overall: <span className="font-semibold ml-1">{customerSegmentData.overall.mostActiveDay}</span>
+                </p>
+                 <p className="text-sm flex items-center mt-1">
+                  <Users className="mr-2 h-4 w-4 text-primary" />
+                  Total Unique Customers Profiled: <span className="font-semibold ml-1">{customerSegmentData.overall.totalCustomers}</span>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center">
+                <UserMinus className="mr-2 h-5 w-5 text-destructive" />
+                Engage Lapsed Customers
+              </CardTitle>
+              <CardDescription>Identify and re-engage customers who haven't ordered recently with targeted promotions.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Showing {atRiskCustomerExamples.slice(0, 3).length} example customers who haven't ordered in over 40 days.
+                </p>
+                {atRiskCustomerExamples.slice(0, 3).map(customer => (
+                  <div key={customer.id} className="p-3 bg-muted/50 rounded-md text-sm border border-border">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-foreground">{customer.name} ({customer.postcode})</span>
+                      <span className="text-xs text-destructive">{customer.lastOrderDaysAgo} days ago</span>
+                    </div>
+                    <p className="text-muted-foreground text-xs">Phone: {customer.phonePreview}</p>
+                  </div>
+                ))}
+                {atRiskCustomerExamples.length > 3 && (
+                    <p className="text-xs text-center text-muted-foreground">...and {atRiskCustomerExamples.length - 3} more.</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="coupon-select" className="font-semibold">Choose Coupon</Label>
+                    <Select value={selectedCouponId} onValueChange={setSelectedCouponId}>
+                      <SelectTrigger id="coupon-select" className="mt-1">
+                        <SelectValue placeholder="Select a coupon" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {existingCoupons.map(coupon => (
+                          <SelectItem key={coupon.id} value={coupon.id}>
+                            {coupon.name} ({coupon.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={handleCreateNewCoupon} variant="outline" className="w-full">
+                    <Ticket className="mr-2 h-4 w-4" /> Create New Coupon
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="sms-template-preview" className="font-semibold">SMS Template</Label>
+                    <Textarea
+                      id="sms-template-preview"
+                      value={formattedSmsTemplate}
+                      readOnly
+                      rows={4}
+                      className="mt-1 bg-muted/30 text-sm"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={handleEditTemplate} variant="outline" className="flex-1">
+                      <Edit3 className="mr-2 h-4 w-4" /> Edit
+                    </Button>
+                    <Button onClick={handlePreviewSms} variant="outline" className="flex-1">
+                      <Eye className="mr-2 h-4 w-4" /> Preview
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground whitespace-normal h-auto py-3 text-base mt-4">
+                <Send className="mr-2 h-5 w-5" />
+                Send Promo SMS to {atRiskCustomerExamples.length} Lapsed Customers
+                <Ticket className="ml-2 h-5 w-5" />
               </Button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="sms-template-preview" className="font-semibold">SMS Template</Label>
-                <Textarea
-                  id="sms-template-preview"
-                  value={formattedSmsTemplate}
-                  readOnly
-                  rows={4}
-                  className="mt-1 bg-muted/30 text-sm"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleEditTemplate} variant="outline" className="flex-1">
-                  <Edit3 className="mr-2 h-4 w-4" /> Edit
-                </Button>
-                <Button onClick={handlePreviewSms} variant="outline" className="flex-1">
-                  <Eye className="mr-2 h-4 w-4" /> Preview
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground whitespace-normal h-auto py-3 text-base mt-4">
-            <Send className="mr-2 h-5 w-5" />
-            Send Promo SMS to {atRiskCustomerExamples.length} Lapsed Customers
-            <Ticket className="ml-2 h-5 w-5" />
-          </Button>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
-
-
-      
-
-    

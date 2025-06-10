@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/dashboard/page-header';
 import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, Repeat, UserMinus, Ticket, Send, Edit3, Eye } from 'lucide-react';
+import { Users, UserPlus, Repeat, UserMinus, Ticket, Send, Edit3, Eye, ShoppingBag, TrendingUp as TrendingUpIcon, CalendarDays, DollarSign } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,24 @@ const existingCoupons = [
   { id: "FREEFRIES", name: "Free Fries with Purchase", code: "GETFRIES" },
   { id: "20OFF50", name: "£20 Off Orders over £50", code: "BIGSAVE20" },
 ];
+
+const customerSegmentData = {
+  newCustomers: {
+    count: customerDataByArea.reduce((sum, area) => sum + area.newCustomers, 0),
+    topCategories: ["Pizzas", "Burgers", "Soft Drinks"],
+    avgOrderValue: 18.50,
+  },
+  repeatCustomers: {
+    count: customerDataByArea.reduce((sum, area) => sum + area.repeatCustomers, 0),
+    topCategories: ["Curries", "Rice Dishes", "Sides"],
+    avgOrderValue: 25.75,
+  },
+  overall: {
+    mostActiveDay: "Friday",
+    totalCustomers: customerDataByArea.reduce((sum, area) => sum + area.newCustomers + area.repeatCustomers, 0),
+  }
+};
+
 
 export default function CustomerMapPage() {
   const { toast } = useToast();
@@ -112,7 +130,7 @@ export default function CustomerMapPage() {
       />
       <FilterControls onApplyFilters={(filters) => console.log("Applying customer map filters:", filters)} />
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2">
           <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="customer distribution map" />
         </div>
@@ -159,7 +177,68 @@ export default function CustomerMapPage() {
         </div>
       </div>
 
-      <Card className="mt-6">
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="font-headline flex items-center">
+            <TrendingUpIcon className="mr-2 h-6 w-6 text-primary" />
+            Customer Segments Overview
+          </CardTitle>
+          <CardDescription>Insights into new and repeat customer behaviors.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4 p-4 border rounded-lg bg-card shadow-sm">
+            <h3 className="text-lg font-semibold flex items-center text-primary">
+              <UserPlus className="mr-2 h-5 w-5" /> New Customers ({customerSegmentData.newCustomers.count})
+            </h3>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground flex items-center">
+                <ShoppingBag className="mr-2 h-4 w-4 text-accent" /> Top Categories:
+              </p>
+              <ul className="list-disc list-inside text-sm ml-4">
+                {customerSegmentData.newCustomers.topCategories.map(cat => <li key={`new-${cat}`}>{cat}</li>)}
+              </ul>
+            </div>
+            <p className="text-sm flex items-center">
+              <DollarSign className="mr-2 h-4 w-4 text-green-500" />
+              Avg. Order Value: <span className="font-semibold ml-1">£{customerSegmentData.newCustomers.avgOrderValue.toFixed(2)}</span>
+            </p>
+          </div>
+
+          <div className="space-y-4 p-4 border rounded-lg bg-card shadow-sm">
+            <h3 className="text-lg font-semibold flex items-center text-primary">
+              <Repeat className="mr-2 h-5 w-5" /> Repeat Customers ({customerSegmentData.repeatCustomers.count})
+            </h3>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground flex items-center">
+                <ShoppingBag className="mr-2 h-4 w-4 text-accent" /> Top Categories:
+              </p>
+              <ul className="list-disc list-inside text-sm ml-4">
+                {customerSegmentData.repeatCustomers.topCategories.map(cat => <li key={`repeat-${cat}`}>{cat}</li>)}
+              </ul>
+            </div>
+            <p className="text-sm flex items-center">
+               <DollarSign className="mr-2 h-4 w-4 text-green-500" />
+              Avg. Order Value: <span className="font-semibold ml-1">£{customerSegmentData.repeatCustomers.avgOrderValue.toFixed(2)}</span>
+            </p>
+          </div>
+          
+          <div className="md:col-span-2 mt-2 p-4 border rounded-lg bg-muted/50">
+             <h3 className="text-lg font-semibold flex items-center text-foreground mb-2">
+              <Users className="mr-2 h-5 w-5 text-primary" /> General Insights
+            </h3>
+            <p className="text-sm flex items-center">
+              <CalendarDays className="mr-2 h-4 w-4 text-accent" />
+              Most Active Day Overall: <span className="font-semibold ml-1">{customerSegmentData.overall.mostActiveDay}</span>
+            </p>
+             <p className="text-sm flex items-center mt-1">
+              <Users className="mr-2 h-4 w-4 text-primary" />
+              Total Unique Customers Profiled: <span className="font-semibold ml-1">{customerSegmentData.overall.totalCustomers}</span>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader>
           <CardTitle className="font-headline flex items-center">
             <UserMinus className="mr-2 h-5 w-5 text-destructive" />
@@ -240,3 +319,6 @@ export default function CustomerMapPage() {
     </div>
   );
 }
+
+
+      

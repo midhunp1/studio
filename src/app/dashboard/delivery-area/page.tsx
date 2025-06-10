@@ -147,11 +147,11 @@ export default function DeliveryAreaPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <CssStylizedHeatmap 
-            title="Manchester Area Heatmap Overlay" 
+            title="Manchester Delivery Area" 
             height="500px" 
             backgroundImageUrl="https://i.dailymail.co.uk/i/pix/2014/06/12/article-2656375-1EB4337D00000578-312_964x612.jpg"
             backgroundMapDataAiHint="UK map"
-            dataAiHint="Manchester heatmap overlay" 
+            dataAiHint="Manchester delivery area" 
           />
         </div>
         <div className="space-y-6">

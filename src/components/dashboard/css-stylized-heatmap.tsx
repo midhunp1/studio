@@ -13,54 +13,16 @@ interface CssStylizedHeatmapProps {
   backgroundMapDataAiHint?: string;
 }
 
-// 0: very light, 1: light, 2: medium, 3: high, 4: very high intensity
-// 20x30 pattern for higher resolution
-const defaultHeatmapPattern = [
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,1,1,2,2,3,3,4,4,4,4,3,3,2,2,1,1,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,1,2,2,3,3,4,4,4,4,4,4,4,4,3,3,2,2,1,0,0,0,0,0,0],
-  [0,0,0,0,0,1,2,3,3,4,4,4,3,3,3,3,3,3,4,4,4,3,3,2,1,0,0,0,0,0],
-  [0,0,0,0,1,2,3,4,4,3,3,2,1,1,1,1,1,1,2,3,3,4,4,3,2,1,0,0,0,0],
-  [0,0,0,1,2,3,4,3,2,1,0,0,0,0,0,0,0,0,0,1,2,3,4,3,2,1,0,0,0,0],
-  [0,0,1,2,3,4,3,2,1,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,3,2,1,0,0,0],
-  [0,0,1,2,3,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0,0],
-  [0,0,1,2,3,3,2,1,0,0,0,0,1,1,1,1,0,0,0,0,0,1,2,3,3,2,1,0,0,0],
-  [0,0,1,2,3,4,3,2,1,0,0,0,1,2,2,1,0,0,0,0,1,2,3,4,3,2,1,0,0,0],
-  [0,0,0,1,2,3,4,3,2,1,0,0,1,2,3,2,1,0,0,1,2,3,4,3,2,1,0,0,0,0],
-  [0,0,0,0,1,2,3,4,4,3,1,1,2,3,3,3,2,1,1,3,4,4,3,2,1,0,0,0,0,0],
-  [0,0,0,0,0,1,2,3,3,4,4,2,3,4,4,4,3,2,4,4,3,3,2,1,0,0,0,0,0,0],
-  [0,0,0,0,0,0,1,2,2,3,3,4,4,4,4,4,4,4,4,3,3,2,2,1,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,1,1,2,2,3,3,4,4,4,4,3,3,2,2,1,1,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-];
-
-
-const intensityColors = [
-  'bg-transparent',      // 0 - fully transparent for no activity
-  'bg-sky-500/20',       // 1 - light blue, subtle
-  'bg-yellow-500/30',    // 2 - medium yellow
-  'bg-orange-600/40',    // 3 - orange
-  'bg-red-700/50',       // 4 - very high intensity red, 50% transparent
-];
-
 const DEFAULT_BACKGROUND_URL = "https://i.dailymail.co.uk/i/pix/2014/06/12/article-2656375-1EB4337D00000578-312_964x612.jpg";
 
 export function CssStylizedHeatmap({
   title = "Stylized CSS Heatmap with Background",
   height = "500px",
   backgroundImageUrl = DEFAULT_BACKGROUND_URL,
-  dataAiHint = "heatmap overlay",
-  backgroundMapDataAiHint = "UK map",
+  dataAiHint = "map visualization", // General hint for the component's purpose
+  backgroundMapDataAiHint = "UK map", // Specific hint for the background image
 }: CssStylizedHeatmapProps) {
   
-  const heatmapPattern = defaultHeatmapPattern;
-  const effectiveRows = heatmapPattern.length;
-  const effectiveCols = heatmapPattern[0]?.length || 30;
-
   return (
     <div
       className="w-full bg-card border border-border rounded-lg flex flex-col p-4 shadow-sm"
@@ -82,34 +44,10 @@ export function CssStylizedHeatmap({
           className="z-0"
           data-ai-hint={backgroundMapDataAiHint}
         />
-
-        <div
-          className="absolute inset-0 z-10 grid"
-          style={{
-            gridTemplateColumns: `repeat(${effectiveCols}, 1fr)`,
-            gridTemplateRows: `repeat(${effectiveRows}, 1fr)`,
-          }}
-        >
-          {Array.from({ length: effectiveRows }).map((_, rowIndex) =>
-            Array.from({ length: effectiveCols }).map((_, colIndex) => {
-              const intensity = heatmapPattern[rowIndex]?.[colIndex] ?? 0;
-              const colorClass = intensityColors[intensity] || intensityColors[0];
-              // Using a very subtle border for the overlay cells, or none if preferred
-              const cellBorderClass = intensity > 0 ? "border-black/5" : ""; 
-              return (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`${colorClass} ${cellBorderClass} ${rowIndex < effectiveRows -1 ? 'border-b' : ''} ${colIndex < effectiveCols -1 ? 'border-r' : ''}`}
-                  title={`Cell [${rowIndex + 1},${colIndex + 1}] Intensity: ${intensity}`}
-                >
-                </div>
-              );
-            })
-          )}
-        </div>
+        {/* Overlay grid has been removed */}
       </div>
       <p className="text-xs text-muted-foreground mt-2 text-center">
-        Stylized CSS heatmap overlay on map. Demo purposes only.
+        Map background for delivery area visualization.
       </p>
     </div>
   );

@@ -149,8 +149,8 @@ export default function DeliveryAreaPage() {
           <CssStylizedHeatmap 
             title="Manchester Area Heatmap Overlay" 
             height="500px" 
-            backgroundImageUrl="https://placehold.co/1200x800.png" 
-            backgroundMapDataAiHint="Manchester street map satellite"
+            backgroundImageUrl="https://i.dailymail.co.uk/i/pix/2014/06/12/article-2656375-1EB4337D00000578-312_964x612.jpg"
+            backgroundMapDataAiHint="UK map"
             dataAiHint="Manchester heatmap overlay" 
           />
         </div>

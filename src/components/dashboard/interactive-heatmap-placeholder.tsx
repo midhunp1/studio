@@ -11,10 +11,12 @@ interface InteractiveHeatmapPlaceholderProps {
   dataAiHint?: string; // This hint is for the image itself
 }
 
+const DEFAULT_MAP_URL = "https://i.dailymail.co.uk/i/pix/2014/06/12/article-2656375-1EB4337D00000578-312_964x612.jpg";
+
 export function InteractiveHeatmapPlaceholder({
   title = "Interactive Heatmap",
   height = "400px",
-  dataAiHint = "abstract map", // Default hint for the map image
+  dataAiHint = "UK map", // Default hint for the map image
 }: InteractiveHeatmapPlaceholderProps) {
   return (
     <div
@@ -29,7 +31,7 @@ export function InteractiveHeatmapPlaceholder({
 
       <div className="relative w-full flex-grow rounded overflow-hidden shadow-inner border border-border/50">
         <Image
-          src="https://placehold.co/800x600.png" 
+          src={DEFAULT_MAP_URL}
           alt={title || "Heatmap Placeholder"}
           layout="fill"
           objectFit="cover"

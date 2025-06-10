@@ -47,12 +47,14 @@ const intensityColors = [
   'bg-red-700/50',       // 4 - very high intensity red, 50% transparent
 ];
 
+const DEFAULT_BACKGROUND_URL = "https://i.dailymail.co.uk/i/pix/2014/06/12/article-2656375-1EB4337D00000578-312_964x612.jpg";
+
 export function CssStylizedHeatmap({
   title = "Stylized CSS Heatmap with Background",
   height = "500px",
-  backgroundImageUrl = "https://placehold.co/800x600.png",
+  backgroundImageUrl = DEFAULT_BACKGROUND_URL,
   dataAiHint = "heatmap overlay",
-  backgroundMapDataAiHint = "city map area",
+  backgroundMapDataAiHint = "UK map",
 }: CssStylizedHeatmapProps) {
   
   const heatmapPattern = defaultHeatmapPattern;

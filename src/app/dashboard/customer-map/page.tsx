@@ -130,7 +130,7 @@ export default function CustomerMapPage() {
       />
       <FilterControls onApplyFilters={(filters) => console.log("Applying customer map filters:", filters)} />
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"> {/* Removed mb-6 here */}
         <div className="lg:col-span-2">
           <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="customer distribution map" />
         </div>
@@ -322,3 +322,5 @@ export default function CustomerMapPage() {
 
 
       
+
+    

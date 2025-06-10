@@ -89,7 +89,7 @@ export default function OrderFailurePage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <InteractiveHeatmapPlaceholder title="Order Failure Hotspots" height="500px" dataAiHint="map error alert" />
+          <InteractiveHeatmapPlaceholder title="Order Failure Hotspots" height="500px" dataAiHint="failure area map" />
         </div>
         <div className="space-y-6">
           <Card>
@@ -275,11 +275,11 @@ export default function OrderFailurePage() {
                 <BarChartHorizontalBig className="mr-2 h-5 w-5" />
                 Cancellation Chart
              </h4>
-            <ChartContainer config={itemCancellationChartConfig} className="h-[400px] w-full"> {/* Increased height for better visibility with more items */}
+            <ChartContainer config={itemCancellationChartConfig} className="h-[400px] w-full"> 
               <RechartsBarChart
                 data={itemCancellationData}
                 layout="vertical"
-                margin={{ left: 20, right: 10, top: 5, bottom: 5 }} // Adjusted margins
+                margin={{ left: 20, right: 10, top: 5, bottom: 5 }} 
                 accessibilityLayer
               >
                 <CartesianGrid horizontal={false} />
@@ -290,8 +290,8 @@ export default function OrderFailurePage() {
                   tickMargin={5}
                   axisLine={false}
                   className="text-xs"
-                  width={150} // Increased width for longer item names
-                  interval={0} // Ensure all item names are displayed
+                  width={150} 
+                  interval={0} 
                 />
                 <XAxis dataKey="cancellationCount" type="number" />
                 <ChartTooltip
@@ -348,4 +348,3 @@ export default function OrderFailurePage() {
     </div>
   );
 }
-

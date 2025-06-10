@@ -41,7 +41,7 @@ export default function PromoPerformancePage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <InteractiveHeatmapPlaceholder title="Promo Effectiveness by Zone" height="500px" dataAiHint="map discount offer" />
+          <InteractiveHeatmapPlaceholder title="Promo Effectiveness by Zone" height="500px" dataAiHint="promo effectiveness map" />
         </div>
         <Card>
           <CardHeader>

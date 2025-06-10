@@ -30,8 +30,8 @@ const atRiskCustomerExamples = [
 ];
 
 const chartConfig = {
-  newCustomers: { label: "New Customers", color: "hsl(var(--chart-1))" }, // Teal variant
-  repeatCustomers: { label: "Repeat Customers", color: "hsl(var(--chart-2))" }, // Gold variant
+  newCustomers: { label: "New Customers", color: "hsl(var(--chart-1))" }, 
+  repeatCustomers: { label: "Repeat Customers", color: "hsl(var(--chart-2))" }, 
 } satisfies ChartConfig;
 
 const existingCoupons = [
@@ -60,7 +60,7 @@ export default function CustomerMapPage() {
       template = template.replace("{couponDescription}", "a special discount");
       template = template.replace("{couponCode}", "SPECIALOFFER");
     }
-    return template.replace("[Customer Name]", "Valued Customer"); // Generic placeholder for preview
+    return template.replace("[Customer Name]", "Valued Customer"); 
   }, [smsTemplate, selectedCoupon]);
 
   const handleSendPromoSmS = () => {
@@ -92,11 +92,11 @@ export default function CustomerMapPage() {
     toast({
       title: "SMS Preview",
       description: <pre className="whitespace-pre-wrap text-xs">{formattedSmsTemplate}</pre>,
-      duration: 9000, // Longer duration for preview
+      duration: 9000, 
     });
   };
 
-  // Simple component to avoid type error with ToastAction
+  
   const ToastAction = ({ altText, children }: { altText: string, children: React.ReactNode }) => (
     <Button variant="outline" size="sm" asChild>
       <div>{children}</div>
@@ -114,7 +114,7 @@ export default function CustomerMapPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="people map customer types" />
+          <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="customer distribution map" />
         </div>
         <div className="space-y-6">
           <Card>

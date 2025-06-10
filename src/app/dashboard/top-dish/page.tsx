@@ -104,7 +104,7 @@ export default function TopDishPage() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <InteractiveHeatmapPlaceholder title="Dish Popularity by Area" height="500px" dataAiHint="food map items" />
+          <InteractiveHeatmapPlaceholder title="Dish Popularity by Area" height="500px" dataAiHint="dish popularity map" />
         </div>
         <div className="space-y-6"> 
           <Card>
@@ -255,5 +255,4 @@ export default function TopDishPage() {
     </div>
   );
 }
-
     

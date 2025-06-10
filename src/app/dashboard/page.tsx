@@ -30,7 +30,7 @@ export default function DashboardOverviewPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedName = localStorage.getItem('selectedTakeawayName');
-      setDisplayedTakeawayName(storedName || "Speedy Eats"); // Default if nothing selected
+      setDisplayedTakeawayName(storedName || "Tiger Bite Stoke"); // Default if nothing selected
     }
   }, []);
 

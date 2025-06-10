@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Store, MapPin, Search as SearchIcon } from 'lucide-react';
 
 const mockTakeawaysList = [
-  { id: '1', name: 'Speedy Eats', address: '123 Main St, Anytown', description: 'Quick and delicious meals, delivered fast!' },
+  { id: '1', name: 'Tiger Bite Stoke', address: '123 Main St, Anytown', description: 'Quick and delicious meals, delivered fast!' },
   { id: '2', name: 'Curry King', address: '456 Oak Ave, Anytown', description: 'Authentic Indian curries and tandoori delights.' },
   { id: '3', name: 'Pizza Planet', address: '789 Pine Ln, Anytown', description: 'Your galaxy of pizza choices, from classic to gourmet.' },
   { id: '4', name: 'Sushi Central', address: '101 Blossom Rd, Anytown', description: 'Fresh sushi, sashimi, and Japanese specialties.' },

@@ -35,7 +35,7 @@ const defaultTakeawayData = {
 };
 
 const takeawaySpecificData: { [key: string]: typeof defaultTakeawayData } = {
-  '1': defaultTakeawayData, // Speedy Eats (uses default)
+  '1': defaultTakeawayData, // Tiger Bite Stoke (uses default)
   '2': { // Curry King
     topPostcodesRaw: [
       { postcode: "CK1 1CK", orders: 800, revenue: "£12,000" },

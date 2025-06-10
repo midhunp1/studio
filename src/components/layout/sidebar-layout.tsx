@@ -28,7 +28,7 @@ export function DashboardSidebarLayout({ children }: { children: React.ReactNode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedName = localStorage.getItem('selectedTakeawayName');
-      setDisplayedTakeawayName(storedName || "Speedy Eats"); // Default if nothing is stored
+      setDisplayedTakeawayName(storedName || "Tiger Bite Stoke"); // Default if nothing is stored
     }
   }, []);
 

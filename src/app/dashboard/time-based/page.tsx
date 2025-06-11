@@ -1,19 +1,20 @@
 
 "use client"
 
-import React, { useState } from 'react'; // Added useState
+import React, { useState, useEffect, useMemo } from 'react'; // Added useEffect, useMemo
 import { PageHeader } from '@/components/dashboard/page-header';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, LineChart as LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent } from 'lucide-react'; // Added BadgePercent
+import { BarChart, LineChart as LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent, Edit3, X } from 'lucide-react'; 
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line, LineChart as RechartsLineChart, ResponsiveContainer, Legend } from "recharts"
-import { Button } from '@/components/ui/button'; // Added Button
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog'; // Added Dialog components
-import { Input } from '@/components/ui/input'; // Added Input
-import { Label } from '@/components/ui/label'; // Added Label
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Added Select components
-import { useToast } from '@/hooks/use-toast'; // Added useToast
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
 const hourlyData = [
   { hour: "00:00", orders: 10, delivery: 8, collection: 2 },
@@ -49,7 +50,8 @@ const chartConfig = {
 
 const identifiedQuieterPeriod = {
   days: "Monday & Tuesday",
-  timeRange: "09:00 AM - 11:30 AM",
+  startTime: "09:00",
+  endTime: "11:30",
   fullText: "Monday & Tuesday, 09:00 AM - 11:30 AM"
 };
 
@@ -61,6 +63,30 @@ export default function TimeBasedPage() {
   const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
   const [discountValue, setDiscountValue] = useState('');
   const [couponCode, setCouponCode] = useState('');
+
+  // State for editable quieter period
+  const [isEditingPeriod, setIsEditingPeriod] = useState(false);
+  const [customDays, setCustomDays] = useState(identifiedQuieterPeriod.days);
+  const [customStartTime, setCustomStartTime] = useState(identifiedQuieterPeriod.startTime);
+  const [customEndTime, setCustomEndTime] = useState(identifiedQuieterPeriod.endTime);
+
+  const formatTimeForDisplay = (time: string) => {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    const h = parseInt(hours, 10);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const displayHours = h % 12 || 12; // Convert 0 to 12 for AM/PM
+    return `${displayHours}:${minutes} ${ampm}`;
+  };
+
+  const activePeriodDescription = useMemo(() => {
+    if (isEditingPeriod) {
+      const formattedStart = formatTimeForDisplay(customStartTime);
+      const formattedEnd = formatTimeForDisplay(customEndTime);
+      return `${customDays || "Selected days"}, ${formattedStart || "Start Time"} - ${formattedEnd || "End Time"}`;
+    }
+    return identifiedQuieterPeriod.fullText;
+  }, [isEditingPeriod, customDays, customStartTime, customEndTime, identifiedQuieterPeriod.fullText]);
 
   const handleCreateOffer = () => {
     if (!offerName.trim()) {
@@ -77,11 +103,42 @@ export default function TimeBasedPage() {
       return;
     }
 
+    let periodForToast = identifiedQuieterPeriod.fullText;
+    if (isEditingPeriod) {
+        if (!customDays.trim()) {
+            toast({ variant: "destructive", title: "Error", description: "Custom days are required when editing period."});
+            return;
+        }
+        if (!customStartTime) {
+            toast({ variant: "destructive", title: "Error", description: "Custom start time is required."});
+            return;
+        }
+        if (!customEndTime) {
+            toast({ variant: "destructive", title: "Error", description: "Custom end time is required."});
+            return;
+        }
+        // Basic time validation: start before end
+        if (customStartTime >= customEndTime) {
+            toast({ variant: "destructive", title: "Error", description: "Custom start time must be before custom end time."});
+            return;
+        }
+        periodForToast = `${customDays}, ${formatTimeForDisplay(customStartTime)} - ${formatTimeForDisplay(customEndTime)}`;
+    }
+
+
     // Simulation of offer creation
-    console.log("Creating offer:", { offerName, discountType, discountValue: numDiscountValue, couponCode });
+    console.log("Creating offer:", { 
+        offerName, 
+        discountType, 
+        discountValue: numDiscountValue, 
+        couponCode,
+        period: periodForToast,
+        isCustomPeriod: isEditingPeriod,
+        customPeriodDetails: isEditingPeriod ? { days: customDays, startTime: customStartTime, endTime: customEndTime } : null
+    });
     toast({
       title: "Off-Peak Promotion Created (Simulated)",
-      description: `Promotion "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for ${identifiedQuieterPeriod.fullText}.`,
+      description: `Promotion "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for ${periodForToast}.`,
     });
     setIsOfferDialogOpen(false);
     // Reset form fields
@@ -89,7 +146,21 @@ export default function TimeBasedPage() {
     setDiscountType('percentage');
     setDiscountValue('');
     setCouponCode('');
+    setIsEditingPeriod(false); // Reset period editing mode
+    setCustomDays(identifiedQuieterPeriod.days);
+    setCustomStartTime(identifiedQuieterPeriod.startTime);
+    setCustomEndTime(identifiedQuieterPeriod.endTime);
   };
+
+  const toggleEditPeriod = () => {
+    setIsEditingPeriod(!isEditingPeriod);
+    if (!isEditingPeriod) { // When switching to edit mode, populate with current defaults
+        setCustomDays(identifiedQuieterPeriod.days);
+        setCustomStartTime(identifiedQuieterPeriod.startTime);
+        setCustomEndTime(identifiedQuieterPeriod.endTime);
+    }
+  };
+
 
   return (
     <div>
@@ -177,21 +248,77 @@ export default function TimeBasedPage() {
                 <p className="text-sm text-muted-foreground mt-1">Opportunity for targeted promotions to boost orders during off-peak hours.</p>
               </div>
             </div>
-            <Dialog open={isOfferDialogOpen} onOpenChange={setIsOfferDialogOpen}>
+            <Dialog open={isOfferDialogOpen} onOpenChange={(open) => {
+                setIsOfferDialogOpen(open);
+                if (!open) { // Reset editing state if dialog is closed
+                    setIsEditingPeriod(false);
+                    setCustomDays(identifiedQuieterPeriod.days);
+                    setCustomStartTime(identifiedQuieterPeriod.startTime);
+                    setCustomEndTime(identifiedQuieterPeriod.endTime);
+                }
+            }}>
               <DialogTrigger asChild>
                 <Button variant="outline" className="mt-4 w-full sm:w-auto">
                   <BadgePercent className="mr-2 h-4 w-4" /> Create Promotion for Quieter Periods
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[480px]">
+              <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                   <DialogTitle>Create Promotion for Quieter Periods</DialogTitle>
-                  <DialogDescription>
-                    Boost sales during the identified quieter period: <strong className="text-primary">{identifiedQuieterPeriod.fullText}</strong>.
-                    <Clock className="inline h-3.5 w-3.5 ml-1 mr-0.5 align-text-bottom text-primary"/>
-                    If you add a coupon code, customers must use it. Otherwise, the discount can be automatically applied during these hours (simulated).
+                  <DialogDescription className="space-y-1">
+                    <div>
+                        <span>Targeting the period: </span>
+                        <strong className="text-primary">{activePeriodDescription}</strong>
+                        <Button variant="link" size="sm" onClick={toggleEditPeriod} className="ml-2 p-0 h-auto text-xs">
+                          {isEditingPeriod ? <><X className="mr-1 h-3 w-3"/> Use Predefined</> : <><Edit3 className="mr-1 h-3 w-3" /> Edit Period</>}
+                        </Button>
+                    </div>
+                    <div>
+                        If you add a coupon code, customers must use it. Otherwise, the discount can be automatically applied during these hours (simulated).
+                    </div>
                   </DialogDescription>
                 </DialogHeader>
+
+                {isEditingPeriod && (
+                  <div className="my-4 p-4 border rounded-md bg-muted/50 space-y-3">
+                    <h4 className="text-sm font-medium text-foreground">Customize Promotion Period</h4>
+                    <div>
+                      <Label htmlFor="custom-days">Days</Label>
+                      <Input 
+                        id="custom-days" 
+                        placeholder="e.g., Monday, Wednesday" 
+                        value={customDays} 
+                        onChange={(e) => setCustomDays(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="custom-start-time">Start Time</Label>
+                        <Input 
+                          id="custom-start-time" 
+                          type="time" 
+                          value={customStartTime} 
+                          onChange={(e) => setCustomStartTime(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="custom-end-time">End Time</Label>
+                        <Input 
+                          id="custom-end-time" 
+                          type="time" 
+                          value={customEndTime} 
+                          onChange={(e) => setCustomEndTime(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <Separator className={isEditingPeriod ? 'my-4' : 'hidden'} />
+
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
                     <Label htmlFor="offer-name">Promotion Name / Description</Label>

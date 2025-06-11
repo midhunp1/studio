@@ -21,18 +21,16 @@ export function SidebarNavItem({ href, label, icon: Icon, tooltip }: SidebarNavI
 
   return (
     <SidebarMenuItem>
-      <Link href={href}>
-        <SidebarMenuButton
-          asChild
-          isActive={isActive}
-          tooltip={tooltip || label}
-        >
-          <a>
-            <Icon />
-            <span>{label}</span>
-          </a>
-        </SidebarMenuButton>
-      </Link>
+      <SidebarMenuButton
+        asChild
+        isActive={isActive}
+        tooltip={tooltip || label}
+      >
+        <Link href={href}>
+          <Icon />
+          <span>{label}</span>
+        </Link>
+      </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }

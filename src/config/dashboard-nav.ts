@@ -12,6 +12,7 @@ import {
   Replace, // Added for Switch Takeaway
   Settings,
   TrendingUp, // Added for Actions & Revenue Optimisation
+  Network, // Added for Aggregator Intelligence
 } from 'lucide-react';
 
 export interface NavItem {
@@ -77,6 +78,12 @@ export const dashboardNavItems: NavItem[] = [
     group: 'Optimisation',
   },
   {
+    href: '/dashboard/aggregator-intelligence',
+    label: 'Aggregator Intelligence',
+    icon: Network,
+    group: 'Optimisation',
+  },
+  {
     href: '/takeaways', 
     label: 'Switch Takeaway',
     icon: Replace, 
@@ -90,3 +97,4 @@ export const dashboardNavItems: NavItem[] = [
   //   group: 'Configuration',
   // },
 ];
+

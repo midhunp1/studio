@@ -1,18 +1,41 @@
 
 "use client";
 
+import React, { useState, useCallback } from 'react'; // Added useState, useCallback
 import { PageHeader } from '@/components/dashboard/page-header';
 import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Utensils, Star, TrendingUp, TrendingDown, PieChart as PieChartIcon } from 'lucide-react';
+import { Utensils, Star, TrendingUp, TrendingDown, PieChart as PieChartIcon, BadgePercent } from 'lucide-react'; // Added BadgePercent
 import Image from 'next/image';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { PieChart, Pie, Cell, Legend, Sector } from "recharts"; 
-import React from 'react';
+import { Button } from '@/components/ui/button'; // Added Button
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog'; // Added Dialog components
+import { Input } from '@/components/ui/input'; // Added Input
+import { Label } from '@/components/ui/label'; // Added Label
+import { useToast } from '@/hooks/use-toast'; // Added useToast
+
+// Define type for low performing dish for clarity in state
+type LowPerformingDish = {
+  dishName: string;
+  category: string;
+  orders: number;
+  revenue: string;
+  rating: number;
+  reason: string;
+  imageHint: string;
+};
+
 
 export default function TopDishPage() {
+  const { toast } = useToast();
+  const [isDiscountDialogOpen, setIsDiscountDialogOpen] = useState(false);
+  const [selectedDishForDiscount, setSelectedDishForDiscount] = useState<LowPerformingDish | null>(null);
+  const [discountPercentage, setDiscountPercentage] = useState('');
+  const [fixedAmount, setFixedAmount] = useState('');
+
   // Placeholder data
   const topDishesByArea = [
     { postcode: "M1 1AA", dishName: "Pepperoni Pizza", category: "Pizza", orders: 150, revenue: "£1,800", rating: 4.8, imageHint: "pizza pepperoni" },
@@ -23,15 +46,14 @@ export default function TopDishPage() {
     { postcode: "M3 3CC", dishName: "Sushi Platter", category: "Sushi", orders: 70, revenue: "£1,050", rating: 4.9, imageHint: "sushi platter" },
   ];
 
-  const lowPerformingDishes = [
+  const lowPerformingDishes: LowPerformingDish[] = [
     { dishName: "Vegetable Spring Rolls", category: "Starters", orders: 15, revenue: "£45", rating: 3.2, reason: "Low visibility", imageHint: "spring rolls" },
-    { dishName: "Tuna Sandwich", category: "Sandwiches", orders: 8, revenue: "£32", rating: 2.8, reason: " unpopular", imageHint: "tuna sandwich" },
+    { dishName: "Tuna Sandwich", category: "Sandwiches", orders: 8, revenue: "£32", rating: 2.8, reason: "Unpopular", imageHint: "tuna sandwich" },
     { dishName: "Diet Lemonade", category: "Drinks", orders: 25, revenue: "£25", rating: 3.5, reason: "Low margin, often out of stock", imageHint: "lemonade drink" },
     { dishName: "Plain Naan", category: "Sides", orders: 30, revenue: "£60", rating: 4.0, reason: "Usually ordered with curry", imageHint: "naan bread" },
     { dishName: "Mushroom Soup", category: "Soups", orders: 5, revenue: "£20", rating: 2.5, reason: "Seasonal, low demand", imageHint: "mushroom soup" },
   ];
 
-  // Assume a selected area or show overall top dishes
   const selectedArea = "M1 1AA"; 
   const dishesForSelectedArea = topDishesByArea.filter(d => d.postcode === selectedArea);
 
@@ -99,6 +121,62 @@ export default function TopDishPage() {
         )}
       </g>
     );
+  };
+
+  const handleOpenDiscountDialog = (dish: LowPerformingDish) => {
+    setSelectedDishForDiscount(dish);
+    setDiscountPercentage(''); 
+    setFixedAmount('');
+    setIsDiscountDialogOpen(true);
+  };
+
+  const handleApplyDiscount = () => {
+    if (!selectedDishForDiscount) return;
+
+    const percValue = parseFloat(discountPercentage);
+    const fixedVal = parseFloat(fixedAmount);
+
+    if (isNaN(percValue) && isNaN(fixedVal)) {
+      toast({
+        variant: "destructive",
+        title: "Input Error",
+        description: "Please enter a valid percentage or fixed amount.",
+      });
+      return;
+    }
+    if (!isNaN(percValue) && (percValue <= 0 || percValue > 100)) {
+       toast({
+        variant: "destructive",
+        title: "Input Error",
+        description: "Percentage must be between 1 and 100.",
+      });
+      return;
+    }
+     if (!isNaN(fixedVal) && fixedVal <= 0) {
+       toast({
+        variant: "destructive",
+        title: "Input Error",
+        description: "Fixed amount must be greater than 0.",
+      });
+      return;
+    }
+
+
+    let discountAppliedDescription = "";
+    if (!isNaN(percValue)) {
+      discountAppliedDescription = `${percValue}% off`;
+    }
+    if (!isNaN(fixedVal)) {
+      if (discountAppliedDescription) discountAppliedDescription += " or ";
+      discountAppliedDescription += `£${fixedVal.toFixed(2)} off`;
+    }
+    
+    toast({
+      title: "Discount Applied (Simulated)",
+      description: `${discountAppliedDescription} set for ${selectedDishForDiscount.dishName}.`,
+    });
+    setIsDiscountDialogOpen(false);
+    setSelectedDishForDiscount(null);
   };
 
 
@@ -267,7 +345,7 @@ export default function TopDishPage() {
             <TrendingDown className="mr-2 h-5 w-5 text-destructive" />
             Overall Low Performing Dishes
           </CardTitle>
-          <CardDescription>Items with low orders or revenue, potentially needing attention.</CardDescription>
+          <CardDescription>Items with low orders or revenue. You can add discounts directly from this table to help boost their performance.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -279,6 +357,7 @@ export default function TopDishPage() {
                 <TableHead className="text-right">Revenue</TableHead>
                 <TableHead className="text-right">Avg. Rating</TableHead>
                 <TableHead>Reason / Note</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -290,12 +369,72 @@ export default function TopDishPage() {
                   <TableCell className="text-right text-destructive">{dish.revenue}</TableCell>
                   <TableCell className="text-right">{dish.rating}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{dish.reason}</TableCell>
+                  <TableCell>
+                    <Button variant="outline" size="sm" onClick={() => handleOpenDiscountDialog(dish)}>
+                      <BadgePercent className="mr-2 h-4 w-4" /> Add Discount
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={isDiscountDialogOpen} onOpenChange={setIsDiscountDialogOpen}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle>Add Discount for {selectedDishForDiscount?.dishName || "Item"}</DialogTitle>
+            <DialogDescription>
+              Set a percentage or fixed amount discount. This will be active until manually removed (simulation).
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="discount-percentage" className="text-right col-span-1">
+                Percentage
+              </Label>
+              <Input
+                id="discount-percentage"
+                type="number"
+                placeholder="e.g., 10 for 10%"
+                value={discountPercentage}
+                onChange={(e) => setDiscountPercentage(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="relative col-span-4 my-1">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="fixed-amount" className="text-right col-span-1">
+                Fixed Amt (£)
+              </Label>
+              <Input
+                id="fixed-amount"
+                type="number"
+                placeholder="e.g., 2.50 for £2.50 off"
+                value={fixedAmount}
+                onChange={(e) => setFixedAmount(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="button" onClick={handleApplyDiscount}>Apply Discount</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,16 +29,17 @@ import {
   Percent,
   ThumbsUp,
   ThumbsDown,
-  ChevronRight,
   PowerOff,
-  Power,
   Printer,
   Ban,
   UserX,
   TrendingDown as TrendingDownIcon,
-  AlertCircle
+  AlertCircle,
+  Smartphone, // For WhatsApp number
+  Mail, // For Email
+  MessageSquare, // For WhatsApp toggle icon
 } from 'lucide-react';
-import { ChartContainer, ChartTooltip, ChartTooltipContent as ShadCNChartTooltipContent } from "@/components/ui/chart"; // Renamed to avoid conflict
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart"; 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer, TooltipProps } from "recharts";
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -54,6 +55,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
 
 const venueDetails = {
   name: 'Speedy Pizza',
@@ -62,11 +64,11 @@ const venueDetails = {
   aggregators: ['Foodhub', 'JustEat'],
   hygieneRating: 5,
   currentReviewScore: 4.2,
-  reviewScoreTrend: 'up', // 'up', 'down', 'stable'
-  deliveryTime: 45, // minutes
-  areaAverageDeliveryTime: 35, // minutes
-  availability: 85, // percentage
-  competitorAverageAvailability: 92, // percentage
+  reviewScoreTrend: 'up', 
+  deliveryTime: 45, 
+  areaAverageDeliveryTime: 35, 
+  availability: 85, 
+  competitorAverageAvailability: 92, 
 };
 
 const detectedIssues = [
@@ -95,26 +97,35 @@ const upliftChartConfig = {
   postFixRevenue: { label: "Post-Fix Revenue", color: "hsl(var(--primary))" },
   currentOrders: { label: "Current Orders", color: "hsl(var(--muted-foreground))",  type: "line", yAxisId: "orders" },
   postFixOrders: { label: "Post-Fix Orders", color: "hsl(var(--accent))", type: "line", yAxisId: "orders" },
-  currentRating: { label: "Current Rating", color: "hsl(var(--muted-foreground))" }, // Added for tooltip
-  postFixRating: { label: "Post-Fix Rating", color: "hsl(var(--chart-3))" }, // Added for tooltip
+  currentRating: { label: "Current Rating", color: "hsl(var(--muted-foreground))" }, 
+  postFixRating: { label: "Post-Fix Rating", color: "hsl(var(--chart-3))" }, 
 };
 
-interface AlertSettings {
-  avgDeliveryTime: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
-  driverAvailability: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
-  orderQueueCongestion: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
-  prepTimeSpike: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
-  noOrdersInMinutes: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
-  dailySalesDip: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
-  posDisconnected: { enabled: boolean; label: string; description: string; icon: React.ElementType };
-  printerOffline: { enabled: boolean; label: string; description: string; icon: React.ElementType };
+interface AlertSettingDetail {
+  enabled: boolean;
+  threshold?: number;
+  label: string;
+  unit?: string;
+  description: string;
+  icon: React.ElementType;
+  notifyWhatsApp: boolean; 
+  notifyEmail: boolean;    
 }
 
-// Custom Tooltip for Uplift Chart
+interface AlertSettings {
+  avgDeliveryTime: AlertSettingDetail;
+  driverAvailability: AlertSettingDetail;
+  orderQueueCongestion: AlertSettingDetail;
+  prepTimeSpike: AlertSettingDetail;
+  noOrdersInMinutes: AlertSettingDetail;
+  dailySalesDip: AlertSettingDetail;
+  posDisconnected: Omit<AlertSettingDetail, 'threshold' | 'unit'>;
+  printerOffline: Omit<AlertSettingDetail, 'threshold' | 'unit'>;
+}
+
 const CustomUpliftTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
-    const dataPoint = payload[0].payload; // The full data object for this X-axis point
-
+    const dataPoint = payload[0].payload;
     const isDivergent = 
       dataPoint.currentRevenue !== dataPoint.postFixRevenue ||
       dataPoint.currentOrders !== dataPoint.postFixOrders ||
@@ -123,7 +134,6 @@ const CustomUpliftTooltip = ({ active, payload, label }: TooltipProps<number, st
     return (
       <div className="rounded-lg border bg-background p-2.5 shadow-xl text-xs">
         <p className="mb-1.5 font-medium text-foreground">{label}</p>
-        
         {isDivergent ? (
           <>
             <div className="mb-2">
@@ -156,30 +166,34 @@ const CustomUpliftTooltip = ({ active, payload, label }: TooltipProps<number, st
 export default function RevenueActionsPageRevamped() {
   const { toast } = useToast();
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [whatsAppNumberInput, setWhatsAppNumberInput] = useState<string>("+447012345678");
+  const [emailAddressInput, setEmailAddressInput] = useState<string>("manager@example.com");
 
   const [alertSettings, setAlertSettings] = useState<AlertSettings>({
-    avgDeliveryTime: { enabled: true, threshold: 45, label: "Avg. Delivery Time", unit: "min", description: "Alert if avg. delivery time exceeds X mins.", icon: Clock },
-    driverAvailability: { enabled: true, threshold: 2, label: "Driver Availability", unit: "drivers", description: "Alert if available drivers drop below X.", icon: UserX },
-    orderQueueCongestion: { enabled: true, threshold: 10, label: "Order Queue Congestion", unit: "orders", description: "Alert if pending orders exceed X.", icon: Layers },
-    prepTimeSpike: { enabled: true, threshold: 15, label: "Prep Time Spike", unit: "min", description: "Alert if avg. prep time exceeds X mins.", icon: AlertTriangle },
-    noOrdersInMinutes: { enabled: true, threshold: 30, label: "No Orders", unit: "min", description: "Alert if no orders for X mins (during ops hours).", icon: Ban },
-    dailySalesDip: { enabled: true, threshold: 20, label: "Daily Sales Dip", unit: "%", description: "Alert if sales are X% below daily average.", icon: TrendingDownIcon },
-    posDisconnected: { enabled: true, label: "POS Disconnected", description: "Alert if Point of Sale system goes offline.", icon: PowerOff },
-    printerOffline: { enabled: true, label: "Printer Offline", description: "Alert if order printer goes offline.", icon: Printer },
+    avgDeliveryTime: { enabled: true, threshold: 45, label: "Avg. Delivery Time", unit: "min", description: "Alert if avg. delivery time exceeds set minutes.", icon: Clock, notifyWhatsApp: true, notifyEmail: false },
+    driverAvailability: { enabled: true, threshold: 2, label: "Driver Availability", unit: "drivers", description: "Alert if available drivers drop below set number.", icon: UserX, notifyWhatsApp: false, notifyEmail: true },
+    orderQueueCongestion: { enabled: true, threshold: 10, label: "Order Queue Congestion", unit: "orders", description: "Alert if pending orders exceed set count.", icon: Layers, notifyWhatsApp: true, notifyEmail: true },
+    prepTimeSpike: { enabled: true, threshold: 15, label: "Prep Time Spike", unit: "min", description: "Alert if avg. prep time exceeds set minutes.", icon: AlertTriangle, notifyWhatsApp: false, notifyEmail: false },
+    noOrdersInMinutes: { enabled: true, threshold: 30, label: "No Orders", unit: "min", description: "Alert if no orders for set minutes (during ops hours).", icon: Ban, notifyWhatsApp: true, notifyEmail: false },
+    dailySalesDip: { enabled: true, threshold: 20, label: "Daily Sales Dip", unit: "%", description: "Alert if sales are set % below daily average.", icon: TrendingDownIcon, notifyWhatsApp: true, notifyEmail: true },
+    posDisconnected: { enabled: true, label: "POS Disconnected", description: "Alert if Point of Sale system goes offline.", icon: PowerOff, notifyWhatsApp: true, notifyEmail: true },
+    printerOffline: { enabled: true, label: "Printer Offline", description: "Alert if order printer goes offline.", icon: Printer, notifyWhatsApp: true, notifyEmail: false },
   });
 
   const handleAlertSettingChange = (
     key: keyof AlertSettings,
-    field: 'threshold' | 'enabled',
+    field: 'threshold' | 'enabled' | 'notifyWhatsApp' | 'notifyEmail',
     value: number | boolean
   ) => {
     setAlertSettings(prev => {
       const currentSetting = prev[key];
-      const updatedValue = field === 'threshold' ? Number(value) : value;
+      let updatedValue: number | boolean = value;
+
       if (field === 'threshold' && 'threshold' in currentSetting) {
+        updatedValue = Number(value);
         return { ...prev, [key]: { ...currentSetting, threshold: updatedValue as number } };
-      } else if (field === 'enabled') {
-         return { ...prev, [key]: { ...currentSetting, enabled: updatedValue as boolean } };
+      } else if (field === 'enabled' || field === 'notifyWhatsApp' || field === 'notifyEmail') {
+         return { ...prev, [key]: { ...currentSetting, [field]: updatedValue as boolean } };
       }
       return prev; 
     });
@@ -188,11 +202,10 @@ export default function RevenueActionsPageRevamped() {
   const handleSaveAlerts = () => {
     toast({
       title: "Alert Settings Saved (Simulated)",
-      description: "Your auto-alert preferences have been updated.",
+      description: "Your auto-alert and notification preferences have been updated.",
     });
     setIsAlertDialogOpen(false);
   };
-
 
   const handleSmartSuggestionAction = (suggestion: typeof smartSuggestions[0]) => {
     toast({
@@ -361,27 +374,26 @@ export default function RevenueActionsPageRevamped() {
                 <Bell className="mr-2 h-6 w-6 text-primary" />
                 Auto-Alert Configuration
               </CardTitle>
-              <CardDescription>Current settings. Click below to modify.</CardDescription>
+              <CardDescription>Current alert settings. Click below to modify.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <ul className="space-y-2 text-sm max-h-[280px] overflow-y-auto pr-2">
                 {Object.entries(alertSettings).map(([key, setting]) => {
                   const Icon = setting.icon;
+                  const thresholdText = 'threshold' in setting ? `${setting.threshold} ${setting.unit || ''}` : 'Enabled';
                   return (
                     <li key={key} className="flex items-center justify-between p-2 bg-muted/30 rounded-md">
                       <div className="flex items-center">
                         <Icon className={`mr-2 h-4 w-4 ${setting.enabled ? 'text-primary' : 'text-muted-foreground'}`} />
-                        <span className={setting.enabled ? 'text-foreground' : 'text-muted-foreground'}>{setting.label}:</span>
+                        <span className={`${setting.enabled ? 'text-foreground' : 'text-muted-foreground'}`}>{setting.label}:</span>
                       </div>
-                      {'threshold' in setting ? (
-                        <Badge variant={setting.enabled ? 'default' : 'secondary'} className={setting.enabled ? 'bg-primary/20 text-primary-foreground border-primary/30' : ''}>
-                          {setting.enabled ? `${setting.threshold} ${setting.unit}` : 'Disabled'}
+                      <div className="flex items-center gap-1">
+                        {setting.enabled && setting.notifyWhatsApp && <MessageSquare className="h-3 w-3 text-green-500" />}
+                        {setting.enabled && setting.notifyEmail && <Mail className="h-3 w-3 text-blue-500" />}
+                        <Badge variant={setting.enabled ? 'default' : 'secondary'} className={`text-xs ${setting.enabled ? 'bg-primary/20 text-primary-foreground border-primary/30' : ''}`}>
+                          {setting.enabled ? thresholdText : 'Disabled'}
                         </Badge>
-                      ) : (
-                        <Badge variant={setting.enabled ? 'default' : 'secondary'} className={setting.enabled ? 'bg-primary/20 text-primary-foreground border-primary/30' : ''}>
-                          {setting.enabled ? 'Enabled' : 'Disabled'}
-                        </Badge>
-                      )}
+                      </div>
                     </li>
                   );
                 })}
@@ -392,22 +404,56 @@ export default function RevenueActionsPageRevamped() {
                     <Bell className="mr-2 h-4 w-4" /> Configure Alerts
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[525px]">
+                <DialogContent className="sm:max-w-2xl"> {/* Increased width for more content */}
                   <DialogHeader>
                     <DialogTitle className="flex items-center">
                       <Bell className="mr-2 h-5 w-5 text-primary" /> Configure Auto-Alerts
                     </DialogTitle>
                     <DialogDescription>
-                      Set thresholds for critical operational metrics. You'll receive WhatsApp and email notifications
-                      when these limits are breached, helping you take timely action.
+                      Set thresholds and notification channels for critical operational metrics. You'll receive notifications when these limits are breached.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid gap-6 py-4 max-h-[60vh] overflow-y-auto pr-2">
+
+                  <div className="space-y-4 py-4 max-h-[65vh] overflow-y-auto pr-3">
+                    <Card className="p-4 bg-muted/20">
+                      <CardHeader className="p-0 pb-3">
+                        <CardTitle className="text-lg flex items-center">
+                          <Smartphone className="mr-2 h-5 w-5 text-primary" /> Global Notification Channels
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0 space-y-3">
+                        <div>
+                          <Label htmlFor="whatsapp-number" className="text-sm font-medium">WhatsApp Notification Number</Label>
+                          <Input
+                            id="whatsapp-number"
+                            type="tel"
+                            placeholder="+12345678900"
+                            value={whatsAppNumberInput}
+                            onChange={(e) => setWhatsAppNumberInput(e.target.value)}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="email-address" className="text-sm font-medium">Email Notification Address</Label>
+                          <Input
+                            id="email-address"
+                            type="email"
+                            placeholder="alerts@example.com"
+                            value={emailAddressInput}
+                            onChange={(e) => setEmailAddressInput(e.target.value)}
+                            className="mt-1"
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Separator className="my-6" />
+
                     {Object.entries(alertSettings).map(([key, setting]) => {
                       const typedKey = key as keyof AlertSettings;
                       const Icon = setting.icon;
                        return (
-                        <div key={key} className="space-y-3 p-3 border rounded-md">
+                        <div key={key} className="space-y-3 p-4 border rounded-md shadow-sm">
                           <div className="flex items-center justify-between">
                             <Label htmlFor={`${key}-enabled`} className="flex items-center gap-2 text-base font-semibold">
                               <Icon className="h-5 w-5 text-primary" />
@@ -420,8 +466,9 @@ export default function RevenueActionsPageRevamped() {
                             />
                           </div>
                           <p className="text-xs text-muted-foreground pl-7">{setting.description}</p>
+                          
                           {'threshold' in setting && (
-                            <div className={`pl-7 mt-2 ${!setting.enabled ? 'opacity-50' : ''}`}>
+                            <div className={`pl-7 mt-2 ${!setting.enabled ? 'opacity-50 pointer-events-none' : ''}`}>
                               <Label htmlFor={`${key}-threshold`} className="text-xs text-muted-foreground">
                                 Threshold ({setting.unit})
                               </Label>
@@ -435,6 +482,34 @@ export default function RevenueActionsPageRevamped() {
                               />
                             </div>
                           )}
+
+                          <div className={`pl-7 mt-3 space-y-2 ${!setting.enabled ? 'opacity-50 pointer-events-none' : ''}`}>
+                             <p className="text-xs text-muted-foreground">Notify via:</p>
+                             <div className="flex items-center gap-6">
+                                <div className="flex items-center space-x-2">
+                                  <Switch
+                                    id={`${key}-notifyWhatsApp`}
+                                    checked={setting.notifyWhatsApp}
+                                    onCheckedChange={(checked) => handleAlertSettingChange(typedKey, 'notifyWhatsApp', checked)}
+                                    disabled={!setting.enabled}
+                                  />
+                                  <Label htmlFor={`${key}-notifyWhatsApp`} className="flex items-center text-sm">
+                                    <MessageSquare className="mr-1.5 h-4 w-4 text-green-600" /> WhatsApp
+                                  </Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Switch
+                                    id={`${key}-notifyEmail`}
+                                    checked={setting.notifyEmail}
+                                    onCheckedChange={(checked) => handleAlertSettingChange(typedKey, 'notifyEmail', checked)}
+                                    disabled={!setting.enabled}
+                                  />
+                                  <Label htmlFor={`${key}-notifyEmail`} className="flex items-center text-sm">
+                                     <Mail className="mr-1.5 h-4 w-4 text-blue-600" /> Email
+                                  </Label>
+                                </div>
+                              </div>
+                          </div>
                         </div>
                        );
                     })}
@@ -479,3 +554,4 @@ export default function RevenueActionsPageRevamped() {
     </TooltipProvider>
   );
 }
+

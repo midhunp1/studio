@@ -164,10 +164,20 @@ export default function PromoPerformancePage() {
             <CardDescription>Effectiveness of different offers (Top 5 by redemptions).</CardDescription>
           </CardHeader>
           <CardContent>
-             <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <RechartsBarChart data={chartData} accessibilityLayer margin={{ right: 10, left: -10}}>
+             <ChartContainer config={chartConfig} className="h-[350px] w-full">
+                <RechartsBarChart data={chartData} accessibilityLayer margin={{ right: 10, left: -10, bottom: 20 }}>
                   <CartesianGrid vertical={false} />
-                  <XAxis dataKey="promoCode" tickLine={false} tickMargin={10} axisLine={false} className="text-xs" interval={0} />
+                  <XAxis 
+                    dataKey="promoCode" 
+                    tickLine={false} 
+                    tickMargin={5} 
+                    axisLine={false} 
+                    className="text-xs" 
+                    interval={0} 
+                    angle={-30} 
+                    textAnchor="end"
+                    height={50} // Provide space for angled labels
+                  />
                   <YAxis yAxisId="left" orientation="left" className="text-xs" />
                   <YAxis yAxisId="right" orientation="right" dataKey="revenueLiftNumeric" className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />

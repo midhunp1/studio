@@ -32,8 +32,8 @@ const parsePercentage = (percentageString: string): number => {
 };
 
 const chartConfig = {
-  redemptions: { label: "Redemptions", color: "hsl(var(--primary))" },
-  revenueLiftNumeric: { label: "Revenue Lift (£)", color: "hsl(var(--accent))" },
+  redemptions: { label: "Redemptions", color: "hsl(0, 90%, 60%)" }, // Vibrant Red
+  revenueLiftNumeric: { label: "Revenue Lift (£)", color: "hsl(60, 100%, 50%)" }, // Standard Yellow
 } satisfies ChartConfig;
 
 export default function PromoPerformancePage() {
@@ -183,7 +183,7 @@ export default function PromoPerformancePage() {
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend wrapperStyle={{fontSize: "0.75rem"}}/>
                   <Bar yAxisId="left" dataKey="redemptions" fill="var(--color-redemptions)" radius={4} />
-                  <Bar yAxisId="right" dataKey="revenueLiftNumeric" name="Revenue Lift (£)" fill="var(--color-revenueLift)" radius={4} />
+                  <Bar yAxisId="right" dataKey="revenueLiftNumeric" name="Revenue Lift (£)" fill="var(--color-revenueLiftNumeric)" radius={4} />
                 </RechartsBarChart>
               </ChartContainer>
           </CardContent>

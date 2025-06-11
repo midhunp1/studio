@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-import { Checkbox } from "@/components/ui/checkbox"; // Added Checkbox
+import { Checkbox } from "@/components/ui/checkbox";
 
 const hourlyData = [
   { hour: "00:00", orders: 10, delivery: 8, collection: 2 },
@@ -50,10 +50,10 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const identifiedQuieterPeriod = {
-  days: "Monday & Tuesday", // This is a descriptive string
+  days: "Monday & Tuesday", 
   startTime: "09:00",
   endTime: "11:30",
-  fullText: "Monday & Tuesday, 09:00 AM - 11:30 AM" // For display
+  fullText: "Monday & Tuesday, 09:00 AM - 11:30 AM"
 };
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -94,7 +94,7 @@ export default function TimeBasedPage() {
   const handleDayCheckboxChange = (day: string, checked: boolean) => {
     setCustomDays(prevDays => {
       if (checked) {
-        return [...prevDays, day];
+        return [...prevDays, day].sort((a, b) => daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b));
       } else {
         return prevDays.filter(d => d !== day);
       }
@@ -102,9 +102,8 @@ export default function TimeBasedPage() {
   };
   
   const parsePredefinedDays = (daysString: string): string[] => {
-    // Basic parser for "Day1 & Day2" or "Day1, Day2"
     const parsed = daysString.split(/&|,/g).map(d => d.trim()).filter(Boolean);
-    return parsed.filter(day => daysOfWeek.includes(day));
+    return parsed.filter(day => daysOfWeek.includes(day)).sort((a, b) => daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b));
   };
 
 
@@ -176,12 +175,12 @@ export default function TimeBasedPage() {
   const toggleEditPeriod = () => {
     const newEditingState = !isEditingPeriod;
     setIsEditingPeriod(newEditingState);
-    if (newEditingState) { // When switching to edit mode
+    if (newEditingState) { 
         setCustomDays(parsePredefinedDays(identifiedQuieterPeriod.days));
         setCustomStartTime(identifiedQuieterPeriod.startTime);
         setCustomEndTime(identifiedQuieterPeriod.endTime);
-    } else { // When switching back to predefined
-        setCustomDays([]); // Clear custom days
+    } else { 
+        setCustomDays([]); 
         setCustomStartTime(identifiedQuieterPeriod.startTime);
         setCustomEndTime(identifiedQuieterPeriod.endTime);
     }
@@ -307,100 +306,102 @@ export default function TimeBasedPage() {
                     </div>
                   </DialogDescription>
                 </DialogHeader>
-
-                {isEditingPeriod && (
-                  <div className="my-4 p-4 border rounded-md bg-muted/50 space-y-4">
-                    <h4 className="text-sm font-medium text-foreground">Customize Promotion Period</h4>
-                    <div>
-                      <Label className="mb-2 block">Days of the Week</Label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
-                        {daysOfWeek.map(day => (
-                          <div key={day} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`day-${day}`}
-                              checked={customDays.includes(day)}
-                              onCheckedChange={(checked) => handleDayCheckboxChange(day, !!checked)}
-                            />
-                            <Label htmlFor={`day-${day}`} className="font-normal text-sm">{day}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label htmlFor="custom-start-time">Start Time</Label>
-                        <Input 
-                          id="custom-start-time" 
-                          type="time" 
-                          value={customStartTime} 
-                          onChange={(e) => setCustomStartTime(e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="custom-end-time">End Time</Label>
-                        <Input 
-                          id="custom-end-time" 
-                          type="time" 
-                          value={customEndTime} 
-                          onChange={(e) => setCustomEndTime(e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
                 
-                <Separator className={isEditingPeriod ? 'my-4' : 'hidden'} />
+                <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
+                    {isEditingPeriod && (
+                    <div className="p-4 border rounded-md bg-muted/50 space-y-4">
+                        <h4 className="text-sm font-medium text-foreground">Customize Promotion Period</h4>
+                        <div>
+                        <Label className="mb-2 block">Days of the Week</Label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
+                            {daysOfWeek.map(day => (
+                            <div key={day} className="flex items-center space-x-2">
+                                <Checkbox
+                                id={`day-${day}`}
+                                checked={customDays.includes(day)}
+                                onCheckedChange={(checked) => handleDayCheckboxChange(day, !!checked)}
+                                />
+                                <Label htmlFor={`day-${day}`} className="font-normal text-sm">{day}</Label>
+                            </div>
+                            ))}
+                        </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <Label htmlFor="custom-start-time">Start Time</Label>
+                            <Input 
+                            id="custom-start-time" 
+                            type="time" 
+                            value={customStartTime} 
+                            onChange={(e) => setCustomStartTime(e.target.value)}
+                            className="mt-1"
+                            />
+                        </div>
+                        <div>
+                            <Label htmlFor="custom-end-time">End Time</Label>
+                            <Input 
+                            id="custom-end-time" 
+                            type="time" 
+                            value={customEndTime} 
+                            onChange={(e) => setCustomEndTime(e.target.value)}
+                            className="mt-1"
+                            />
+                        </div>
+                        </div>
+                    </div>
+                    )}
+                    
+                    <Separator className={isEditingPeriod ? '' : 'hidden'} />
 
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="offer-name">Promotion Name / Description</Label>
-                    <Input
-                      id="offer-name"
-                      placeholder="e.g., Midweek Morning Boost"
-                      value={offerName}
-                      onChange={(e) => setOfferName(e.target.value)}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="discount-type">Discount Type</Label>
-                    <Select value={discountType} onValueChange={(value) => setDiscountType(value as 'percentage' | 'fixed')}>
-                      <SelectTrigger id="discount-type">
-                        <SelectValue placeholder="Select discount type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="percentage">Percentage Off</SelectItem>
-                        <SelectItem value="fixed">Fixed Amount Off (£)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="discount-value">
-                      Discount Value {discountType === 'percentage' ? '(%)' : '(£)'}
-                    </Label>
-                    <Input
-                      id="discount-value"
-                      type="number"
-                      placeholder={discountType === 'percentage' ? "e.g., 15" : "e.g., 5.00"}
-                      value={discountValue}
-                      onChange={(e) => setDiscountValue(e.target.value)}
-                      min="0"
-                      step={discountType === 'percentage' ? "1" : "0.01"}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="coupon-code">Coupon Code (Optional)</Label>
-                    <Input
-                      id="coupon-code"
-                      placeholder="e.g., QUIETMORNING20"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                    />
-                     <p className="text-xs text-muted-foreground">Leave blank for an automatic timed discount; fill for a redeemable coupon.</p>
-                  </div>
+                    <div className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="offer-name">Promotion Name / Description</Label>
+                            <Input
+                            id="offer-name"
+                            placeholder="e.g., Midweek Morning Boost"
+                            value={offerName}
+                            onChange={(e) => setOfferName(e.target.value)}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="discount-type">Discount Type</Label>
+                            <Select value={discountType} onValueChange={(value) => setDiscountType(value as 'percentage' | 'fixed')}>
+                            <SelectTrigger id="discount-type">
+                                <SelectValue placeholder="Select discount type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="percentage">Percentage Off</SelectItem>
+                                <SelectItem value="fixed">Fixed Amount Off (£)</SelectItem>
+                            </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="discount-value">
+                            Discount Value {discountType === 'percentage' ? '(%)' : '(£)'}
+                            </Label>
+                            <Input
+                            id="discount-value"
+                            type="number"
+                            placeholder={discountType === 'percentage' ? "e.g., 15" : "e.g., 5.00"}
+                            value={discountValue}
+                            onChange={(e) => setDiscountValue(e.target.value)}
+                            min="0"
+                            step={discountType === 'percentage' ? "1" : "0.01"}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="coupon-code">Coupon Code (Optional)</Label>
+                            <Input
+                            id="coupon-code"
+                            placeholder="e.g., QUIETMORNING20"
+                            value={couponCode}
+                            onChange={(e) => setCouponCode(e.target.value)}
+                            />
+                            <p className="text-xs text-muted-foreground">Leave blank for an automatic timed discount; fill for a redeemable coupon.</p>
+                        </div>
+                    </div>
                 </div>
-                <DialogFooter>
+                <DialogFooter className="border-t pt-4">
                   <DialogClose asChild>
                     <Button type="button" variant="outline">Cancel</Button>
                   </DialogClose>

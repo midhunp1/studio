@@ -47,7 +47,11 @@ const chartConfig = {
   value: { label: "Order Value (£)", color: "hsl(var(--accent))" },
 } satisfies ChartConfig;
 
-const identifiedQuieterPeriodText = "Monday and Tuesday mornings";
+const identifiedQuieterPeriod = {
+  days: "Monday & Tuesday",
+  timeRange: "09:00 AM - 11:30 AM",
+  fullText: "Monday & Tuesday, 09:00 AM - 11:30 AM"
+};
 
 
 export default function TimeBasedPage() {
@@ -77,7 +81,7 @@ export default function TimeBasedPage() {
     console.log("Creating offer:", { offerName, discountType, discountValue: numDiscountValue, couponCode });
     toast({
       title: "Off-Peak Promotion Created (Simulated)",
-      description: `Promotion "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for quieter periods.`,
+      description: `Promotion "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for ${identifiedQuieterPeriod.fullText}.`,
     });
     setIsOfferDialogOpen(false);
     // Reset form fields
@@ -169,7 +173,7 @@ export default function TimeBasedPage() {
               <TrendingDown className="h-8 w-8 text-red-500 mr-3 mt-1 flex-shrink-0" />
               <div className="flex-grow">
                 <h4 className="font-semibold">Quieter Periods</h4>
-                <p className="text-sm text-muted-foreground">Lowest activity observed on <span className="text-primary">{identifiedQuieterPeriodText}</span>.</p>
+                <p className="text-sm text-muted-foreground">Lowest activity observed on <span className="text-primary">{identifiedQuieterPeriod.fullText}</span>.</p>
                 <p className="text-sm text-muted-foreground mt-1">Opportunity for targeted promotions to boost orders during off-peak hours.</p>
               </div>
             </div>
@@ -183,7 +187,7 @@ export default function TimeBasedPage() {
                 <DialogHeader>
                   <DialogTitle>Create Promotion for Quieter Periods</DialogTitle>
                   <DialogDescription>
-                    Boost sales during the identified quieter period: <strong className="text-primary">{identifiedQuieterPeriodText}</strong>.
+                    Boost sales during the identified quieter period: <strong className="text-primary">{identifiedQuieterPeriod.fullText}</strong>.
                     <Clock className="inline h-3.5 w-3.5 ml-1 mr-0.5 align-text-bottom text-primary"/>
                     If you add a coupon code, customers must use it. Otherwise, the discount can be automatically applied during these hours (simulated).
                   </DialogDescription>

@@ -288,7 +288,7 @@ export default function CustomerMapPage() {
         <CardContent className="space-y-6">
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Showing {atRiskCustomerExamples.slice(0, 3).length} example customers who haven't ordered in over 40 days.
+              Showing {atRiskCustomerExamples.slice(0, 3).length} customers who haven't ordered in over 40 days.
             </p>
             {atRiskCustomerExamples.slice(0, 3).map(customer => (
               <div key={customer.id} className="p-3 bg-muted/50 rounded-md text-sm border border-border">

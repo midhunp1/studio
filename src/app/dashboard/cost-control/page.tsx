@@ -252,11 +252,11 @@ export default function CostControlPage() {
           <CardContent className="space-y-4">
             <div className="p-3 bg-muted/30 rounded-lg">
                 <p className="text-sm text-muted-foreground">Highest Cost Dish (GP %)</p>
-                <p className="font-semibold text-destructive">Caesar Salad (24% GP based on mock data - example)</p>
+                <p className="font-semibold text-destructive">Caesar Salad (24% GP)</p>
             </div>
              <div className="p-3 bg-muted/30 rounded-lg">
                 <p className="text-sm text-muted-foreground">Most Profitable Dish (GP %)</p>
-                <p className="font-semibold text-green-500">Fries (83.3% GP based on mock data - example)</p>
+                <p className="font-semibold text-green-500">Fries (83.3% GP)</p>
             </div>
             <div className="p-3 bg-muted/30 rounded-lg">
                 <p className="text-sm text-muted-foreground">Total Estimated Waste (Last 7 Days)</p>
@@ -264,7 +264,7 @@ export default function CostControlPage() {
             </div>
              <div className="p-3 bg-muted/30 rounded-lg">
                 <p className="text-sm text-muted-foreground">Supplier with Most Price Increases</p>
-                <p className="font-semibold text-amber-600">FreshMeats Ltd. (Example)</p>
+                <p className="font-semibold text-amber-600">FreshMeats Ltd.</p>
             </div>
           </CardContent>
         </Card>

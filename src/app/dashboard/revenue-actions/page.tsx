@@ -81,7 +81,7 @@ const detectedIssues = [
 const smartSuggestions = [
   { id: 'sugg1', text: 'Add 20% Off Welcome Promo', action: 'CREATE_PROMO', icon: <Megaphone className="mr-2 h-4 w-4" />, priority: 1, impact: 'High revenue potential' },
   { id: 'sugg2', text: 'Extend Friday Evening Hours by 1hr', action: 'EXTEND_HOURS', icon: <Clock className="mr-2 h-4 w-4" />, priority: 2, impact: 'Capture more peak orders' },
-  { id: 'sugg3', text: 'Update Hero Image to High-Res', action: 'UPDATE_IMAGE', icon: <ImageIcon className="mr-2 h-4 w-4" />, priority: 3, impact: 'Improve visual appeal' },
+  { id: 'sugg3', text: 'Update Menu Image to High-Res', action: 'UPDATE_IMAGE', icon: <ImageIcon className="mr-2 h-4 w-4" />, priority: 3, impact: 'Improve visual appeal' },
 ];
 
 const upliftChartData = [
@@ -200,7 +200,6 @@ export default function RevenueActionsPageRevamped() {
   };
 
   const handleSaveAlerts = () => {
-    // In a real app, you'd save whatsAppNumberInput and emailAddressInput too
     toast({
       title: "Alert Settings Saved (Simulated)",
       description: "Your auto-alert and notification preferences have been updated.",

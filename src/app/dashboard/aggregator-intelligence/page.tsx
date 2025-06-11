@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BarChart2, BellRing, Briefcase, ExternalLink, ShieldAlert, Users2, LineChart } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
+import { Button } from '@/components/ui/button'; // Added this line
 
 const platformPerformanceData = [
   { platform: "Foodhub", orders: 120, avgOrderValue: "£22.50", commission: "15%", netRevenue: "£2295" },

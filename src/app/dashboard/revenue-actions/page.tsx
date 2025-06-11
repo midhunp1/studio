@@ -35,9 +35,9 @@ import {
   UserX,
   TrendingDown as TrendingDownIcon,
   AlertCircle,
-  Smartphone, // For WhatsApp number
-  Mail, // For Email
-  MessageSquare, // For WhatsApp toggle icon
+  Smartphone,
+  Mail,
+  MessageSquare,
 } from 'lucide-react';
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart"; 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer, TooltipProps } from "recharts";
@@ -200,6 +200,7 @@ export default function RevenueActionsPageRevamped() {
   };
 
   const handleSaveAlerts = () => {
+    // In a real app, you'd save whatsAppNumberInput and emailAddressInput too
     toast({
       title: "Alert Settings Saved (Simulated)",
       description: "Your auto-alert and notification preferences have been updated.",
@@ -374,10 +375,10 @@ export default function RevenueActionsPageRevamped() {
                 <Bell className="mr-2 h-6 w-6 text-primary" />
                 Auto-Alert Configuration
               </CardTitle>
-              <CardDescription>Current alert settings. Click below to modify.</CardDescription>
+              <CardDescription>Live alert settings. Click below to modify specific alert thresholds and notification channels.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <ul className="space-y-2 text-sm max-h-[280px] overflow-y-auto pr-2">
+              <ul className="space-y-2 text-sm max-h-[180px] overflow-y-auto pr-2 mb-3">
                 {Object.entries(alertSettings).map(([key, setting]) => {
                   const Icon = setting.icon;
                   const thresholdText = 'threshold' in setting ? `${setting.threshold} ${setting.unit || ''}` : 'Enabled';
@@ -400,55 +401,20 @@ export default function RevenueActionsPageRevamped() {
               </ul>
               <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full mt-4">
-                    <Bell className="mr-2 h-4 w-4" /> Configure Alerts
+                  <Button variant="outline" className="w-full">
+                    <Bell className="mr-2 h-4 w-4" /> Configure Alert Details
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-2xl"> {/* Increased width for more content */}
+                <DialogContent className="sm:max-w-2xl">
                   <DialogHeader>
                     <DialogTitle className="flex items-center">
-                      <Bell className="mr-2 h-5 w-5 text-primary" /> Configure Auto-Alerts
+                      <Bell className="mr-2 h-5 w-5 text-primary" /> Configure Alert Details
                     </DialogTitle>
                     <DialogDescription>
-                      Set thresholds and notification channels for critical operational metrics. You'll receive notifications when these limits are breached.
+                      Set thresholds and enable/disable specific alert notifications. Contact details are managed on the main page.
                     </DialogDescription>
                   </DialogHeader>
-
                   <div className="space-y-4 py-4 max-h-[65vh] overflow-y-auto pr-3">
-                    <Card className="p-4 bg-muted/20">
-                      <CardHeader className="p-0 pb-3">
-                        <CardTitle className="text-lg flex items-center">
-                          <Smartphone className="mr-2 h-5 w-5 text-primary" /> Global Notification Channels
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-0 space-y-3">
-                        <div>
-                          <Label htmlFor="whatsapp-number" className="text-sm font-medium">WhatsApp Notification Number</Label>
-                          <Input
-                            id="whatsapp-number"
-                            type="tel"
-                            placeholder="+12345678900"
-                            value={whatsAppNumberInput}
-                            onChange={(e) => setWhatsAppNumberInput(e.target.value)}
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="email-address" className="text-sm font-medium">Email Notification Address</Label>
-                          <Input
-                            id="email-address"
-                            type="email"
-                            placeholder="alerts@example.com"
-                            value={emailAddressInput}
-                            onChange={(e) => setEmailAddressInput(e.target.value)}
-                            className="mt-1"
-                          />
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Separator className="my-6" />
-
                     {Object.entries(alertSettings).map(([key, setting]) => {
                       const typedKey = key as keyof AlertSettings;
                       const Icon = setting.icon;
@@ -522,6 +488,34 @@ export default function RevenueActionsPageRevamped() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+              <Separator className="my-4" />
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="whatsapp-number" className="text-sm font-medium flex items-center mb-1">
+                    <Smartphone className="mr-2 h-4 w-4 text-primary" /> WhatsApp Notification Number
+                  </Label>
+                  <Input
+                    id="whatsapp-number"
+                    type="tel"
+                    placeholder="+12345678900"
+                    value={whatsAppNumberInput}
+                    onChange={(e) => setWhatsAppNumberInput(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email-address" className="text-sm font-medium flex items-center mb-1">
+                    <Mail className="mr-2 h-4 w-4 text-primary" /> Email Notification Address
+                  </Label>
+                  <Input
+                    id="email-address"
+                    type="email"
+                    placeholder="alerts@example.com"
+                    value={emailAddressInput}
+                    onChange={(e) => setEmailAddressInput(e.target.value)}
+                  />
+                </div>
+                 {/* Consider adding a "Save Contacts" button here if needed */}
+              </div>
             </CardContent>
           </Card>
         </div>

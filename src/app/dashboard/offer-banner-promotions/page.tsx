@@ -109,7 +109,7 @@ export default function OfferBannerPromotionsPage() {
             <CardTitle className="font-headline">Generated Banner</CardTitle>
             <CardDescription>Your AI-generated banner will appear here.</CardDescription>
           </CardHeader>
-          <CardContent className="flex items-center justify-center min-h-[250px] border-dashed border-2 border-muted rounded-lg">
+          <CardContent className="flex items-center justify-center min-h-[300px] border-dashed border-2 border-muted rounded-lg">
             {isLoading && (
               <div className="flex flex-col items-center text-muted-foreground">
                 <Loader2 className="h-12 w-12 animate-spin text-primary mb-2" />
@@ -125,7 +125,7 @@ export default function OfferBannerPromotionsPage() {
               </div>
             )}
             {!isLoading && !error && bannerResult?.bannerImageUrl && (
-              <div className="w-full aspect-[3/1] relative overflow-hidden rounded-md">
+              <div className="w-full aspect-[3/1] relative overflow-hidden rounded-md min-h-[180px] sm:min-h-[200px]">
                 <Image
                   src={bannerResult.bannerImageUrl}
                   alt="Generated promotional banner"

@@ -123,7 +123,9 @@ export default function RevenueActionsPageRevamped() {
   ) => {
     setAlertSettings(prev => {
       const currentSetting = prev[key];
-      const updatedSetting = { ...currentSetting, [field]: value };
+      // Type assertion for threshold to ensure it's treated as a number
+      const updatedValue = field === 'threshold' ? Number(value) : value;
+      const updatedSetting = { ...currentSetting, [field]: updatedValue };
       return {
         ...prev,
         [key]: updatedSetting,
@@ -158,7 +160,7 @@ export default function RevenueActionsPageRevamped() {
     <TooltipProvider>
       <div>
         <PageHeader
-          title="Actions & Revenue Optimisation"
+          title="Actions &amp; Revenue Optimisation"
           description="Identify underperforming venues and prioritize actions for maximum revenue impact."
         />
 
@@ -271,73 +273,64 @@ export default function RevenueActionsPageRevamped() {
           </CardContent>
         </Card>
 
-        {/* Simulated Uplift Module Card */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="font-headline flex items-center">
-              <BarChartHorizontalBig className="mr-2 h-6 w-6 text-primary" />
-              Simulated Uplift
-            </CardTitle>
-            <CardDescription>Projected performance improvements after implementing top suggestions.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-4 text-center">
-              <p className="text-2xl font-bold text-green-500">+£360 potential weekly revenue uplift</p>
-              <p className="text-sm text-muted-foreground">(Based on projected +60 orders/week and +0.3 rating)</p>
-            </div>
-            <ChartContainer config={upliftChartConfig} className="h-[350px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={upliftChartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} />
-                  <YAxis yAxisId="left" stroke="hsl(var(--primary))" tickFormatter={(value) => `£${value/1000}k`} tick={{fontSize: 12}} domain={['auto', 'auto']}/>
-                  <YAxis yAxisId="orders" orientation="right" stroke="hsl(var(--accent))" tickFormatter={(value) => `${value}`}  tick={{fontSize: 12}} domain={['auto', 'auto']} />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        formatter={(value, name, props) => {
-                          if (name === "currentRevenue" || name === "postFixRevenue") return `£${(value as number).toLocaleString()}`;
-                          if (name === "currentRating" || name === "postFixRating") return `${value} ★`;
-                          return `${value} orders`;
-                        }}
-                      />
-                    }
-                  />
-                  <Legend />
-                  <Line yAxisId="left" type="monotone" dataKey="currentRevenue" stroke="var(--color-currentRevenue)" strokeDasharray="5 5" activeDot={{ r: 6 }} />
-                  <Line yAxisId="left" type="monotone" dataKey="postFixRevenue" stroke="var(--color-postFixRevenue)" strokeWidth={2} activeDot={{ r: 8 }} />
-                  <Line yAxisId="orders" type="monotone" dataKey="currentOrders" strokeDasharray="5 5" stroke="var(--color-currentOrders)" activeDot={{ r: 6 }} />
-                  <Line yAxisId="orders" type="monotone" dataKey="postFixOrders" strokeWidth={2} stroke="var(--color-postFixOrders)" activeDot={{ r: 8 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-        
-        {/* Quick Actions Card */}
-        <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Simulated Uplift Module Card */}
+          <Card className="lg:col-span-2">
             <CardHeader>
-                <CardTitle className="font-headline flex items-center">
-                    <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
-                    Quick Actions
-                </CardTitle>
-                <CardDescription>Central hub for operational tasks related to this venue.</CardDescription>
+              <CardTitle className="font-headline flex items-center">
+                <BarChartHorizontalBig className="mr-2 h-6 w-6 text-primary" />
+                Simulated Uplift
+              </CardTitle>
+              <CardDescription>Projected performance improvements after implementing top suggestions.</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                <Button variant="outline" onClick={() => handleQuickAction('Apply Top Fix')} className="flex-col h-auto py-3">
-                    <ThumbsUp className="mb-1 h-5 w-5" /> Apply Top Fix
-                </Button>
-                <Button variant="outline" onClick={() => handleQuickAction('Send to Ops Team')} className="flex-col h-auto py-3">
-                    <Send className="mb-1 h-5 w-5" /> Send to Ops
-                </Button>
-                <Button variant="outline" onClick={() => handleQuickAction('Export Issue Report')} className="flex-col h-auto py-3">
-                    <Download className="mb-1 h-5 w-5" /> Export Report
-                </Button>
-                
-                <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
+            <CardContent>
+              <div className="mb-4 text-center">
+                <p className="text-2xl font-bold text-green-500">+£360 potential weekly revenue uplift</p>
+                <p className="text-sm text-muted-foreground">(Based on projected +60 orders/week and +0.3 rating)</p>
+              </div>
+              <ChartContainer config={upliftChartConfig} className="h-[350px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={upliftChartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} />
+                    <YAxis yAxisId="left" stroke="hsl(var(--primary))" tickFormatter={(value) => `£${value/1000}k`} tick={{fontSize: 12}} domain={['auto', 'auto']}/>
+                    <YAxis yAxisId="orders" orientation="right" stroke="hsl(var(--accent))" tickFormatter={(value) => `${value}`}  tick={{fontSize: 12}} domain={['auto', 'auto']} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          formatter={(value, name, props) => {
+                            if (name === "currentRevenue" || name === "postFixRevenue") return `£${(value as number).toLocaleString()}`;
+                            if (name === "currentRating" || name === "postFixRating") return `${value} ★`;
+                            return `${value} orders`;
+                          }}
+                        />
+                      }
+                    />
+                    <Legend />
+                    <Line yAxisId="left" type="monotone" dataKey="currentRevenue" stroke="var(--color-currentRevenue)" strokeDasharray="5 5" activeDot={{ r: 6 }} />
+                    <Line yAxisId="left" type="monotone" dataKey="postFixRevenue" stroke="var(--color-postFixRevenue)" strokeWidth={2} activeDot={{ r: 8 }} />
+                    <Line yAxisId="orders" type="monotone" dataKey="currentOrders" strokeDasharray="5 5" stroke="var(--color-currentOrders)" activeDot={{ r: 6 }} />
+                    <Line yAxisId="orders" type="monotone" dataKey="postFixOrders" strokeWidth={2} stroke="var(--color-postFixOrders)" activeDot={{ r: 8 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Auto-Alert Configuration Card */}
+          <Card className="lg:col-span-1">
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center">
+                <Bell className="mr-2 h-6 w-6 text-primary" />
+                Auto-Alert Configuration
+              </CardTitle>
+              <CardDescription>Manage your automated operational notifications. You'll receive WhatsApp and email alerts.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center h-full">
+               <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="flex-col h-auto py-3">
-                      <Bell className="mb-1 h-5 w-5" /> Set Auto Alert
+                    <Button variant="outline" className="w-full py-6 text-base">
+                      <Bell className="mr-2 h-5 w-5" /> Configure Alerts
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[525px]">
@@ -494,7 +487,29 @@ export default function RevenueActionsPageRevamped() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Quick Actions Card */}
+        <Card>
+            <CardHeader>
+                <CardTitle className="font-headline flex items-center">
+                    <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
+                    Quick Actions
+                </CardTitle>
+                <CardDescription>Central hub for operational tasks related to this venue.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <Button variant="outline" onClick={() => handleQuickAction('Apply Top Fix')} className="flex-col h-auto py-3">
+                    <ThumbsUp className="mb-1 h-5 w-5" /> Apply Top Fix
+                </Button>
+                <Button variant="outline" onClick={() => handleQuickAction('Send to Ops Team')} className="flex-col h-auto py-3">
+                    <Send className="mb-1 h-5 w-5" /> Send to Ops
+                </Button>
+                <Button variant="outline" onClick={() => handleQuickAction('Export Issue Report')} className="flex-col h-auto py-3">
+                    <Download className="mb-1 h-5 w-5" /> Export Report
+                </Button>
                 <Button variant="outline" onClick={() => handleQuickAction('Log Fix Completion')} className="flex-col h-auto py-3">
                     <ClipboardCheck className="mb-1 h-5 w-5" /> Log Fix
                 </Button>
@@ -505,3 +520,4 @@ export default function RevenueActionsPageRevamped() {
     </TooltipProvider>
   );
 }
+

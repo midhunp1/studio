@@ -19,9 +19,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Switch } from '@/components/ui/switch';
 
 
 const customerDataByArea = [
@@ -44,10 +45,17 @@ const chartConfig = {
   repeatCustomers: { label: "Repeat Customers", color: "hsl(var(--chart-2))" }, 
 } satisfies ChartConfig;
 
-const initialCoupons = [
-  { id: "SAVE15", name: "15% Off Next Order", code: "SAVE15NOW" },
-  { id: "FREEFRIES", name: "Free Fries with Purchase", code: "GETFRIES" },
-  { id: "20OFF50", name: "£20 Off Orders over £50", code: "BIGSAVE20" },
+type Coupon = {
+  id: string;
+  name: string;
+  code: string;
+  oneTimeUsage?: boolean;
+};
+
+const initialCoupons: Coupon[] = [
+  { id: "SAVE15", name: "15% Off Next Order", code: "SAVE15NOW", oneTimeUsage: false },
+  { id: "FREEFRIES", name: "Free Fries with Purchase", code: "GETFRIES", oneTimeUsage: true },
+  { id: "20OFF50", name: "£20 Off Orders over £50", code: "BIGSAVE20", oneTimeUsage: false },
 ];
 
 const smsTemplates = [
@@ -76,20 +84,21 @@ const customerSegmentData = {
 const newCouponSchema = z.object({
   name: z.string().min(3, "Coupon name must be at least 3 characters.").max(50, "Coupon name too long."),
   code: z.string().min(3, "Code must be at least 3 characters.").max(20, "Code too long.").regex(/^[A-Z0-9]+$/, "Code must be uppercase alphanumeric (e.g., SAVE10)."),
+  oneTimeUsage: z.boolean().optional().default(false),
 });
 type NewCouponFormValues = z.infer<typeof newCouponSchema>;
 
 
 export default function CustomerMapPage() {
   const { toast } = useToast();
-  const [coupons, setCoupons] = useState(initialCoupons);
+  const [coupons, setCoupons] = useState<Coupon[]>(initialCoupons);
   const [selectedCouponId, setSelectedCouponId] = useState<string>(coupons[0]?.id || "");
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(smsTemplates[0]?.id || "");
   const [isCreateCouponDialogOpen, setIsCreateCouponDialogOpen] = useState(false);
 
   const newCouponForm = useForm<NewCouponFormValues>({
     resolver: zodResolver(newCouponSchema),
-    defaultValues: { name: "", code: "" },
+    defaultValues: { name: "", code: "", oneTimeUsage: false },
   });
 
   const selectedCoupon = useMemo(() => {
@@ -123,16 +132,17 @@ export default function CustomerMapPage() {
   };
 
   const onSubmitNewCoupon: SubmitHandler<NewCouponFormValues> = (data) => {
-    const newCoupon = {
+    const newCoupon: Coupon = {
       id: data.code, 
       name: data.name,
       code: data.code,
+      oneTimeUsage: data.oneTimeUsage,
     };
     setCoupons(prevCoupons => [...prevCoupons, newCoupon]);
     setSelectedCouponId(newCoupon.id); 
     toast({
       title: "Coupon Created!",
-      description: `Coupon "${newCoupon.name}" with code "${newCoupon.code}" has been added.`,
+      description: `Coupon "${newCoupon.name}" (Code: ${newCoupon.code}) ${newCoupon.oneTimeUsage ? 'is one-time use' : 'is multi-use'}.`,
     });
     newCouponForm.reset();
     setIsCreateCouponDialogOpen(false);
@@ -366,7 +376,7 @@ export default function CustomerMapPage() {
                     <SelectContent>
                       {coupons.map(coupon => (
                         <SelectItem key={coupon.id} value={coupon.id}>
-                          {coupon.name} ({coupon.code})
+                          {coupon.name} ({coupon.code}) {coupon.oneTimeUsage ? '(One-time)' : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -411,6 +421,26 @@ export default function CustomerMapPage() {
                               </FormControl>
                                <FormDescription>Must be uppercase alphanumeric.</FormDescription>
                               <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={newCouponForm.control}
+                          name="oneTimeUsage"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                              <div className="space-y-0.5">
+                                <FormLabel>One-Time Usage</FormLabel>
+                                <FormDescription>
+                                  If enabled, this coupon can only be used once per customer.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
                             </FormItem>
                           )}
                         />

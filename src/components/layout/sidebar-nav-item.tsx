@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -20,7 +21,7 @@ export function SidebarNavItem({ href, label, icon: Icon, tooltip }: SidebarNavI
 
   return (
     <SidebarMenuItem>
-      <Link href={href} passHref legacyBehavior>
+      <Link href={href}>
         <SidebarMenuButton
           asChild
           isActive={isActive}

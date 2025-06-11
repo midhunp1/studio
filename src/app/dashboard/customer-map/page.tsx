@@ -10,7 +10,7 @@ import { PageHeader } from '@/components/dashboard/page-header';
 import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, Repeat, UserMinus, Ticket, Send, Edit3, Eye, ShoppingBag, TrendingUp as TrendingUpIcon, CalendarDays, DollarSign } from 'lucide-react';
+import { Users, UserPlus, Repeat, UserMinus, Ticket, Send, Edit3, Eye, ShoppingBag, TrendingUp as TrendingUpIcon, CalendarDays, DollarSign, MessageSquareText } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
 import { Button } from '@/components/ui/button';
@@ -48,6 +48,12 @@ const initialCoupons = [
   { id: "20OFF50", name: "£20 Off Orders over £50", code: "BIGSAVE20" },
 ];
 
+const smsTemplates = [
+  { id: "miss_you_coupon", name: "We Miss You (Coupon)", content: "Hi [Customer Name]! We've missed you at OrderLens. Enjoy {couponDescription} (Code: {couponCode}) on your next order!" },
+  { id: "new_offer_alert", name: "New Offer Alert", content: "Great news, [Customer Name]! OrderLens has a new offer: {couponDescription} (Code: {couponCode}). Don't miss out!" },
+  { id: "come_back_special", name: "Come Back Special", content: "Hey [Customer Name], it's been a while! Treat yourself with {couponDescription} using code {couponCode} at OrderLens." },
+];
+
 const customerSegmentData = {
   newCustomers: {
     count: customerDataByArea.reduce((sum, area) => sum + area.newCustomers, 0),
@@ -76,9 +82,7 @@ export default function CustomerMapPage() {
   const { toast } = useToast();
   const [coupons, setCoupons] = useState(initialCoupons);
   const [selectedCouponId, setSelectedCouponId] = useState<string>(coupons[0]?.id || "");
-  const [smsTemplate, setSmsTemplate] = useState<string>(
-    "Hi [Customer Name]! We've missed you. Enjoy {couponDescription} (Code: {couponCode}) on your next order with OrderLens!"
-  );
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(smsTemplates[0]?.id || "");
   const [isCreateCouponDialogOpen, setIsCreateCouponDialogOpen] = useState(false);
 
   const newCouponForm = useForm<NewCouponFormValues>({
@@ -91,16 +95,21 @@ export default function CustomerMapPage() {
   }, [selectedCouponId, coupons]);
 
   const formattedSmsTemplate = useMemo(() => {
-    let template = smsTemplate;
-    if (selectedCoupon) {
-      template = template.replace("{couponDescription}", selectedCoupon.name);
-      template = template.replace("{couponCode}", selectedCoupon.code);
-    } else {
-      template = template.replace("{couponDescription}", "a special discount");
-      template = template.replace("{couponCode}", "SPECIALOFFER");
+    const currentTemplate = smsTemplates.find(t => t.id === selectedTemplateId);
+    if (!currentTemplate) {
+      return "Select a template and coupon to see the preview.";
     }
-    return template.replace("[Customer Name]", "Valued Customer"); 
-  }, [smsTemplate, selectedCoupon]);
+
+    let templateContent = currentTemplate.content;
+    if (selectedCoupon) {
+      templateContent = templateContent.replace(/{couponDescription}/g, selectedCoupon.name);
+      templateContent = templateContent.replace(/{couponCode}/g, selectedCoupon.code);
+    } else {
+      templateContent = templateContent.replace(/{couponDescription}/g, "a special discount");
+      templateContent = templateContent.replace(/{couponCode}/g, "SPECIALOFFER");
+    }
+    return templateContent.replace(/\[Customer Name\]/g, "Valued Customer"); 
+  }, [selectedTemplateId, selectedCoupon, smsTemplates]);
 
   const handleSendPromoSmS = () => {
     const couponDescription = selectedCoupon ? selectedCoupon.name : "a special discount";
@@ -113,12 +122,12 @@ export default function CustomerMapPage() {
 
   const onSubmitNewCoupon: SubmitHandler<NewCouponFormValues> = (data) => {
     const newCoupon = {
-      id: data.code, // Using code as ID, ensure it's unique in a real app
+      id: data.code, 
       name: data.name,
       code: data.code,
     };
     setCoupons(prevCoupons => [...prevCoupons, newCoupon]);
-    setSelectedCouponId(newCoupon.id); // Select the new coupon
+    setSelectedCouponId(newCoupon.id); 
     toast({
       title: "Coupon Created!",
       description: `Coupon "${newCoupon.name}" with code "${newCoupon.code}" has been added.`,
@@ -225,7 +234,7 @@ export default function CustomerMapPage() {
           </Card>
         </div>
 
-        <div className="space-y-6"> {/* Right Column */}
+        <div className="space-y-6"> 
           <Card>
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -268,13 +277,13 @@ export default function CustomerMapPage() {
         </div>
       </div>
       
-      <Card className="mt-6"> {/* Engage Lapsed Customers Card - Full width */}
+      <Card className="mt-6"> 
         <CardHeader>
           <CardTitle className="font-headline flex items-center">
             <UserMinus className="mr-2 h-5 w-5 text-destructive" />
             Engage Lapsed Customers
           </CardTitle>
-          <CardDescription>Identify and re-engage customers who haven't ordered recently with targeted promotions.</CardDescription>
+          <CardDescription>Identify and re-engage customers who haven't ordered recently with targeted promotions. Select an SMS template and coupon below.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-3">
@@ -297,8 +306,27 @@ export default function CustomerMapPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border pt-6">
             <div className="space-y-4">
+               <div>
+                <Label htmlFor="sms-template-select" className="font-semibold flex items-center">
+                  <MessageSquareText className="mr-2 h-4 w-4 text-primary" /> Choose SMS Template
+                </Label>
+                <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
+                  <SelectTrigger id="sms-template-select" className="mt-1">
+                    <SelectValue placeholder="Select an SMS template" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {smsTemplates.map(template => (
+                      <SelectItem key={template.id} value={template.id}>
+                        {template.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div>
-                <Label htmlFor="coupon-select" className="font-semibold">Choose Coupon</Label>
+                <Label htmlFor="coupon-select" className="font-semibold flex items-center">
+                  <Ticket className="mr-2 h-4 w-4 text-primary" /> Choose Coupon
+                </Label>
                 <Select value={selectedCouponId} onValueChange={setSelectedCouponId}>
                   <SelectTrigger id="coupon-select" className="mt-1">
                     <SelectValue placeholder="Select a coupon" />
@@ -370,12 +398,12 @@ export default function CustomerMapPage() {
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="sms-template-preview" className="font-semibold">SMS Template</Label>
+                <Label htmlFor="sms-template-preview" className="font-semibold">SMS Preview</Label>
                 <Textarea
                   id="sms-template-preview"
                   value={formattedSmsTemplate}
                   readOnly
-                  rows={4}
+                  rows={5}
                   className="mt-1 bg-muted/30 text-sm"
                 />
               </div>

@@ -20,6 +20,8 @@ const customerDataByArea = [
   { postcode: "M2 2BB", newCustomers: 200, repeatCustomers: 250, churnRate: "8%" },
   { postcode: "M3 3CC", newCustomers: 100, repeatCustomers: 180, churnRate: "12%" },
   { postcode: "M4 4DD", newCustomers: 250, repeatCustomers: 150, churnRate: "15%" },
+  { postcode: "M5 5EE", newCustomers: 120, repeatCustomers: 90, churnRate: "18%" }, // New entry 1
+  { postcode: "M6 6FF", newCustomers: 80, repeatCustomers: 220, churnRate: "7%" },  // New entry 2
 ];
 
 const atRiskCustomerExamples = [
@@ -27,6 +29,8 @@ const atRiskCustomerExamples = [
   { id: "cust2", postcode: "M3 3CC", name: "Jane S.", lastOrderDaysAgo: 62, phonePreview: "******1234" },
   { id: "cust3", postcode: "M4 4DD", name: "Alex J.", lastOrderDaysAgo: 95, phonePreview: "******5678" },
   { id: "cust4", postcode: "M2 2BB", name: "Sarah B.", lastOrderDaysAgo: 70, phonePreview: "******3456" },
+  { id: "cust5", postcode: "M5 5EE", name: "Mike L.", lastOrderDaysAgo: 50, phonePreview: "******9012" }, // Optional: related at-risk customer
+  { id: "cust6", postcode: "M6 6FF", name: "Laura P.", lastOrderDaysAgo: 80, phonePreview: "******2345" }, // Optional: related at-risk customer
 ];
 
 const chartConfig = {
@@ -239,7 +243,7 @@ export default function CustomerMapPage() {
         </div>
       </div>
 
-      <Card className="mt-6"> {/* Engage Lapsed Customers Card - Moved to full width */}
+      <Card className="mt-6"> {/* Engage Lapsed Customers Card - Full width */}
         <CardHeader>
           <CardTitle className="font-headline flex items-center">
             <UserMinus className="mr-2 h-5 w-5 text-destructive" />

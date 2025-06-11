@@ -74,27 +74,27 @@ export default function AggregatorIntelligencePage() {
                     axisLine={false}
                     width={80}
                     className="text-xs"
-                    id="platformYAxis" // Explicit ID for Y-axis
+                    id="platformYAxis" // Y-Axis ID for categories
                   />
-                  {/* X-axis for Orders */}
-                  <XAxis type="number" id="ordersXAxis" /> 
-                  {/* X-axis for Net Revenue, positioned at the top */}
+                  {/* X-axis for Orders values */}
+                  <XAxis type="number" id="ordersXAxis" />
+                  {/* X-axis for Net Revenue values, positioned at the top */}
                   <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Bar 
-                    dataKey="orders" 
-                    xAxisId="ordersXAxis" // Link to orders X-axis
-                    yAxisId="platformYAxis" // Link to platform Y-axis
-                    fill="var(--color-orders)" 
-                    radius={[0, 4, 4, 0]} 
+                  <Bar
+                    dataKey="orders"
+                    xAxisId="ordersXAxis" // Links to the 'orders' X-axis
+                    yAxisId="platformYAxis" // Links to the 'platform' Y-axis
+                    fill="var(--color-orders)"
+                    radius={[0, 4, 4, 0]}
                   />
-                  <Bar 
-                    dataKey="netRevenue" 
-                    xAxisId="revenueXAxis" // Link to revenue X-axis
-                    yAxisId="platformYAxis" // Link to platform Y-axis
-                    fill="var(--color-netRevenue)" 
-                    radius={[0, 4, 4, 0]} 
+                  <Bar
+                    dataKey="netRevenue"
+                    xAxisId="revenueXAxis" // Links to the 'revenue' X-axis
+                    yAxisId="platformYAxis" // Links to the 'platform' Y-axis
+                    fill="var(--color-netRevenue)"
+                    radius={[0, 4, 4, 0]}
                   />
                 </RechartsBarChart>
               </ChartContainer>
@@ -188,3 +188,5 @@ export default function AggregatorIntelligencePage() {
     </div>
   );
 }
+
+    

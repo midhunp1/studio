@@ -330,7 +330,7 @@ export default function TopDishPage() {
                   <TableCell className="font-medium">{dish.dishName}</TableCell>
                   <TableCell>{dish.category}</TableCell>
                   <TableCell className="text-right">{dish.orders}</TableCell>
-                  <TableCell className="text-right text-primary font-semibold">{dish.revenue}</TableCell>
+                  <TableCell className="text-right text-green-500 font-semibold">{dish.revenue}</TableCell>
                   <TableCell className="text-right">{dish.rating}</TableCell>
                 </TableRow>
               ))}
@@ -366,7 +366,7 @@ export default function TopDishPage() {
                   <TableCell className="font-medium">{dish.dishName}</TableCell>
                   <TableCell>{dish.category}</TableCell>
                   <TableCell className="text-right">{dish.orders}</TableCell>
-                  <TableCell className="text-right text-destructive">{dish.revenue}</TableCell>
+                  <TableCell className="text-right text-destructive font-bold">{dish.revenue}</TableCell>
                   <TableCell className="text-right">{dish.rating}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{dish.reason}</TableCell>
                   <TableCell>

@@ -74,25 +74,23 @@ export default function AggregatorIntelligencePage() {
                     axisLine={false}
                     width={80}
                     className="text-xs"
-                    id="platformYAxis" // Y-Axis ID for categories
+                    id="platformYAxis" 
                   />
-                  {/* X-axis for Orders values */}
                   <XAxis type="number" id="ordersXAxis" />
-                  {/* X-axis for Net Revenue values, positioned at the top */}
                   <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
                   <Bar
                     dataKey="orders"
-                    xAxisId="ordersXAxis" // Links to the 'orders' X-axis
-                    yAxisId="platformYAxis" // Links to the 'platform' Y-axis
+                    xAxisId="ordersXAxis" 
+                    yAxisId="platformYAxis" 
                     fill="var(--color-orders)"
                     radius={[0, 4, 4, 0]}
                   />
                   <Bar
                     dataKey="netRevenue"
-                    xAxisId="revenueXAxis" // Links to the 'revenue' X-axis
-                    yAxisId="platformYAxis" // Links to the 'platform' Y-axis
+                    xAxisId="revenueXAxis" 
+                    yAxisId="platformYAxis" 
                     fill="var(--color-netRevenue)"
                     radius={[0, 4, 4, 0]}
                   />
@@ -188,5 +186,3 @@ export default function AggregatorIntelligencePage() {
     </div>
   );
 }
-
-    

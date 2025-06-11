@@ -74,8 +74,8 @@ export default function TimeBasedPage() {
     // Simulation of offer creation
     console.log("Creating offer:", { offerName, discountType, discountValue: numDiscountValue, couponCode });
     toast({
-      title: "Off-Peak Offer Created (Simulated)",
-      description: `Offer "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for quieter periods.`,
+      title: "Off-Peak Promotion Created (Simulated)",
+      description: `Promotion "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for quieter periods.`,
     });
     setIsOfferDialogOpen(false);
     // Reset form fields
@@ -174,22 +174,23 @@ export default function TimeBasedPage() {
             <Dialog open={isOfferDialogOpen} onOpenChange={setIsOfferDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" className="mt-4 w-full sm:w-auto">
-                  <BadgePercent className="mr-2 h-4 w-4" /> Create Off-Peak Offer
+                  <BadgePercent className="mr-2 h-4 w-4" /> Create Promotion for Quieter Periods
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
-                  <DialogTitle>Create Off-Peak Offer</DialogTitle>
+                  <DialogTitle>Create Promotion for Quieter Periods</DialogTitle>
                   <DialogDescription>
-                    Define a special discount or coupon for quieter business periods.
+                    Boost sales during identified quieter times (e.g., <Clock className="inline h-3.5 w-3.5 mr-0.5 align-text-bottom"/>Monday and Tuesday mornings).
+                    If you add a coupon code, customers must use it. Otherwise, the discount can be automatically applied during these hours (simulated).
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="offer-name">Offer Name / Description</Label>
+                    <Label htmlFor="offer-name">Promotion Name / Description</Label>
                     <Input
                       id="offer-name"
-                      placeholder="e.g., Weekday Lunch Special"
+                      placeholder="e.g., Midweek Morning Boost"
                       value={offerName}
                       onChange={(e) => setOfferName(e.target.value)}
                     />
@@ -224,17 +225,18 @@ export default function TimeBasedPage() {
                     <Label htmlFor="coupon-code">Coupon Code (Optional)</Label>
                     <Input
                       id="coupon-code"
-                      placeholder="e.g., LUNCH20"
+                      placeholder="e.g., QUIETMORNING20"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value)}
                     />
+                     <p className="text-xs text-muted-foreground">Leave blank for an automatic timed discount; fill for a redeemable coupon.</p>
                   </div>
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button type="button" variant="outline">Cancel</Button>
                   </DialogClose>
-                  <Button type="button" onClick={handleCreateOffer}>Create Offer</Button>
+                  <Button type="button" onClick={handleCreateOffer}>Create Promotion</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

@@ -74,14 +74,28 @@ export default function AggregatorIntelligencePage() {
                     axisLine={false}
                     width={80}
                     className="text-xs"
-                    id="platformYAxis"
+                    id="platformYAxis" // Explicit ID for Y-axis
                   />
-                  <XAxis type="number" id="ordersXAxis" />
+                  {/* X-axis for Orders */}
+                  <XAxis type="number" id="ordersXAxis" /> 
+                  {/* X-axis for Net Revenue, positioned at the top */}
                   <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Bar dataKey="orders" xAxisId="ordersXAxis" yAxisId="platformYAxis" fill="var(--color-orders)" radius={[0, 4, 4, 0]} />
-                  <Bar dataKey="netRevenue" xAxisId="revenueXAxis" yAxisId="platformYAxis" fill="var(--color-netRevenue)" radius={[0, 4, 4, 0]} />
+                  <Bar 
+                    dataKey="orders" 
+                    xAxisId="ordersXAxis" // Link to orders X-axis
+                    yAxisId="platformYAxis" // Link to platform Y-axis
+                    fill="var(--color-orders)" 
+                    radius={[0, 4, 4, 0]} 
+                  />
+                  <Bar 
+                    dataKey="netRevenue" 
+                    xAxisId="revenueXAxis" // Link to revenue X-axis
+                    yAxisId="platformYAxis" // Link to platform Y-axis
+                    fill="var(--color-netRevenue)" 
+                    radius={[0, 4, 4, 0]} 
+                  />
                 </RechartsBarChart>
               </ChartContainer>
             </div>
@@ -174,5 +188,3 @@ export default function AggregatorIntelligencePage() {
     </div>
   );
 }
-
-    

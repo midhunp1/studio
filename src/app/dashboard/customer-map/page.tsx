@@ -20,8 +20,8 @@ const customerDataByArea = [
   { postcode: "M2 2BB", newCustomers: 200, repeatCustomers: 250, churnRate: "8%" },
   { postcode: "M3 3CC", newCustomers: 100, repeatCustomers: 180, churnRate: "12%" },
   { postcode: "M4 4DD", newCustomers: 250, repeatCustomers: 150, churnRate: "15%" },
-  { postcode: "M5 5EE", newCustomers: 120, repeatCustomers: 90, churnRate: "18%" }, // New entry 1
-  { postcode: "M6 6FF", newCustomers: 80, repeatCustomers: 220, churnRate: "7%" },  // New entry 2
+  { postcode: "M5 5EE", newCustomers: 120, repeatCustomers: 90, churnRate: "18%" }, 
+  // Removed: { postcode: "M6 6FF", newCustomers: 80, repeatCustomers: 220, churnRate: "7%" },
 ];
 
 const atRiskCustomerExamples = [
@@ -29,8 +29,8 @@ const atRiskCustomerExamples = [
   { id: "cust2", postcode: "M3 3CC", name: "Jane S.", lastOrderDaysAgo: 62, phonePreview: "******1234" },
   { id: "cust3", postcode: "M4 4DD", name: "Alex J.", lastOrderDaysAgo: 95, phonePreview: "******5678" },
   { id: "cust4", postcode: "M2 2BB", name: "Sarah B.", lastOrderDaysAgo: 70, phonePreview: "******3456" },
-  { id: "cust5", postcode: "M5 5EE", name: "Mike L.", lastOrderDaysAgo: 50, phonePreview: "******9012" }, // Optional: related at-risk customer
-  { id: "cust6", postcode: "M6 6FF", name: "Laura P.", lastOrderDaysAgo: 80, phonePreview: "******2345" }, // Optional: related at-risk customer
+  { id: "cust5", postcode: "M5 5EE", name: "Mike L.", lastOrderDaysAgo: 50, phonePreview: "******9012" }, 
+  // { id: "cust6", postcode: "M6 6FF", name: "Laura P.", lastOrderDaysAgo: 80, phonePreview: "******2345" }, // Optional: related at-risk customer
 ];
 
 const chartConfig = {
@@ -198,6 +198,85 @@ export default function CustomerMapPage() {
               </div>
             </CardContent>
           </Card>
+          
+           <Card className="w-full"> {/* Engage Lapsed Customers Card - Full width within this column */}
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center">
+                <UserMinus className="mr-2 h-5 w-5 text-destructive" />
+                Engage Lapsed Customers
+              </CardTitle>
+              <CardDescription>Identify and re-engage customers who haven't ordered recently with targeted promotions.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Showing {atRiskCustomerExamples.slice(0, 3).length} example customers who haven't ordered in over 40 days.
+                </p>
+                {atRiskCustomerExamples.slice(0, 3).map(customer => (
+                  <div key={customer.id} className="p-3 bg-muted/50 rounded-md text-sm border border-border">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-foreground">{customer.name} ({customer.postcode})</span>
+                      <span className="text-xs text-destructive">{customer.lastOrderDaysAgo} days ago</span>
+                    </div>
+                    <p className="text-muted-foreground text-xs">Phone: {customer.phonePreview}</p>
+                  </div>
+                ))}
+                {atRiskCustomerExamples.length > 3 && (
+                    <p className="text-xs text-center text-muted-foreground">...and {atRiskCustomerExamples.length - 3} more.</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="coupon-select" className="font-semibold">Choose Coupon</Label>
+                    <Select value={selectedCouponId} onValueChange={setSelectedCouponId}>
+                      <SelectTrigger id="coupon-select" className="mt-1">
+                        <SelectValue placeholder="Select a coupon" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {existingCoupons.map(coupon => (
+                          <SelectItem key={coupon.id} value={coupon.id}>
+                            {coupon.name} ({coupon.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={handleCreateNewCoupon} variant="outline" className="w-full">
+                    <Ticket className="mr-2 h-4 w-4" /> Create New Coupon
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="sms-template-preview" className="font-semibold">SMS Template</Label>
+                    <Textarea
+                      id="sms-template-preview"
+                      value={formattedSmsTemplate}
+                      readOnly
+                      rows={4}
+                      className="mt-1 bg-muted/30 text-sm"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={handleEditTemplate} variant="outline" className="flex-1">
+                      <Edit3 className="mr-2 h-4 w-4" /> Edit
+                    </Button>
+                    <Button onClick={handlePreviewSms} variant="outline" className="flex-1">
+                      <Eye className="mr-2 h-4 w-4" /> Preview
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground whitespace-normal h-auto py-3 text-base mt-4">
+                <Send className="mr-2 h-5 w-5" />
+                Send Promo SMS to {atRiskCustomerExamples.length} Lapsed Customers
+                <Ticket className="ml-2 h-5 w-5" />
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6"> {/* Right Column */}
@@ -242,85 +321,6 @@ export default function CustomerMapPage() {
           </Card>
         </div>
       </div>
-
-      <Card className="mt-6"> {/* Engage Lapsed Customers Card - Full width */}
-        <CardHeader>
-          <CardTitle className="font-headline flex items-center">
-            <UserMinus className="mr-2 h-5 w-5 text-destructive" />
-            Engage Lapsed Customers
-          </CardTitle>
-          <CardDescription>Identify and re-engage customers who haven't ordered recently with targeted promotions.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Showing {atRiskCustomerExamples.slice(0, 3).length} example customers who haven't ordered in over 40 days.
-            </p>
-            {atRiskCustomerExamples.slice(0, 3).map(customer => (
-              <div key={customer.id} className="p-3 bg-muted/50 rounded-md text-sm border border-border">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-foreground">{customer.name} ({customer.postcode})</span>
-                  <span className="text-xs text-destructive">{customer.lastOrderDaysAgo} days ago</span>
-                </div>
-                <p className="text-muted-foreground text-xs">Phone: {customer.phonePreview}</p>
-              </div>
-            ))}
-            {atRiskCustomerExamples.length > 3 && (
-                <p className="text-xs text-center text-muted-foreground">...and {atRiskCustomerExamples.length - 3} more.</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border pt-6">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="coupon-select" className="font-semibold">Choose Coupon</Label>
-                <Select value={selectedCouponId} onValueChange={setSelectedCouponId}>
-                  <SelectTrigger id="coupon-select" className="mt-1">
-                    <SelectValue placeholder="Select a coupon" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {existingCoupons.map(coupon => (
-                      <SelectItem key={coupon.id} value={coupon.id}>
-                        {coupon.name} ({coupon.code})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button onClick={handleCreateNewCoupon} variant="outline" className="w-full">
-                <Ticket className="mr-2 h-4 w-4" /> Create New Coupon
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="sms-template-preview" className="font-semibold">SMS Template</Label>
-                <Textarea
-                  id="sms-template-preview"
-                  value={formattedSmsTemplate}
-                  readOnly
-                  rows={4}
-                  className="mt-1 bg-muted/30 text-sm"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleEditTemplate} variant="outline" className="flex-1">
-                  <Edit3 className="mr-2 h-4 w-4" /> Edit
-                </Button>
-                <Button onClick={handlePreviewSms} variant="outline" className="flex-1">
-                  <Eye className="mr-2 h-4 w-4" /> Preview
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          <Button onClick={handleSendPromoSmS} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground whitespace-normal h-auto py-3 text-base mt-4">
-            <Send className="mr-2 h-5 w-5" />
-            Send Promo SMS to {atRiskCustomerExamples.length} Lapsed Customers
-            <Ticket className="ml-2 h-5 w-5" />
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 }

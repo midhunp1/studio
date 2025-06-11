@@ -29,7 +29,6 @@ import {
   Percent,
   ThumbsUp,
   ThumbsDown,
-  // Info // Not used as not in standard lucide set from prompt, explanations added directly
 } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from "recharts";
@@ -90,17 +89,6 @@ const upliftChartConfig = {
   postFixOrders: { label: "Post-Fix Orders", color: "hsl(var(--accent))", type: "line", yAxisId: "orders" },
 } satisfies ChartConfig;
 
-type AlertSettingsKey = 
-  | 'avgDeliveryTime' 
-  | 'driverAvailability' 
-  | 'orderQueueCongestion' 
-  | 'prepTimeSpike' 
-  | 'noOrdersInMinutes' 
-  | 'dailySalesDip';
-
-type AlertSettingValue = { enabled: boolean; threshold?: number };
-
-
 interface AlertSettings {
   avgDeliveryTime: { enabled: boolean; threshold: number };
   driverAvailability: { enabled: boolean; threshold: number };
@@ -135,7 +123,6 @@ export default function RevenueActionsPageRevamped() {
   ) => {
     setAlertSettings(prev => {
       const currentSetting = prev[key];
-      // Create a new object for the specific alert setting being changed
       const updatedSetting = { ...currentSetting, [field]: value };
       return {
         ...prev,

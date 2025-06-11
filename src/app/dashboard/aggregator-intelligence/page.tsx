@@ -66,15 +66,15 @@ export default function AggregatorIntelligencePage() {
                <ChartContainer config={platformPerformanceChartConfig} className="h-[250px] w-full">
                 <RechartsBarChart data={platformPerformanceChartData} accessibilityLayer layout="vertical">
                   <CartesianGrid horizontal={false} />
-                  <YAxis 
-                    dataKey="platform" 
-                    type="category" 
-                    tickLine={false} 
-                    tickMargin={5} 
-                    axisLine={false} 
-                    width={80} 
-                    className="text-xs" 
-                    id="platformYAxis" 
+                  <YAxis
+                    dataKey="platform"
+                    type="category"
+                    tickLine={false}
+                    tickMargin={5}
+                    axisLine={false}
+                    width={80}
+                    className="text-xs"
+                    id="platformYAxis"
                   />
                   <XAxis type="number" id="ordersXAxis" />
                   <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
@@ -174,3 +174,5 @@ export default function AggregatorIntelligencePage() {
     </div>
   );
 }
+
+    

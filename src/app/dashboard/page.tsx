@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react'; // Import useState and useEffect
 import { PageHeader } from '@/components/dashboard/page-header';
-import { Card, CardTitle } from '@/components/ui/card'; 
+import { Card, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import {
   Map,
@@ -13,7 +13,9 @@ import {
   AlertTriangle,
   BadgePercent,
   Brain,
-  LayoutDashboard
+  LayoutDashboard,
+  TrendingUp,
+  ClipboardList,
 } from 'lucide-react';
 
 interface InsightCardItem {
@@ -83,6 +85,20 @@ export default function DashboardOverviewPage() {
       icon: Brain,
       description: 'Get smart insights like ad boost times and combo meal ideas powered by generative AI.',
       dataAiHint: 'brain artificial intelligence suggestions',
+    },
+    {
+      title: 'Actions & Revenue Optimisation',
+      href: '/dashboard/revenue-actions',
+      icon: TrendingUp,
+      description: 'Identify underperforming venues and prioritize actions for maximum revenue impact.',
+      dataAiHint: 'revenue actions optimization',
+    },
+    {
+      title: 'Cost & Inventory Mgmt',
+      href: '/dashboard/cost-control',
+      icon: ClipboardList,
+      description: 'Analyze COGS, track waste, manage supplier prices, and optimize recipe profitability.',
+      dataAiHint: 'cost inventory management',
     },
   ];
 

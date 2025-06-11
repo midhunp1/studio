@@ -2,6 +2,10 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
 import { PageHeader } from '@/components/dashboard/page-header';
 import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
 import { FilterControls } from '@/components/dashboard/filter-controls';
@@ -14,14 +18,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+
 
 const customerDataByArea = [
   { postcode: "M1 1AA", newCustomers: 150, repeatCustomers: 350, churnRate: "5%" },
   { postcode: "M2 2BB", newCustomers: 200, repeatCustomers: 250, churnRate: "8%" },
   { postcode: "M3 3CC", newCustomers: 100, repeatCustomers: 180, churnRate: "12%" },
   { postcode: "M4 4DD", newCustomers: 250, repeatCustomers: 150, churnRate: "15%" },
-  // Removed: { postcode: "M5 5EE", newCustomers: 120, repeatCustomers: 90, churnRate: "18%" }, 
-  // Removed: { postcode: "M6 6FF", newCustomers: 80, repeatCustomers: 220, churnRate: "7%" },
 ];
 
 const atRiskCustomerExamples = [
@@ -29,8 +35,6 @@ const atRiskCustomerExamples = [
   { id: "cust2", postcode: "M3 3CC", name: "Jane S.", lastOrderDaysAgo: 62, phonePreview: "******1234" },
   { id: "cust3", postcode: "M4 4DD", name: "Alex J.", lastOrderDaysAgo: 95, phonePreview: "******5678" },
   { id: "cust4", postcode: "M2 2BB", name: "Sarah B.", lastOrderDaysAgo: 70, phonePreview: "******3456" },
-  // Removed: { id: "cust5", postcode: "M5 5EE", name: "Mike L.", lastOrderDaysAgo: 50, phonePreview: "******9012" }, 
-  // { id: "cust6", postcode: "M6 6FF", name: "Laura P.", lastOrderDaysAgo: 80, phonePreview: "******2345" }, // Optional: related at-risk customer
 ];
 
 const chartConfig = {
@@ -38,7 +42,7 @@ const chartConfig = {
   repeatCustomers: { label: "Repeat Customers", color: "hsl(var(--chart-2))" }, 
 } satisfies ChartConfig;
 
-const existingCoupons = [
+const initialCoupons = [
   { id: "SAVE15", name: "15% Off Next Order", code: "SAVE15NOW" },
   { id: "FREEFRIES", name: "Free Fries with Purchase", code: "GETFRIES" },
   { id: "20OFF50", name: "£20 Off Orders over £50", code: "BIGSAVE20" },
@@ -61,17 +65,30 @@ const customerSegmentData = {
   }
 };
 
+const newCouponSchema = z.object({
+  name: z.string().min(3, "Coupon name must be at least 3 characters.").max(50, "Coupon name too long."),
+  code: z.string().min(3, "Code must be at least 3 characters.").max(20, "Code too long.").regex(/^[A-Z0-9]+$/, "Code must be uppercase alphanumeric (e.g., SAVE10)."),
+});
+type NewCouponFormValues = z.infer<typeof newCouponSchema>;
+
 
 export default function CustomerMapPage() {
   const { toast } = useToast();
-  const [selectedCouponId, setSelectedCouponId] = useState<string>(existingCoupons[0]?.id || "");
+  const [coupons, setCoupons] = useState(initialCoupons);
+  const [selectedCouponId, setSelectedCouponId] = useState<string>(coupons[0]?.id || "");
   const [smsTemplate, setSmsTemplate] = useState<string>(
     "Hi [Customer Name]! We've missed you. Enjoy {couponDescription} (Code: {couponCode}) on your next order with OrderLens!"
   );
+  const [isCreateCouponDialogOpen, setIsCreateCouponDialogOpen] = useState(false);
+
+  const newCouponForm = useForm<NewCouponFormValues>({
+    resolver: zodResolver(newCouponSchema),
+    defaultValues: { name: "", code: "" },
+  });
 
   const selectedCoupon = useMemo(() => {
-    return existingCoupons.find(c => c.id === selectedCouponId);
-  }, [selectedCouponId]);
+    return coupons.find(c => c.id === selectedCouponId);
+  }, [selectedCouponId, coupons]);
 
   const formattedSmsTemplate = useMemo(() => {
     let template = smsTemplate;
@@ -94,13 +111,22 @@ export default function CustomerMapPage() {
     });
   };
 
-  const handleCreateNewCoupon = () => {
+  const onSubmitNewCoupon: SubmitHandler<NewCouponFormValues> = (data) => {
+    const newCoupon = {
+      id: data.code, // Using code as ID, ensure it's unique in a real app
+      name: data.name,
+      code: data.code,
+    };
+    setCoupons(prevCoupons => [...prevCoupons, newCoupon]);
+    setSelectedCouponId(newCoupon.id); // Select the new coupon
     toast({
-      title: "Create New Coupon",
-      description: "This feature to create coupons on-the-fly is coming soon!",
-      variant: "default",
+      title: "Coupon Created!",
+      description: `Coupon "${newCoupon.name}" with code "${newCoupon.code}" has been added.`,
     });
+    newCouponForm.reset();
+    setIsCreateCouponDialogOpen(false);
   };
+
 
   const handleEditTemplate = () => {
      toast({
@@ -137,7 +163,6 @@ export default function CustomerMapPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="customer distribution map" />
-          
           <Card>
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -279,7 +304,7 @@ export default function CustomerMapPage() {
                     <SelectValue placeholder="Select a coupon" />
                   </SelectTrigger>
                   <SelectContent>
-                    {existingCoupons.map(coupon => (
+                    {coupons.map(coupon => (
                       <SelectItem key={coupon.id} value={coupon.id}>
                         {coupon.name} ({coupon.code})
                       </SelectItem>
@@ -287,9 +312,60 @@ export default function CustomerMapPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleCreateNewCoupon} variant="outline" className="w-full">
-                <Ticket className="mr-2 h-4 w-4" /> Create New Coupon
-              </Button>
+               <Dialog open={isCreateCouponDialogOpen} onOpenChange={setIsCreateCouponDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full">
+                    <Ticket className="mr-2 h-4 w-4" /> Create New Coupon
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Create New Coupon</DialogTitle>
+                    <DialogDescription>
+                      Add a new promotional coupon. Click save when you're done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Form {...newCouponForm}>
+                    <form onSubmit={newCouponForm.handleSubmit(onSubmitNewCoupon)} className="space-y-4 py-4">
+                      <FormField
+                        control={newCouponForm.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Coupon Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Summer Discount 10%" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={newCouponForm.control}
+                        name="code"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Coupon Code</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., SUMMER10" {...field} />
+                            </FormControl>
+                             <FormDescription>Must be uppercase alphanumeric.</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="button" variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit" disabled={newCouponForm.formState.isSubmitting}>
+                          {newCouponForm.formState.isSubmitting ? "Saving..." : "Save Coupon"}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="space-y-4">

@@ -86,7 +86,7 @@ export default function OfferBannerPromotionsPage() {
         description="Create eye-catching promotional banners with AI. Enter your offer text below."
       />
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8">
         <Card>
           <CardHeader>
             <CardTitle className="font-headline flex items-center">

@@ -1,12 +1,19 @@
+
 "use client"
 
+import React, { useState } from 'react'; // Added useState
 import { PageHeader } from '@/components/dashboard/page-header';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, LineChart, Clock, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart, LineChart as LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent } from 'lucide-react'; // Added BadgePercent
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line, LineChart as RechartsLineChart, ResponsiveContainer, Legend } from "recharts"
-import React from 'react';
+import { Button } from '@/components/ui/button'; // Added Button
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog'; // Added Dialog components
+import { Input } from '@/components/ui/input'; // Added Input
+import { Label } from '@/components/ui/label'; // Added Label
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Added Select components
+import { useToast } from '@/hooks/use-toast'; // Added useToast
 
 const hourlyData = [
   { hour: "00:00", orders: 10, delivery: 8, collection: 2 },
@@ -42,6 +49,42 @@ const chartConfig = {
 
 
 export default function TimeBasedPage() {
+  const { toast } = useToast();
+  const [isOfferDialogOpen, setIsOfferDialogOpen] = useState(false);
+  const [offerName, setOfferName] = useState('');
+  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
+  const [discountValue, setDiscountValue] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+
+  const handleCreateOffer = () => {
+    if (!offerName.trim()) {
+      toast({ variant: "destructive", title: "Error", description: "Offer name is required." });
+      return;
+    }
+    const numDiscountValue = parseFloat(discountValue);
+    if (isNaN(numDiscountValue) || numDiscountValue <= 0) {
+      toast({ variant: "destructive", title: "Error", description: "Please enter a valid positive discount value." });
+      return;
+    }
+    if (discountType === 'percentage' && (numDiscountValue > 100)) {
+       toast({ variant: "destructive", title: "Error", description: "Percentage discount cannot exceed 100." });
+      return;
+    }
+
+    // Simulation of offer creation
+    console.log("Creating offer:", { offerName, discountType, discountValue: numDiscountValue, couponCode });
+    toast({
+      title: "Off-Peak Offer Created (Simulated)",
+      description: `Offer "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for quieter periods.`,
+    });
+    setIsOfferDialogOpen(false);
+    // Reset form fields
+    setOfferName('');
+    setDiscountType('percentage');
+    setDiscountValue('');
+    setCouponCode('');
+  };
+
   return (
     <div>
       <PageHeader
@@ -109,24 +152,96 @@ export default function TimeBasedPage() {
           <CardTitle className="font-headline">Key Insights</CardTitle>
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-4">
-          <div className="flex items-start p-4 bg-muted/30 rounded-lg">
-            <TrendingUp className="h-8 w-8 text-green-500 mr-3 mt-1" />
-            <div>
-              <h4 className="font-semibold">Peak Performance</h4>
-              <p className="text-sm text-muted-foreground">Highest order volumes are typically on <span className="text-primary">Friday and Saturday evenings (7 PM - 9 PM)</span>.</p>
-              <p className="text-sm text-muted-foreground mt-1">Consider increasing staff and delivery capacity during these times.</p>
+          <div className="flex flex-col items-start p-4 bg-muted/30 rounded-lg">
+            <div className="flex items-start w-full">
+              <TrendingUp className="h-8 w-8 text-green-500 mr-3 mt-1 flex-shrink-0" />
+              <div className="flex-grow">
+                <h4 className="font-semibold">Peak Performance</h4>
+                <p className="text-sm text-muted-foreground">Highest order volumes are typically on <span className="text-primary">Friday and Saturday evenings (7 PM - 9 PM)</span>.</p>
+                <p className="text-sm text-muted-foreground mt-1">Consider increasing staff and delivery capacity during these times.</p>
+              </div>
             </div>
           </div>
-          <div className="flex items-start p-4 bg-muted/30 rounded-lg">
-            <TrendingDown className="h-8 w-8 text-red-500 mr-3 mt-1" />
-            <div>
-              <h4 className="font-semibold">Quieter Periods</h4>
-              <p className="text-sm text-muted-foreground">Lowest activity observed on <span className="text-primary">Monday and Tuesday mornings</span>.</p>
-              <p className="text-sm text-muted-foreground mt-1">Opportunity for targeted promotions to boost orders during off-peak hours.</p>
+          <div className="flex flex-col items-start p-4 bg-muted/30 rounded-lg">
+             <div className="flex items-start w-full">
+              <TrendingDown className="h-8 w-8 text-red-500 mr-3 mt-1 flex-shrink-0" />
+              <div className="flex-grow">
+                <h4 className="font-semibold">Quieter Periods</h4>
+                <p className="text-sm text-muted-foreground">Lowest activity observed on <span className="text-primary">Monday and Tuesday mornings</span>.</p>
+                <p className="text-sm text-muted-foreground mt-1">Opportunity for targeted promotions to boost orders during off-peak hours.</p>
+              </div>
             </div>
+            <Dialog open={isOfferDialogOpen} onOpenChange={setIsOfferDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="mt-4 w-full sm:w-auto">
+                  <BadgePercent className="mr-2 h-4 w-4" /> Create Off-Peak Offer
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[480px]">
+                <DialogHeader>
+                  <DialogTitle>Create Off-Peak Offer</DialogTitle>
+                  <DialogDescription>
+                    Define a special discount or coupon for quieter business periods.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="offer-name">Offer Name / Description</Label>
+                    <Input
+                      id="offer-name"
+                      placeholder="e.g., Weekday Lunch Special"
+                      value={offerName}
+                      onChange={(e) => setOfferName(e.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="discount-type">Discount Type</Label>
+                    <Select value={discountType} onValueChange={(value) => setDiscountType(value as 'percentage' | 'fixed')}>
+                      <SelectTrigger id="discount-type">
+                        <SelectValue placeholder="Select discount type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="percentage">Percentage Off</SelectItem>
+                        <SelectItem value="fixed">Fixed Amount Off (£)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="discount-value">
+                      Discount Value {discountType === 'percentage' ? '(%)' : '(£)'}
+                    </Label>
+                    <Input
+                      id="discount-value"
+                      type="number"
+                      placeholder={discountType === 'percentage' ? "e.g., 15" : "e.g., 5.00"}
+                      value={discountValue}
+                      onChange={(e) => setDiscountValue(e.target.value)}
+                      min="0"
+                      step={discountType === 'percentage' ? "1" : "0.01"}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="coupon-code">Coupon Code (Optional)</Label>
+                    <Input
+                      id="coupon-code"
+                      placeholder="e.g., LUNCH20"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="button" onClick={handleCreateOffer}>Create Offer</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+

@@ -133,53 +133,8 @@ export default function CustomerMapPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <InteractiveHeatmapPlaceholder title="Customer Type Distribution" height="500px" dataAiHint="customer distribution map" />
-        </div>
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline flex items-center">
-                <Users className="mr-2 h-5 w-5 text-primary" />
-                Customer Breakdown by Area
-              </CardTitle>
-              <CardDescription>New vs. Repeat customers in key postcodes.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <RechartsBarChart data={customerDataByArea} layout="vertical" accessibilityLayer>
-                  <CartesianGrid horizontal={false} />
-                  <YAxis dataKey="postcode" type="category" tickLine={false} tickMargin={10} axisLine={false} width={60} />
-                  <XAxis type="number" />
-                  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                  <Legend />
-                  <Bar dataKey="newCustomers" fill="var(--color-newCustomers)" radius={4} />
-                  <Bar dataKey="repeatCustomers" fill="var(--color-repeatCustomers)" radius={4} />
-                </RechartsBarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">Retention Insights</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {customerDataByArea.slice(0,2).map(area => ( 
-                <div key={area.postcode} className="p-3 bg-muted/30 rounded-lg">
-                  <h4 className="font-semibold text-primary">{area.postcode}</h4>
-                  <p className="text-sm">
-                    <UserPlus className="inline h-4 w-4 mr-1 text-primary" /> New: {area.newCustomers} | 
-                    <Repeat className="inline h-4 w-4 ml-2 mr-1 text-accent" /> Repeat: {area.repeatCustomers}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Churn Rate: {area.churnRate}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-2">
-          <Card>
+          
+          <Card className="mt-6">
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
                 <TrendingUpIcon className="mr-2 h-6 w-6 text-primary" />
@@ -240,7 +195,46 @@ export default function CustomerMapPage() {
             </CardContent>
           </Card>
         </div>
-        <div>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center">
+                <Users className="mr-2 h-5 w-5 text-primary" />
+                Customer Breakdown by Area
+              </CardTitle>
+              <CardDescription>New vs. Repeat customers in key postcodes.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                <RechartsBarChart data={customerDataByArea} layout="vertical" accessibilityLayer>
+                  <CartesianGrid horizontal={false} />
+                  <YAxis dataKey="postcode" type="category" tickLine={false} tickMargin={10} axisLine={false} width={60} />
+                  <XAxis type="number" />
+                  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                  <Legend />
+                  <Bar dataKey="newCustomers" fill="var(--color-newCustomers)" radius={4} />
+                  <Bar dataKey="repeatCustomers" fill="var(--color-repeatCustomers)" radius={4} />
+                </RechartsBarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Retention Insights</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {customerDataByArea.slice(0,2).map(area => ( 
+                <div key={area.postcode} className="p-3 bg-muted/30 rounded-lg">
+                  <h4 className="font-semibold text-primary">{area.postcode}</h4>
+                  <p className="text-sm">
+                    <UserPlus className="inline h-4 w-4 mr-1 text-primary" /> New: {area.newCustomers} | 
+                    <Repeat className="inline h-4 w-4 ml-2 mr-1 text-accent" /> Repeat: {area.repeatCustomers}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Churn Rate: {area.churnRate}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle className="font-headline flex items-center">

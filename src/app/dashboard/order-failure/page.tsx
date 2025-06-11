@@ -7,7 +7,7 @@ import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactiv
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertTriangle, XCircle, AlertCircle, ThumbsDown, Brain, ListChecks, Sparkles, AlertOctagon, PackageX, BarChartHorizontalBig } from 'lucide-react';
+import { AlertTriangle, XCircle, AlertCircle, ThumbsDown, Brain, ListChecks, Sparkles, AlertOctagon, PackageX, BarChartHorizontalBig, Sandwich } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { generateFailureAnalysis, type GenerateFailureAnalysisOutput } from '@/ai/flows/generate-failure-analysis';
@@ -152,10 +152,7 @@ export default function OrderFailurePage() {
             <Button onClick={handleAnalyzeFailures} disabled={analysisLoading} className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground">
               {analysisLoading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <Sandwich className="animate-spin -ml-1 mr-3 h-5 w-5" />
                   Analyzing...
                 </>
               ) : (
@@ -170,10 +167,7 @@ export default function OrderFailurePage() {
         <CardContent>
           {analysisLoading && (
             <div className="flex items-center justify-center p-8 text-muted-foreground">
-              <svg className="animate-spin mr-3 h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
+              <Sandwich className="animate-spin mr-3 h-8 w-8 text-primary" />
               AI is thinking... please wait.
             </div>
           )}

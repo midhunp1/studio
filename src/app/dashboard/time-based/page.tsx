@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useEffect, useMemo } from 'react'; // Added useEffect, useMemo
+import React, { useState, useEffect, useMemo } from 'react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from "@/components/ui/checkbox"; // Added Checkbox
 
 const hourlyData = [
   { hour: "00:00", orders: 10, delivery: 8, collection: 2 },
@@ -49,11 +50,13 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const identifiedQuieterPeriod = {
-  days: "Monday & Tuesday",
+  days: "Monday & Tuesday", // This is a descriptive string
   startTime: "09:00",
   endTime: "11:30",
-  fullText: "Monday & Tuesday, 09:00 AM - 11:30 AM"
+  fullText: "Monday & Tuesday, 09:00 AM - 11:30 AM" // For display
 };
+
+const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 
 export default function TimeBasedPage() {
@@ -64,9 +67,8 @@ export default function TimeBasedPage() {
   const [discountValue, setDiscountValue] = useState('');
   const [couponCode, setCouponCode] = useState('');
 
-  // State for editable quieter period
   const [isEditingPeriod, setIsEditingPeriod] = useState(false);
-  const [customDays, setCustomDays] = useState(identifiedQuieterPeriod.days);
+  const [customDays, setCustomDays] = useState<string[]>([]);
   const [customStartTime, setCustomStartTime] = useState(identifiedQuieterPeriod.startTime);
   const [customEndTime, setCustomEndTime] = useState(identifiedQuieterPeriod.endTime);
 
@@ -75,18 +77,36 @@ export default function TimeBasedPage() {
     const [hours, minutes] = time.split(':');
     const h = parseInt(hours, 10);
     const ampm = h >= 12 ? 'PM' : 'AM';
-    const displayHours = h % 12 || 12; // Convert 0 to 12 for AM/PM
-    return `${displayHours}:${minutes} ${ampm}`;
+    const displayHours = h % 12 || 12; 
+    return `${String(displayHours).padStart(2, '0')}:${minutes} ${ampm}`;
   };
 
   const activePeriodDescription = useMemo(() => {
+    const formattedStart = formatTimeForDisplay(customStartTime);
+    const formattedEnd = formatTimeForDisplay(customEndTime);
     if (isEditingPeriod) {
-      const formattedStart = formatTimeForDisplay(customStartTime);
-      const formattedEnd = formatTimeForDisplay(customEndTime);
-      return `${customDays || "Selected days"}, ${formattedStart || "Start Time"} - ${formattedEnd || "End Time"}`;
+      const daysString = customDays.length > 0 ? customDays.join(', ') : "No days selected";
+      return `Selected Days: ${daysString}, ${formattedStart || "Start Time"} - ${formattedEnd || "End Time"}`;
     }
     return identifiedQuieterPeriod.fullText;
   }, [isEditingPeriod, customDays, customStartTime, customEndTime, identifiedQuieterPeriod.fullText]);
+
+  const handleDayCheckboxChange = (day: string, checked: boolean) => {
+    setCustomDays(prevDays => {
+      if (checked) {
+        return [...prevDays, day];
+      } else {
+        return prevDays.filter(d => d !== day);
+      }
+    });
+  };
+  
+  const parsePredefinedDays = (daysString: string): string[] => {
+    // Basic parser for "Day1 & Day2" or "Day1, Day2"
+    const parsed = daysString.split(/&|,/g).map(d => d.trim()).filter(Boolean);
+    return parsed.filter(day => daysOfWeek.includes(day));
+  };
+
 
   const handleCreateOffer = () => {
     if (!offerName.trim()) {
@@ -104,9 +124,11 @@ export default function TimeBasedPage() {
     }
 
     let periodForToast = identifiedQuieterPeriod.fullText;
+    let finalCustomDays = customDays;
+
     if (isEditingPeriod) {
-        if (!customDays.trim()) {
-            toast({ variant: "destructive", title: "Error", description: "Custom days are required when editing period."});
+        if (customDays.length === 0) {
+            toast({ variant: "destructive", title: "Error", description: "Please select at least one custom day."});
             return;
         }
         if (!customStartTime) {
@@ -117,16 +139,16 @@ export default function TimeBasedPage() {
             toast({ variant: "destructive", title: "Error", description: "Custom end time is required."});
             return;
         }
-        // Basic time validation: start before end
         if (customStartTime >= customEndTime) {
             toast({ variant: "destructive", title: "Error", description: "Custom start time must be before custom end time."});
             return;
         }
-        periodForToast = `${customDays}, ${formatTimeForDisplay(customStartTime)} - ${formatTimeForDisplay(customEndTime)}`;
+        periodForToast = `${customDays.join(', ')}, ${formatTimeForDisplay(customStartTime)} - ${formatTimeForDisplay(customEndTime)}`;
+    } else {
+      finalCustomDays = parsePredefinedDays(identifiedQuieterPeriod.days);
     }
 
 
-    // Simulation of offer creation
     console.log("Creating offer:", { 
         offerName, 
         discountType, 
@@ -134,28 +156,32 @@ export default function TimeBasedPage() {
         couponCode,
         period: periodForToast,
         isCustomPeriod: isEditingPeriod,
-        customPeriodDetails: isEditingPeriod ? { days: customDays, startTime: customStartTime, endTime: customEndTime } : null
+        customPeriodDetails: { days: finalCustomDays, startTime: customStartTime, endTime: customEndTime } 
     });
     toast({
       title: "Off-Peak Promotion Created (Simulated)",
       description: `Promotion "${offerName}" (${numDiscountValue}${discountType === 'percentage' ? '%' : '£'} off) ${couponCode ? `with code ${couponCode} ` : ''}is ready for ${periodForToast}.`,
     });
     setIsOfferDialogOpen(false);
-    // Reset form fields
     setOfferName('');
     setDiscountType('percentage');
     setDiscountValue('');
     setCouponCode('');
-    setIsEditingPeriod(false); // Reset period editing mode
-    setCustomDays(identifiedQuieterPeriod.days);
+    setIsEditingPeriod(false); 
+    setCustomDays([]);
     setCustomStartTime(identifiedQuieterPeriod.startTime);
     setCustomEndTime(identifiedQuieterPeriod.endTime);
   };
 
   const toggleEditPeriod = () => {
-    setIsEditingPeriod(!isEditingPeriod);
-    if (!isEditingPeriod) { // When switching to edit mode, populate with current defaults
-        setCustomDays(identifiedQuieterPeriod.days);
+    const newEditingState = !isEditingPeriod;
+    setIsEditingPeriod(newEditingState);
+    if (newEditingState) { // When switching to edit mode
+        setCustomDays(parsePredefinedDays(identifiedQuieterPeriod.days));
+        setCustomStartTime(identifiedQuieterPeriod.startTime);
+        setCustomEndTime(identifiedQuieterPeriod.endTime);
+    } else { // When switching back to predefined
+        setCustomDays([]); // Clear custom days
         setCustomStartTime(identifiedQuieterPeriod.startTime);
         setCustomEndTime(identifiedQuieterPeriod.endTime);
     }
@@ -250,9 +276,9 @@ export default function TimeBasedPage() {
             </div>
             <Dialog open={isOfferDialogOpen} onOpenChange={(open) => {
                 setIsOfferDialogOpen(open);
-                if (!open) { // Reset editing state if dialog is closed
+                if (!open) { 
                     setIsEditingPeriod(false);
-                    setCustomDays(identifiedQuieterPeriod.days);
+                    setCustomDays([]);
                     setCustomStartTime(identifiedQuieterPeriod.startTime);
                     setCustomEndTime(identifiedQuieterPeriod.endTime);
                 }
@@ -266,11 +292,14 @@ export default function TimeBasedPage() {
                 <DialogHeader>
                   <DialogTitle>Create Promotion for Quieter Periods</DialogTitle>
                   <DialogDescription className="space-y-1">
-                    <div>
+                    <div className="flex items-center gap-2">
+                       <Clock className="h-4 w-4 text-primary flex-shrink-0" />
                         <span>Targeting the period: </span>
                         <strong className="text-primary">{activePeriodDescription}</strong>
-                        <Button variant="link" size="sm" onClick={toggleEditPeriod} className="ml-2 p-0 h-auto text-xs">
-                          {isEditingPeriod ? <><X className="mr-1 h-3 w-3"/> Use Predefined</> : <><Edit3 className="mr-1 h-3 w-3" /> Edit Period</>}
+                    </div>
+                     <div>
+                        <Button variant="link" size="sm" onClick={toggleEditPeriod} className="p-0 h-auto text-xs text-accent hover:text-accent/80">
+                          {isEditingPeriod ? <><X className="mr-1 h-3 w-3"/> Use Predefined Period</> : <><Edit3 className="mr-1 h-3 w-3" /> Edit Period Manually</>}
                         </Button>
                     </div>
                     <div>
@@ -280,17 +309,22 @@ export default function TimeBasedPage() {
                 </DialogHeader>
 
                 {isEditingPeriod && (
-                  <div className="my-4 p-4 border rounded-md bg-muted/50 space-y-3">
+                  <div className="my-4 p-4 border rounded-md bg-muted/50 space-y-4">
                     <h4 className="text-sm font-medium text-foreground">Customize Promotion Period</h4>
                     <div>
-                      <Label htmlFor="custom-days">Days</Label>
-                      <Input 
-                        id="custom-days" 
-                        placeholder="e.g., Monday, Wednesday" 
-                        value={customDays} 
-                        onChange={(e) => setCustomDays(e.target.value)}
-                        className="mt-1"
-                      />
+                      <Label className="mb-2 block">Days of the Week</Label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
+                        {daysOfWeek.map(day => (
+                          <div key={day} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`day-${day}`}
+                              checked={customDays.includes(day)}
+                              onCheckedChange={(checked) => handleDayCheckboxChange(day, !!checked)}
+                            />
+                            <Label htmlFor={`day-${day}`} className="font-normal text-sm">{day}</Label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>

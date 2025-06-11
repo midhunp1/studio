@@ -33,7 +33,7 @@ const parsePercentage = (percentageString: string): number => {
 
 const chartConfig = {
   redemptions: { label: "Redemptions", color: "hsl(0, 90%, 60%)" }, // Vibrant Red
-  revenueLiftNumeric: { label: "Revenue Lift (£)", color: "hsl(60, 100%, 50%)" }, // Standard Yellow
+  revenueLiftNumeric: { label: "Revenue Lift (£)", color: "hsl(var(--accent))" }, // Theme Accent Yellow
 } satisfies ChartConfig;
 
 export default function PromoPerformancePage() {

@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, LineChart as LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent, Edit3, X } from 'lucide-react'; 
+import { LineChart as LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent, Edit3, X } from 'lucide-react'; 
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line, LineChart as RechartsLineChart, ResponsiveContainer, Legend } from "recharts"
 import { Button } from '@/components/ui/button';
@@ -222,7 +222,7 @@ export default function TimeBasedPage() {
         <Card>
           <CardHeader>
             <CardTitle className="font-headline flex items-center">
-              <BarChart className="mr-2 h-5 w-5 text-primary" />
+              <LineChartIconLucide className="mr-2 h-5 w-5 text-primary" />
               Daily Order Volume & Value
             </CardTitle>
             <CardDescription>Total orders and revenue by day of the week</CardDescription>
@@ -241,8 +241,8 @@ export default function TimeBasedPage() {
                 <YAxis yAxisId="right" orientation="right" />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Line yAxisId="left" type="monotone" dataKey="orders" stroke="var(--color-orders)" strokeWidth={2} dot={false} />
-                <Line yAxisId="right" type="monotone" dataKey="value" stroke="var(--color-value)" strokeWidth={2} dot={false} />
+                <Line yAxisId="left" type="monotone" dataKey="orders" name={chartConfig.orders.label as string} stroke="var(--color-orders)" strokeWidth={2} dot={false} />
+                <Line yAxisId="right" type="monotone" dataKey="value" name={chartConfig.value.label as string} stroke="var(--color-value)" strokeWidth={2} dot={false} />
               </RechartsLineChart>
             </ChartContainer>
           </CardContent>

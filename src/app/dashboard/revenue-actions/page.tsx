@@ -74,7 +74,7 @@ const venueDetails = {
 const detectedIssues = [
   { id: 'issue1', severity: 'high', title: 'Offline during peak', description: 'Venue was offline between 7 PM - 9 PM on Friday, missing key order window.', icon: <AlertTriangle className="h-4 w-4 text-destructive" /> },
   { id: 'issue2', severity: 'medium', title: 'No active promos', description: 'Currently no promotions are running, potentially reducing new customer acquisition.', icon: <Percent className="h-4 w-4 text-yellow-500" /> },
-  { id: 'issue3', severity: 'low', title: 'Low-res hero image', description: 'The main hero image on aggregators is low resolution, impacting appeal.', icon: <ImageIcon className="h-4 w-4 text-blue-500" /> },
+  { id: 'issue3', severity: 'low', title: 'Low-res menu images', description: 'Low resolution menu images on aggregators are impacting appeal.', icon: <ImageIcon className="h-4 w-4 text-blue-500" /> },
   { id: 'issue4', severity: 'medium', title: 'Delivery time above average', description: `Average delivery time of ${venueDetails.deliveryTime} mins is higher than area average of ${venueDetails.areaAverageDeliveryTime} mins.`, icon: <Clock className="h-4 w-4 text-yellow-500" /> },
 ];
 
@@ -399,10 +399,10 @@ export default function RevenueActionsPageRevamped() {
                   );
                 })}
               </ul>
-              <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
+               <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="w-full">
-                    <Bell className="mr-2 h-4 w-4" /> Configure Alert Details
+                     <Bell className="mr-2 h-4 w-4" /> Configure Alert Details
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-2xl">
@@ -514,7 +514,6 @@ export default function RevenueActionsPageRevamped() {
                     onChange={(e) => setEmailAddressInput(e.target.value)}
                   />
                 </div>
-                 {/* Consider adding a "Save Contacts" button here if needed */}
               </div>
             </CardContent>
           </Card>

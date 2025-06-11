@@ -11,13 +11,13 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GeneratePromoBannerInputSchema = z.object({
+const GeneratePromoBannerInputSchema = z.object({
   promoText: z.string().min(5, "Promo text must be at least 5 characters").max(100, "Promo text must be 100 characters or less")
     .describe('The text to display prominently on the promotional banner.'),
 });
 export type GeneratePromoBannerInput = z.infer<typeof GeneratePromoBannerInputSchema>;
 
-export const GeneratePromoBannerOutputSchema = z.object({
+const GeneratePromoBannerOutputSchema = z.object({
   bannerImageUrl: z.string().describe('The generated banner image as a data URI.'),
 });
 export type GeneratePromoBannerOutput = z.infer<typeof GeneratePromoBannerOutputSchema>;
@@ -57,3 +57,4 @@ The banner should be in a landscape orientation, suitable for web use (e.g., asp
     return { bannerImageUrl: media.url };
   }
 );
+

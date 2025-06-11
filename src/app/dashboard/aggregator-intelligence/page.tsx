@@ -10,7 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BarChart2, BellRing, Briefcase, ExternalLink, ShieldAlert, Users2, LineChart } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
-import { Button } from '@/components/ui/button'; // Added this line
+import { Button } from '@/components/ui/button';
 
 const platformPerformanceData = [
   { platform: "Foodhub", orders: 120, avgOrderValue: "£22.50", commission: "15%", netRevenue: "£2295" },
@@ -66,13 +66,22 @@ export default function AggregatorIntelligencePage() {
                <ChartContainer config={platformPerformanceChartConfig} className="h-[250px] w-full">
                 <RechartsBarChart data={platformPerformanceChartData} accessibilityLayer layout="vertical">
                   <CartesianGrid horizontal={false} />
-                  <YAxis dataKey="platform" type="category" tickLine={false} tickMargin={5} axisLine={false} width={80} className="text-xs" />
-                  <XAxis type="number" yAxisId="left" />
-                  <XAxis type="number" yAxisId="right" orientation="top" dataKey="netRevenue" className="text-xs" />
+                  <YAxis 
+                    dataKey="platform" 
+                    type="category" 
+                    tickLine={false} 
+                    tickMargin={5} 
+                    axisLine={false} 
+                    width={80} 
+                    className="text-xs" 
+                    id="platformYAxis" 
+                  />
+                  <XAxis type="number" id="ordersXAxis" />
+                  <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Bar yAxisId="left" dataKey="orders" fill="var(--color-orders)" radius={[0, 4, 4, 0]} />
-                  <Bar yAxisId="right" dataKey="netRevenue" fill="var(--color-netRevenue)" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="orders" xAxisId="ordersXAxis" yAxisId="platformYAxis" fill="var(--color-orders)" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="netRevenue" xAxisId="revenueXAxis" yAxisId="platformYAxis" fill="var(--color-netRevenue)" radius={[0, 4, 4, 0]} />
                 </RechartsBarChart>
               </ChartContainer>
             </div>

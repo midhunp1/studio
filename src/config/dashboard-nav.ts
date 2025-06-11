@@ -13,6 +13,7 @@ import {
   Settings,
   TrendingUp, // Added for Actions & Revenue Optimisation
   ClipboardList, // Added for Cost & Inventory Mgmt
+  Megaphone, // Added for Offer Banner Promotions
 } from 'lucide-react';
 
 export interface NavItem {
@@ -66,9 +67,21 @@ export const dashboardNavItems: NavItem[] = [
     group: 'Insights',
   },
   {
+    href: '/dashboard/aggregator-intelligence',
+    label: 'Aggregator Intelligence',
+    icon: LayoutDashboard, // Consider a more specific icon if available
+    group: 'Market Analysis',
+  },
+  {
     href: '/dashboard/ai-suggestions',
     label: 'AI Suggestions',
     icon: Brain,
+    group: 'Tools',
+  },
+  {
+    href: '/dashboard/offer-banner-promotions',
+    label: 'Offer Banner Promotions',
+    icon: Megaphone,
     group: 'Tools',
   },
   {

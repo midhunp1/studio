@@ -38,8 +38,8 @@ import {
   TrendingDown as TrendingDownIcon,
   AlertCircle
 } from 'lucide-react';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent as ShadCNChartTooltipContent } from "@/components/ui/chart"; // Renamed to avoid conflict
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer, TooltipProps } from "recharts";
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -95,7 +95,9 @@ const upliftChartConfig = {
   postFixRevenue: { label: "Post-Fix Revenue", color: "hsl(var(--primary))" },
   currentOrders: { label: "Current Orders", color: "hsl(var(--muted-foreground))",  type: "line", yAxisId: "orders" },
   postFixOrders: { label: "Post-Fix Orders", color: "hsl(var(--accent))", type: "line", yAxisId: "orders" },
-} satisfies ChartConfig;
+  currentRating: { label: "Current Rating", color: "hsl(var(--muted-foreground))" }, // Added for tooltip
+  postFixRating: { label: "Post-Fix Rating", color: "hsl(var(--chart-3))" }, // Added for tooltip
+};
 
 interface AlertSettings {
   avgDeliveryTime: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
@@ -107,6 +109,48 @@ interface AlertSettings {
   posDisconnected: { enabled: boolean; label: string; description: string; icon: React.ElementType };
   printerOffline: { enabled: boolean; label: string; description: string; icon: React.ElementType };
 }
+
+// Custom Tooltip for Uplift Chart
+const CustomUpliftTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    const dataPoint = payload[0].payload; // The full data object for this X-axis point
+
+    const isDivergent = 
+      dataPoint.currentRevenue !== dataPoint.postFixRevenue ||
+      dataPoint.currentOrders !== dataPoint.postFixOrders ||
+      dataPoint.currentRating !== dataPoint.postFixRating;
+
+    return (
+      <div className="rounded-lg border bg-background p-2.5 shadow-xl text-xs">
+        <p className="mb-1.5 font-medium text-foreground">{label}</p>
+        
+        {isDivergent ? (
+          <>
+            <div className="mb-2">
+              <p className="font-semibold text-muted-foreground">Without Action:</p>
+              <p className="text-muted-foreground">Revenue: £{dataPoint.currentRevenue?.toLocaleString()}</p>
+              <p className="text-muted-foreground">Orders: {dataPoint.currentOrders?.toLocaleString()}</p>
+              <p className="text-muted-foreground">Rating: {dataPoint.currentRating} ★</p>
+            </div>
+            <div>
+              <p className="font-semibold text-primary">With Action (Projected):</p>
+              <p className="text-primary-foreground bg-primary/80 px-1 rounded-sm inline-block">Revenue: £{dataPoint.postFixRevenue?.toLocaleString()}</p>
+              <p className="text-accent-foreground bg-accent/80 px-1 rounded-sm inline-block mt-0.5">Orders: {dataPoint.postFixOrders?.toLocaleString()}</p>
+              <p className="text-foreground mt-0.5">Rating: {dataPoint.postFixRating} ★</p>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-foreground">Revenue: £{dataPoint.currentRevenue?.toLocaleString()}</p>
+            <p className="text-foreground">Orders: {dataPoint.currentOrders?.toLocaleString()}</p>
+            <p className="text-foreground">Rating: {dataPoint.currentRating} ★</p>
+          </>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
 
 
 export default function RevenueActionsPageRevamped() {
@@ -132,13 +176,12 @@ export default function RevenueActionsPageRevamped() {
     setAlertSettings(prev => {
       const currentSetting = prev[key];
       const updatedValue = field === 'threshold' ? Number(value) : value;
-      // Ensure type correctness for the specific field being updated
       if (field === 'threshold' && 'threshold' in currentSetting) {
         return { ...prev, [key]: { ...currentSetting, threshold: updatedValue as number } };
       } else if (field === 'enabled') {
          return { ...prev, [key]: { ...currentSetting, enabled: updatedValue as boolean } };
       }
-      return prev; // Should not happen with correct types
+      return prev; 
     });
   };
 
@@ -174,7 +217,6 @@ export default function RevenueActionsPageRevamped() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Venue Snapshot Card */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -219,7 +261,6 @@ export default function RevenueActionsPageRevamped() {
             </CardContent>
           </Card>
 
-          {/* Detected Issues Card */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -253,7 +294,6 @@ export default function RevenueActionsPageRevamped() {
           </Card>
         </div>
 
-        {/* Smart Suggestions Card */}
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="font-headline flex items-center">
@@ -283,7 +323,6 @@ export default function RevenueActionsPageRevamped() {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Simulated Uplift Module Card */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -304,17 +343,7 @@ export default function RevenueActionsPageRevamped() {
                     <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{fontSize: 12}} />
                     <YAxis yAxisId="left" stroke="hsl(var(--primary))" tickFormatter={(value) => `£${value/1000}k`} tick={{fontSize: 12}} domain={['auto', 'auto']}/>
                     <YAxis yAxisId="orders" orientation="right" stroke="hsl(var(--accent))" tickFormatter={(value) => `${value}`}  tick={{fontSize: 12}} domain={['auto', 'auto']} />
-                    <ChartTooltip
-                      content={
-                        <ChartTooltipContent
-                          formatter={(value, name, props) => {
-                            if (name === "currentRevenue" || name === "postFixRevenue") return `£${(value as number).toLocaleString()}`;
-                            if (name === "currentRating" || name === "postFixRating") return `${value} ★`;
-                            return `${value} orders`;
-                          }}
-                        />
-                      }
-                    />
+                    <ChartTooltip content={<CustomUpliftTooltip />} />
                     <Legend />
                     <Line yAxisId="left" type="monotone" dataKey="currentRevenue" stroke="var(--color-currentRevenue)" strokeDasharray="5 5" activeDot={{ r: 6 }} />
                     <Line yAxisId="left" type="monotone" dataKey="postFixRevenue" stroke="var(--color-postFixRevenue)" strokeWidth={2} activeDot={{ r: 8 }} />
@@ -326,7 +355,6 @@ export default function RevenueActionsPageRevamped() {
             </CardContent>
           </Card>
 
-          {/* Auto-Alert Configuration Card */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
@@ -336,7 +364,7 @@ export default function RevenueActionsPageRevamped() {
               <CardDescription>Current settings. Click below to modify.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-2 text-sm max-h-[280px] overflow-y-auto pr-2">
                 {Object.entries(alertSettings).map(([key, setting]) => {
                   const Icon = setting.icon;
                   return (
@@ -347,7 +375,7 @@ export default function RevenueActionsPageRevamped() {
                       </div>
                       {'threshold' in setting ? (
                         <Badge variant={setting.enabled ? 'default' : 'secondary'} className={setting.enabled ? 'bg-primary/20 text-primary-foreground border-primary/30' : ''}>
-                          {setting.enabled ? `> ${setting.threshold} ${setting.unit}` : 'Disabled'}
+                          {setting.enabled ? `${setting.threshold} ${setting.unit}` : 'Disabled'}
                         </Badge>
                       ) : (
                         <Badge variant={setting.enabled ? 'default' : 'secondary'} className={setting.enabled ? 'bg-primary/20 text-primary-foreground border-primary/30' : ''}>
@@ -423,7 +451,6 @@ export default function RevenueActionsPageRevamped() {
           </Card>
         </div>
         
-        {/* Quick Actions Card */}
         <Card>
             <CardHeader>
                 <CardTitle className="font-headline flex items-center">
@@ -452,4 +479,3 @@ export default function RevenueActionsPageRevamped() {
     </TooltipProvider>
   );
 }
-

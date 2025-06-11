@@ -224,7 +224,7 @@ export default function CustomerMapPage() {
               <CardTitle className="font-headline">Retention Insights</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {customerDataByArea.slice(0,2).map(area => ( 
+              {customerDataByArea.map(area => ( 
                 <div key={area.postcode} className="p-3 bg-muted/30 rounded-lg">
                   <h4 className="font-semibold text-primary">{area.postcode}</h4>
                   <p className="text-sm">

@@ -29,6 +29,14 @@ import {
   Percent,
   ThumbsUp,
   ThumbsDown,
+  ChevronRight,
+  PowerOff,
+  Power,
+  Printer,
+  Ban,
+  UserX,
+  TrendingDown as TrendingDownIcon,
+  AlertCircle
 } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from "recharts";
@@ -90,14 +98,14 @@ const upliftChartConfig = {
 } satisfies ChartConfig;
 
 interface AlertSettings {
-  avgDeliveryTime: { enabled: boolean; threshold: number };
-  driverAvailability: { enabled: boolean; threshold: number };
-  orderQueueCongestion: { enabled: boolean; threshold: number };
-  prepTimeSpike: { enabled: boolean; threshold: number };
-  noOrdersInMinutes: { enabled: boolean; threshold: number };
-  dailySalesDip: { enabled: boolean; threshold: number };
-  posDisconnected: { enabled: boolean };
-  printerOffline: { enabled: boolean };
+  avgDeliveryTime: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
+  driverAvailability: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
+  orderQueueCongestion: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
+  prepTimeSpike: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
+  noOrdersInMinutes: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
+  dailySalesDip: { enabled: boolean; threshold: number; label: string; unit: string; description: string; icon: React.ElementType };
+  posDisconnected: { enabled: boolean; label: string; description: string; icon: React.ElementType };
+  printerOffline: { enabled: boolean; label: string; description: string; icon: React.ElementType };
 }
 
 
@@ -106,14 +114,14 @@ export default function RevenueActionsPageRevamped() {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
 
   const [alertSettings, setAlertSettings] = useState<AlertSettings>({
-    avgDeliveryTime: { enabled: true, threshold: 45 },
-    driverAvailability: { enabled: true, threshold: 2 },
-    orderQueueCongestion: { enabled: true, threshold: 10 },
-    prepTimeSpike: { enabled: true, threshold: 15 },
-    noOrdersInMinutes: { enabled: true, threshold: 30 },
-    dailySalesDip: { enabled: true, threshold: 20 },
-    posDisconnected: { enabled: true },
-    printerOffline: { enabled: true },
+    avgDeliveryTime: { enabled: true, threshold: 45, label: "Avg. Delivery Time", unit: "min", description: "Alert if avg. delivery time exceeds X mins.", icon: Clock },
+    driverAvailability: { enabled: true, threshold: 2, label: "Driver Availability", unit: "drivers", description: "Alert if available drivers drop below X.", icon: UserX },
+    orderQueueCongestion: { enabled: true, threshold: 10, label: "Order Queue Congestion", unit: "orders", description: "Alert if pending orders exceed X.", icon: Layers },
+    prepTimeSpike: { enabled: true, threshold: 15, label: "Prep Time Spike", unit: "min", description: "Alert if avg. prep time exceeds X mins.", icon: AlertTriangle },
+    noOrdersInMinutes: { enabled: true, threshold: 30, label: "No Orders", unit: "min", description: "Alert if no orders for X mins (during ops hours).", icon: Ban },
+    dailySalesDip: { enabled: true, threshold: 20, label: "Daily Sales Dip", unit: "%", description: "Alert if sales are X% below daily average.", icon: TrendingDownIcon },
+    posDisconnected: { enabled: true, label: "POS Disconnected", description: "Alert if Point of Sale system goes offline.", icon: PowerOff },
+    printerOffline: { enabled: true, label: "Printer Offline", description: "Alert if order printer goes offline.", icon: Printer },
   });
 
   const handleAlertSettingChange = (
@@ -123,13 +131,14 @@ export default function RevenueActionsPageRevamped() {
   ) => {
     setAlertSettings(prev => {
       const currentSetting = prev[key];
-      // Type assertion for threshold to ensure it's treated as a number
       const updatedValue = field === 'threshold' ? Number(value) : value;
-      const updatedSetting = { ...currentSetting, [field]: updatedValue };
-      return {
-        ...prev,
-        [key]: updatedSetting,
-      };
+      // Ensure type correctness for the specific field being updated
+      if (field === 'threshold' && 'threshold' in currentSetting) {
+        return { ...prev, [key]: { ...currentSetting, threshold: updatedValue as number } };
+      } else if (field === 'enabled') {
+         return { ...prev, [key]: { ...currentSetting, enabled: updatedValue as boolean } };
+      }
+      return prev; // Should not happen with correct types
     });
   };
 
@@ -214,7 +223,7 @@ export default function RevenueActionsPageRevamped() {
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="font-headline flex items-center">
-                <AlertTriangle className="mr-2 h-6 w-6 text-destructive" />
+                <AlertCircle className="mr-2 h-6 w-6 text-destructive" />
                 Detected Issues
               </CardTitle>
               <CardDescription>Key areas needing attention for {venueDetails.name}.</CardDescription>
@@ -324,169 +333,92 @@ export default function RevenueActionsPageRevamped() {
                 <Bell className="mr-2 h-6 w-6 text-primary" />
                 Auto-Alert Configuration
               </CardTitle>
-              <CardDescription>Manage your automated operational notifications. You'll receive WhatsApp and email alerts.</CardDescription>
+              <CardDescription>Current settings. Click below to modify.</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center h-full">
-               <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="w-full py-6 text-base">
-                      <Bell className="mr-2 h-5 w-5" /> Configure Alerts
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[525px]">
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center">
-                        <Bell className="mr-2 h-5 w-5 text-primary" /> Configure Auto-Alerts
-                      </DialogTitle>
-                      <DialogDescription>
-                        Set thresholds for critical operational metrics. You'll receive WhatsApp and email notifications
-                        when these limits are breached, helping you take timely action.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-6 py-4 max-h-[60vh] overflow-y-auto pr-2">
-                      {/* Average Delivery Time */}
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="avgDeliveryTimeThreshold" className="col-span-2">
-                          Avg. Delivery Time Exceeds
-                          <p className="text-xs text-muted-foreground">Alert if avg. delivery time is over X mins.</p>
-                        </Label>
-                        <div className="flex items-center gap-2">
-                          <Input
-                            id="avgDeliveryTimeThreshold"
-                            type="number"
-                            value={alertSettings.avgDeliveryTime.threshold}
-                            onChange={(e) => handleAlertSettingChange('avgDeliveryTime', 'threshold', parseInt(e.target.value) || 0)}
-                            className="w-20 text-center"
-                          />
-                          <span className="text-sm text-muted-foreground">min</span>
-                        </div>
+            <CardContent className="space-y-3">
+              <ul className="space-y-2 text-sm">
+                {Object.entries(alertSettings).map(([key, setting]) => {
+                  const Icon = setting.icon;
+                  return (
+                    <li key={key} className="flex items-center justify-between p-2 bg-muted/30 rounded-md">
+                      <div className="flex items-center">
+                        <Icon className={`mr-2 h-4 w-4 ${setting.enabled ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className={setting.enabled ? 'text-foreground' : 'text-muted-foreground'}>{setting.label}:</span>
                       </div>
-
-                      {/* Driver Availability */}
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="driverAvailabilityThreshold" className="col-span-2">
-                          Driver Availability Drops Below
-                          <p className="text-xs text-muted-foreground">Alert if available drivers are less than X.</p>
-                        </Label>
-                         <div className="flex items-center gap-2">
-                            <Input
-                              id="driverAvailabilityThreshold"
-                              type="number"
-                              value={alertSettings.driverAvailability.threshold}
-                              onChange={(e) => handleAlertSettingChange('driverAvailability', 'threshold', parseInt(e.target.value) || 0)}
-                              className="w-20 text-center"
+                      {'threshold' in setting ? (
+                        <Badge variant={setting.enabled ? 'default' : 'secondary'} className={setting.enabled ? 'bg-primary/20 text-primary-foreground border-primary/30' : ''}>
+                          {setting.enabled ? `> ${setting.threshold} ${setting.unit}` : 'Disabled'}
+                        </Badge>
+                      ) : (
+                        <Badge variant={setting.enabled ? 'default' : 'secondary'} className={setting.enabled ? 'bg-primary/20 text-primary-foreground border-primary/30' : ''}>
+                          {setting.enabled ? 'Enabled' : 'Disabled'}
+                        </Badge>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full mt-4">
+                    <Bell className="mr-2 h-4 w-4" /> Configure Alerts
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[525px]">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center">
+                      <Bell className="mr-2 h-5 w-5 text-primary" /> Configure Auto-Alerts
+                    </DialogTitle>
+                    <DialogDescription>
+                      Set thresholds for critical operational metrics. You'll receive WhatsApp and email notifications
+                      when these limits are breached, helping you take timely action.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-6 py-4 max-h-[60vh] overflow-y-auto pr-2">
+                    {Object.entries(alertSettings).map(([key, setting]) => {
+                      const typedKey = key as keyof AlertSettings;
+                      const Icon = setting.icon;
+                       return (
+                        <div key={key} className="space-y-3 p-3 border rounded-md">
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor={`${key}-enabled`} className="flex items-center gap-2 text-base font-semibold">
+                              <Icon className="h-5 w-5 text-primary" />
+                              {setting.label}
+                            </Label>
+                            <Switch
+                              id={`${key}-enabled`}
+                              checked={setting.enabled}
+                              onCheckedChange={(checked) => handleAlertSettingChange(typedKey, 'enabled', checked)}
                             />
-                             <span className="text-sm text-muted-foreground">drivers</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground pl-7">{setting.description}</p>
+                          {'threshold' in setting && (
+                            <div className={`pl-7 mt-2 ${!setting.enabled ? 'opacity-50' : ''}`}>
+                              <Label htmlFor={`${key}-threshold`} className="text-xs text-muted-foreground">
+                                Threshold ({setting.unit})
+                              </Label>
+                              <Input
+                                id={`${key}-threshold`}
+                                type="number"
+                                value={setting.threshold}
+                                onChange={(e) => handleAlertSettingChange(typedKey, 'threshold', parseInt(e.target.value) || 0)}
+                                className="w-full text-sm mt-1"
+                                disabled={!setting.enabled}
+                              />
+                            </div>
+                          )}
                         </div>
-                      </div>
-
-                      {/* Order Queue Congestion */}
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="orderQueueThreshold" className="col-span-2">
-                          Order Queue Exceeds
-                           <p className="text-xs text-muted-foreground">Alert if pending orders are more than X.</p>
-                        </Label>
-                        <div className="flex items-center gap-2">
-                            <Input
-                              id="orderQueueThreshold"
-                              type="number"
-                              value={alertSettings.orderQueueCongestion.threshold}
-                              onChange={(e) => handleAlertSettingChange('orderQueueCongestion', 'threshold', parseInt(e.target.value) || 0)}
-                              className="w-20 text-center"
-                            />
-                            <span className="text-sm text-muted-foreground">orders</span>
-                        </div>
-                      </div>
-                      
-                      {/* Prep Time Spike */}
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="prepTimeSpikeThreshold" className="col-span-2">
-                          Prep Time Spike Exceeds
-                          <p className="text-xs text-muted-foreground">Alert if avg. prep time is over X mins.</p>
-                        </Label>
-                         <div className="flex items-center gap-2">
-                            <Input
-                              id="prepTimeSpikeThreshold"
-                              type="number"
-                              value={alertSettings.prepTimeSpike.threshold}
-                              onChange={(e) => handleAlertSettingChange('prepTimeSpike', 'threshold', parseInt(e.target.value) || 0)}
-                              className="w-20 text-center"
-                            />
-                            <span className="text-sm text-muted-foreground">min</span>
-                        </div>
-                      </div>
-
-                      {/* No Orders in X Minutes */}
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="noOrdersThreshold" className="col-span-2">
-                          No Orders For
-                          <p className="text-xs text-muted-foreground">Alert if no orders for X mins (during ops).</p>
-                        </Label>
-                        <div className="flex items-center gap-2">
-                            <Input
-                              id="noOrdersThreshold"
-                              type="number"
-                              value={alertSettings.noOrdersInMinutes.threshold}
-                              onChange={(e) => handleAlertSettingChange('noOrdersInMinutes', 'threshold', parseInt(e.target.value) || 0)}
-                              className="w-20 text-center"
-                            />
-                            <span className="text-sm text-muted-foreground">min</span>
-                        </div>
-                      </div>
-
-                      {/* Daily Sales Dip */}
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="salesDipThreshold" className="col-span-2">
-                          Daily Sales Dip Below
-                           <p className="text-xs text-muted-foreground">Alert if sales are X% below daily avg.</p>
-                        </Label>
-                        <div className="flex items-center gap-2">
-                            <Input
-                              id="salesDipThreshold"
-                              type="number"
-                              value={alertSettings.dailySalesDip.threshold}
-                              onChange={(e) => handleAlertSettingChange('dailySalesDip', 'threshold', parseInt(e.target.value) || 0)}
-                              className="w-20 text-center"
-                            />
-                            <span className="text-sm text-muted-foreground">%</span>
-                        </div>
-                      </div>
-
-                      {/* POS Disconnected */}
-                      <div className="flex items-center justify-between gap-4 pt-2 mt-2 border-t">
-                        <Label htmlFor="posDisconnectedAlert" className="flex flex-col">
-                          POS Disconnected Alert
-                          <span className="text-xs text-muted-foreground">Alert if the Point of Sale system goes offline.</span>
-                        </Label>
-                        <Switch
-                          id="posDisconnectedAlert"
-                          checked={alertSettings.posDisconnected.enabled}
-                          onCheckedChange={(checked) => handleAlertSettingChange('posDisconnected', 'enabled', checked)}
-                        />
-                      </div>
-
-                      {/* Printer Offline */}
-                      <div className="flex items-center justify-between gap-4 pt-2 mt-2 border-t">
-                        <Label htmlFor="printerOfflineAlert" className="flex flex-col">
-                          Printer Offline Alert
-                           <span className="text-xs text-muted-foreground">Alert if the order printer goes offline.</span>
-                        </Label>
-                        <Switch
-                          id="printerOfflineAlert"
-                          checked={alertSettings.printerOffline.enabled}
-                          onCheckedChange={(checked) => handleAlertSettingChange('printerOffline', 'enabled', checked)}
-                        />
-                      </div>
-
-                    </div>
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button type="button" variant="outline">Cancel</Button>
-                      </DialogClose>
-                      <Button type="button" onClick={handleSaveAlerts}>Save Settings</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                       );
+                    })}
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button type="button" variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button type="button" onClick={handleSaveAlerts}>Save Settings</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </div>

@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 import {
   LayoutDashboard,
@@ -9,7 +10,8 @@ import {
   AlertTriangle,
   BadgePercent,
   Replace, // Added for Switch Takeaway
-  Settings, 
+  Settings,
+  TrendingUp, // Added for Actions & Revenue Optimisation
 } from 'lucide-react';
 
 export interface NavItem {
@@ -69,7 +71,13 @@ export const dashboardNavItems: NavItem[] = [
     group: 'Tools',
   },
   {
-    href: '/takeaways', // New route for takeaway selection
+    href: '/dashboard/revenue-actions',
+    label: 'Actions & Revenue Optimisation',
+    icon: TrendingUp,
+    group: 'Optimisation',
+  },
+  {
+    href: '/takeaways', 
     label: 'Switch Takeaway',
     icon: Replace, 
     group: 'Configuration',

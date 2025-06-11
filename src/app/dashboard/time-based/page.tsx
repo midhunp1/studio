@@ -47,6 +47,8 @@ const chartConfig = {
   value: { label: "Order Value (£)", color: "hsl(var(--accent))" },
 } satisfies ChartConfig;
 
+const identifiedQuieterPeriodText = "Monday and Tuesday mornings";
+
 
 export default function TimeBasedPage() {
   const { toast } = useToast();
@@ -167,7 +169,7 @@ export default function TimeBasedPage() {
               <TrendingDown className="h-8 w-8 text-red-500 mr-3 mt-1 flex-shrink-0" />
               <div className="flex-grow">
                 <h4 className="font-semibold">Quieter Periods</h4>
-                <p className="text-sm text-muted-foreground">Lowest activity observed on <span className="text-primary">Monday and Tuesday mornings</span>.</p>
+                <p className="text-sm text-muted-foreground">Lowest activity observed on <span className="text-primary">{identifiedQuieterPeriodText}</span>.</p>
                 <p className="text-sm text-muted-foreground mt-1">Opportunity for targeted promotions to boost orders during off-peak hours.</p>
               </div>
             </div>
@@ -181,7 +183,8 @@ export default function TimeBasedPage() {
                 <DialogHeader>
                   <DialogTitle>Create Promotion for Quieter Periods</DialogTitle>
                   <DialogDescription>
-                    Boost sales during identified quieter times (e.g., <Clock className="inline h-3.5 w-3.5 mr-0.5 align-text-bottom"/>Monday and Tuesday mornings).
+                    Boost sales during the identified quieter period: <strong className="text-primary">{identifiedQuieterPeriodText}</strong>.
+                    <Clock className="inline h-3.5 w-3.5 ml-1 mr-0.5 align-text-bottom text-primary"/>
                     If you add a coupon code, customers must use it. Otherwise, the discount can be automatically applied during these hours (simulated).
                   </DialogDescription>
                 </DialogHeader>

@@ -6,7 +6,7 @@ import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactiv
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Utensils, Star, TrendingUp, PieChart as PieChartIcon } from 'lucide-react';
+import { Utensils, Star, TrendingUp, TrendingDown, PieChart as PieChartIcon } from 'lucide-react';
 import Image from 'next/image';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { PieChart, Pie, Cell, Legend, Sector } from "recharts"; 
@@ -21,6 +21,14 @@ export default function TopDishPage() {
     { postcode: "M2 2BB", dishName: "Classic Burger", category: "Burgers", orders: 200, revenue: "£1,600", rating: 4.5, imageHint: "burger fries" },
     { postcode: "M2 2BB", dishName: "Pad Thai", category: "Thai", orders: 90, revenue: "£990", rating: 4.7, imageHint: "pad thai" },
     { postcode: "M3 3CC", dishName: "Sushi Platter", category: "Sushi", orders: 70, revenue: "£1,050", rating: 4.9, imageHint: "sushi platter" },
+  ];
+
+  const lowPerformingDishes = [
+    { dishName: "Vegetable Spring Rolls", category: "Starters", orders: 15, revenue: "£45", rating: 3.2, reason: "Low visibility", imageHint: "spring rolls" },
+    { dishName: "Tuna Sandwich", category: "Sandwiches", orders: 8, revenue: "£32", rating: 2.8, reason: " unpopular", imageHint: "tuna sandwich" },
+    { dishName: "Diet Lemonade", category: "Drinks", orders: 25, revenue: "£25", rating: 3.5, reason: "Low margin, often out of stock", imageHint: "lemonade drink" },
+    { dishName: "Plain Naan", category: "Sides", orders: 30, revenue: "£60", rating: 4.0, reason: "Usually ordered with curry", imageHint: "naan bread" },
+    { dishName: "Mushroom Soup", category: "Soups", orders: 5, revenue: "£20", rating: 2.5, reason: "Seasonal, low demand", imageHint: "mushroom soup" },
   ];
 
   // Assume a selected area or show overall top dishes
@@ -252,6 +260,43 @@ export default function TopDishPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="font-headline flex items-center">
+            <TrendingDown className="mr-2 h-5 w-5 text-destructive" />
+            Overall Low Performing Dishes
+          </CardTitle>
+          <CardDescription>Items with low orders or revenue, potentially needing attention.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Dish Name</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead className="text-right">Orders</TableHead>
+                <TableHead className="text-right">Revenue</TableHead>
+                <TableHead className="text-right">Avg. Rating</TableHead>
+                <TableHead>Reason / Note</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {lowPerformingDishes.map((dish, index) => (
+                <TableRow key={`${dish.dishName}-${index}`}>
+                  <TableCell className="font-medium">{dish.dishName}</TableCell>
+                  <TableCell>{dish.category}</TableCell>
+                  <TableCell className="text-right">{dish.orders}</TableCell>
+                  <TableCell className="text-right text-destructive">{dish.revenue}</TableCell>
+                  <TableCell className="text-right">{dish.rating}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">{dish.reason}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
     </div>
   );
 }

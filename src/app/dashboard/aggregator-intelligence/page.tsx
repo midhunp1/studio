@@ -19,15 +19,15 @@ const platformPerformanceData = [
   { platform: "UberEats", orders: 70, avgOrderValue: "£28.00", commission: "25%", netRevenue: "£1470" },
 ];
 
+// Simplified chart config to only show orders
 const platformPerformanceChartConfig = {
   orders: { label: "Orders", color: "hsl(var(--chart-1))" },
-  netRevenue: { label: "Net Revenue (£)", color: "hsl(var(--chart-2))" },
 } satisfies ChartConfig;
 
 const platformPerformanceChartData = platformPerformanceData.map(p => ({
   platform: p.platform,
   orders: p.orders,
-  netRevenue: parseFloat(p.netRevenue.replace('£', '')),
+  // netRevenue: parseFloat(p.netRevenue.replace('£', '')), // Net revenue data can still be in the data array
 }));
 
 const competitorActivity = [
@@ -75,20 +75,12 @@ export default function AggregatorIntelligencePage() {
                     width={80}
                     className="text-xs"
                   />
-                  <XAxis type="number" id="ordersXAxis" />
-                  <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
+                  <XAxis type="number" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
                   <Bar
                     dataKey="orders"
-                    xAxisId="ordersXAxis"
                     fill="var(--color-orders)"
-                    radius={[0, 4, 4, 0]}
-                  />
-                  <Bar
-                    dataKey="netRevenue"
-                    xAxisId="revenueXAxis"
-                    fill="var(--color-netRevenue)"
                     radius={[0, 4, 4, 0]}
                   />
                 </RechartsBarChart>

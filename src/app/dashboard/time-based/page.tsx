@@ -5,9 +5,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent, Edit3, X } from 'lucide-react'; 
+import { LineChart, Clock, TrendingUp, TrendingDown, BadgePercent, Edit3, X } from 'lucide-react'; 
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line, LineChart as RechartsLineChart, ResponsiveContainer, Legend } from "recharts"
+import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line as RechartsLine, LineChart as RechartsLineChartComponent, ResponsiveContainer, Legend } from "recharts" // Aliased Line from recharts to avoid conflict
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -46,7 +46,7 @@ const chartConfig = {
   orders: { label: "Total Orders", color: "hsl(var(--primary))" },
   delivery: { label: "Delivery Orders", color: "hsl(var(--chart-1))" },
   collection: { label: "Collection Orders", color: "hsl(var(--chart-2))" },
-  instore: { label: "In-Store Orders", color: "hsl(var(--chart-3))" }, // Added instore config
+  instore: { label: "In-Store Orders", color: "hsl(var(--chart-3))" }, 
   value: { label: "Order Value (£)", color: "hsl(var(--accent))" },
 } satisfies ChartConfig;
 
@@ -224,14 +224,14 @@ export default function TimeBasedPage() {
         <Card>
           <CardHeader>
             <CardTitle className="font-headline flex items-center">
-              <LineChartIconLucide className="mr-2 h-5 w-5 text-primary" />
+              <LineChart className="mr-2 h-5 w-5 text-primary" />
               Daily Order Volume & Value
             </CardTitle>
             <CardDescription>Total orders and revenue by day of the week</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
-               <RechartsLineChart data={dailyData} accessibilityLayer margin={{ left: 12, right: 12 }}>
+               <RechartsLineChartComponent data={dailyData} accessibilityLayer margin={{ left: 12, right: 12 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="day"
@@ -243,9 +243,9 @@ export default function TimeBasedPage() {
                 <YAxis yAxisId="right" orientation="right" />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Line yAxisId="left" type="monotone" dataKey="orders" name={chartConfig.orders.label as string} stroke="var(--color-orders)" strokeWidth={2} dot={false} />
-                <Line yAxisId="right" type="monotone" dataKey="value" name={chartConfig.value.label as string} stroke="var(--color-value)" strokeWidth={2} dot={false} />
-              </RechartsLineChart>
+                <RechartsLine yAxisId="left" type="monotone" dataKey="orders" name={chartConfig.orders.label as string} stroke="var(--color-orders)" strokeWidth={2} dot={false} />
+                <RechartsLine yAxisId="right" type="monotone" dataKey="value" name={chartConfig.value.label as string} stroke="var(--color-value)" strokeWidth={2} dot={false} />
+              </RechartsLineChartComponent>
             </ChartContainer>
           </CardContent>
         </Card>

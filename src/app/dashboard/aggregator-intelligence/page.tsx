@@ -35,13 +35,6 @@ const competitorActivity = [
   { id: "comp3", name: "Burger Bistro", postcode: "M2 1AB", activity: "New restaurant launched on Foodhub.", date: "1 week ago", platform: "Foodhub" },
 ];
 
-const churnData = [
-    { restaurant: "Kebab King", action: "Joined JustEat", date: "2024-07-15", previousPlatform: "N/A" },
-    { restaurant: "Noodle Bar", action: "Switched to UberEats", date: "2024-07-10", previousPlatform: "Deliveroo" },
-    { restaurant: "Pizza Place", action: "Left Foodhub", date: "2024-07-01", previousPlatform: "Foodhub" },
-];
-
-
 export default function AggregatorIntelligencePage() {
   return (
     <div>
@@ -93,46 +86,7 @@ export default function AggregatorIntelligencePage() {
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="font-headline flex items-center">
-              <ShieldAlert className="mr-2 h-6 w-6 text-accent" />
-              Churn & Exclusivity Analytics
-            </CardTitle>
-            <CardDescription>Track publicly observable platform switches by restaurants in your market and, if applicable, monitor your own exclusivity agreement compliance with your platform partners. This data helps you understand market dynamics.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Monitor when restaurants join, leave, or switch between aggregator platforms based on publicly available data.
-              This helps in understanding market dynamics and potentially enforcing your own exclusivity agreements.
-            </p>
-             <div className="max-h-80 overflow-y-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                        <TableHead>Restaurant</TableHead>
-                        <TableHead>Action</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Previous/New Platform</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {churnData.map((item, index) => (
-                        <TableRow key={index}>
-                            <TableCell className="font-medium">{item.restaurant}</TableCell>
-                            <TableCell>{item.action}</TableCell>
-                            <TableCell>{item.date}</TableCell>
-                            <TableCell>{item.previousPlatform}</TableCell>
-                        </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-            <Button variant="outline" className="w-full">
-                <ExternalLink className="mr-2 h-4 w-4" /> View Full Churn Report
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Churn & Exclusivity Analytics Card Removed */}
       </div>
 
       <Card>
@@ -141,7 +95,9 @@ export default function AggregatorIntelligencePage() {
             <BellRing className="mr-2 h-6 w-6 text-destructive" />
             Market-Change Alerts
           </CardTitle>
-          <CardDescription>Automated notifications for publicly announced or platform-observed competitor activities, such as new restaurant launches on aggregators, widely advertised promotions, or significant service changes in your area.</CardDescription>
+          <CardDescription>
+            Automated notifications for publicly announced or platform-observed competitor activities, such as new restaurant launches on aggregators, widely advertised promotions, or significant service changes in your area. This information is typically based on public data sources or aggregated market trends.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {competitorActivity.length > 0 ? (

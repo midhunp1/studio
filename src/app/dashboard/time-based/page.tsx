@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { FilterControls } from '@/components/dashboard/filter-controls';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart as LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent, Edit3, X } from 'lucide-react'; 
+import { LineChartIconLucide, Clock, TrendingUp, TrendingDown, BadgePercent, Edit3, X } from 'lucide-react'; 
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Line, LineChart as RechartsLineChart, ResponsiveContainer, Legend } from "recharts"
 import { Button } from '@/components/ui/button';
@@ -18,18 +18,18 @@ import { Separator } from '@/components/ui/separator';
 import { Checkbox } from "@/components/ui/checkbox";
 
 const hourlyData = [
-  { hour: "00:00", orders: 10, delivery: 8, collection: 2 },
-  { hour: "01:00", orders: 12, delivery: 10, collection: 2 },
-  { hour: "02:00", orders: 8, delivery: 7, collection: 1 },
+  { hour: "00:00", orders: 10, delivery: 8, collection: 2, instore: 3 },
+  { hour: "01:00", orders: 12, delivery: 10, collection: 2, instore: 4 },
+  { hour: "02:00", orders: 8, delivery: 7, collection: 1, instore: 2 },
   // ... more hours
-  { hour: "12:00", orders: 50, delivery: 40, collection: 10 },
-  { hour: "13:00", orders: 55, delivery: 45, collection: 10 },
-  { hour: "18:00", orders: 120, delivery: 100, collection: 20 },
-  { hour: "19:00", orders: 150, delivery: 120, collection: 30 },
-  { hour: "20:00", orders: 130, delivery: 110, collection: 20 },
-  { hour: "21:00", orders: 90, delivery: 80, collection: 10 },
-  { hour: "22:00", orders: 60, delivery: 55, collection: 5 },
-  { hour: "23:00", orders: 30, delivery: 28, collection: 2 },
+  { hour: "12:00", orders: 50, delivery: 40, collection: 10, instore: 15 },
+  { hour: "13:00", orders: 55, delivery: 45, collection: 10, instore: 12 },
+  { hour: "18:00", orders: 120, delivery: 100, collection: 20, instore: 25 },
+  { hour: "19:00", orders: 150, delivery: 120, collection: 30, instore: 30 },
+  { hour: "20:00", orders: 130, delivery: 110, collection: 20, instore: 20 },
+  { hour: "21:00", orders: 90, delivery: 80, collection: 10, instore: 15 },
+  { hour: "22:00", orders: 60, delivery: 55, collection: 5, instore: 10 },
+  { hour: "23:00", orders: 30, delivery: 28, collection: 2, instore: 5 },
 ];
 
 const dailyData = [
@@ -46,6 +46,7 @@ const chartConfig = {
   orders: { label: "Total Orders", color: "hsl(var(--primary))" },
   delivery: { label: "Delivery Orders", color: "hsl(var(--chart-1))" },
   collection: { label: "Collection Orders", color: "hsl(var(--chart-2))" },
+  instore: { label: "In-Store Orders", color: "hsl(var(--chart-3))" }, // Added instore config
   value: { label: "Order Value (£)", color: "hsl(var(--accent))" },
 } satisfies ChartConfig;
 
@@ -202,7 +203,7 @@ export default function TimeBasedPage() {
               <Clock className="mr-2 h-5 w-5 text-primary" />
               Hourly Order Volume
             </CardTitle>
-            <CardDescription>Orders by hour of the day</CardDescription>
+            <CardDescription>Orders by hour of the day, broken down by type.</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -212,8 +213,9 @@ export default function TimeBasedPage() {
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Bar dataKey="delivery" fill="var(--color-delivery)" radius={4} />
-                <Bar dataKey="collection" fill="var(--color-collection)" radius={4} />
+                <Bar dataKey="delivery" fill="var(--color-delivery)" radius={4} stackId="a" />
+                <Bar dataKey="collection" fill="var(--color-collection)" radius={4} stackId="a" />
+                <Bar dataKey="instore" fill="var(--color-instore)" radius={4} stackId="a" />
               </RechartsBarChart>
             </ChartContainer>
           </CardContent>

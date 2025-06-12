@@ -76,8 +76,8 @@ export default function AggregatorIntelligencePage() {
                     className="text-xs"
                     id="platformYAxis" 
                   />
-                  <XAxis type="number" id="ordersXAxis" />
-                  <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
+                  <XAxis type="number" id="ordersXAxis" yAxisId="platformYAxis" />
+                  <XAxis type="number" id="revenueXAxis" yAxisId="platformYAxis" orientation="top" className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
                   <Bar

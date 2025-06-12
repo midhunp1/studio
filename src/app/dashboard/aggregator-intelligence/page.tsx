@@ -64,7 +64,7 @@ export default function AggregatorIntelligencePage() {
             <div>
               <h4 className="font-semibold text-lg mb-2 text-primary">Restaurant Performance by Aggregator</h4>
                <ChartContainer config={platformPerformanceChartConfig} className="h-[250px] w-full">
-                <RechartsBarChart data={platformPerformanceChartData} accessibilityLayer layout="vertical">
+                <RechartsBarChart data={platformPerformanceChartData} layout="vertical">
                   <CartesianGrid horizontal={false} />
                   <YAxis
                     dataKey="platform"

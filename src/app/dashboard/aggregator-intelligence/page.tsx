@@ -27,7 +27,6 @@ const platformPerformanceChartConfig = {
 const platformPerformanceChartData = platformPerformanceData.map(p => ({
   platform: p.platform,
   orders: p.orders,
-  // netRevenue: parseFloat(p.netRevenue.replace('£', '')), // Net revenue data can still be in the data array
 }));
 
 const competitorActivity = [
@@ -100,12 +99,12 @@ export default function AggregatorIntelligencePage() {
               <ShieldAlert className="mr-2 h-6 w-6 text-accent" />
               Churn & Exclusivity Analytics
             </CardTitle>
-            <CardDescription>Monitor platform switches and ensure exclusivity compliance.</CardDescription>
+            <CardDescription>Track publicly observable platform switches by restaurants in your market and, if applicable, monitor your own exclusivity agreement compliance with your platform partners. This data helps you understand market dynamics.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Track when restaurants join, leave, or switch between aggregator platforms.
-              This helps in understanding market dynamics and enforcing exclusivity agreements.
+              Monitor when restaurants join, leave, or switch between aggregator platforms based on publicly available data.
+              This helps in understanding market dynamics and potentially enforcing your own exclusivity agreements.
             </p>
              <div className="max-h-80 overflow-y-auto">
                 <Table>
@@ -142,7 +141,7 @@ export default function AggregatorIntelligencePage() {
             <BellRing className="mr-2 h-6 w-6 text-destructive" />
             Market-Change Alerts
           </CardTitle>
-          <CardDescription>Automated notifications for new, expanded, or promotional competitor activity.</CardDescription>
+          <CardDescription>Automated notifications for publicly announced or platform-observed competitor activities, such as new restaurant launches on aggregators, widely advertised promotions, or significant service changes in your area.</CardDescription>
         </CardHeader>
         <CardContent>
           {competitorActivity.length > 0 ? (

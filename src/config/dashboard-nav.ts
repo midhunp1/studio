@@ -14,6 +14,8 @@ import {
   TrendingUp, // Added for Actions & Revenue Optimisation
   ClipboardList, // Added for Cost & Inventory Mgmt
   Megaphone, // Added for Offer Banner Promotions
+  CloudSun, // Added for Weather Demand Forecast
+  CalendarClock, // Added for Seasonal Trend Insights
 } from 'lucide-react';
 
 export interface NavItem {
@@ -69,8 +71,20 @@ export const dashboardNavItems: NavItem[] = [
   {
     href: '/dashboard/aggregator-intelligence',
     label: 'Aggregator Intelligence',
-    icon: LayoutDashboard, // Consider a more specific icon if available
+    icon: LayoutDashboard, 
     group: 'Market Analysis',
+  },
+  {
+    href: '/dashboard/weather-demand',
+    label: 'Weather Demand Forecast',
+    icon: CloudSun,
+    group: 'Forecasting',
+  },
+  {
+    href: '/dashboard/seasonal-trends',
+    label: 'Seasonal Trend Insights',
+    icon: CalendarClock,
+    group: 'Forecasting',
   },
   {
     href: '/dashboard/ai-suggestions',

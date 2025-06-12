@@ -16,7 +16,9 @@ import {
   LayoutDashboard,
   TrendingUp,
   ClipboardList,
-  Megaphone, // Added Megaphone icon
+  Megaphone,
+  CloudSun, // Added for Weather Demand Forecast
+  CalendarClock, // Added for Seasonal Trend Insights
 } from 'lucide-react';
 
 interface InsightCardItem {
@@ -107,6 +109,20 @@ export default function DashboardOverviewPage() {
       icon: ClipboardList,
       description: 'Analyze COGS, track waste, manage supplier prices, and optimize recipe profitability.',
       dataAiHint: 'cost inventory management',
+    },
+    {
+      title: 'Weather Demand Forecast',
+      href: '/dashboard/weather-demand',
+      icon: CloudSun,
+      description: 'Predict order demand based on weather forecasts and historical data.',
+      dataAiHint: 'weather cloud forecast',
+    },
+    {
+      title: 'Seasonal Trend Insights',
+      href: '/dashboard/seasonal-trends',
+      icon: CalendarClock,
+      description: 'Analyze seasonal patterns and predict future order trends.',
+      dataAiHint: 'calendar season trends',
     },
   ];
 

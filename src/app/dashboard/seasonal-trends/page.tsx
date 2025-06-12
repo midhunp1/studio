@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/dashboard/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CalendarClock, Sun, Snowflake, CloudRain, Gift, Moon, Sparkles, TrendingUp, Info, ListChecks, Check, BarChart3, DollarSign, Repeat as RepeatIcon, ArrowUpCircle, ArrowDownCircle, MinusCircle } from 'lucide-react';
+import { CalendarClock, Sun, Snowflake, CloudRain, Gift, Moon, Sparkles, TrendingUp, Info, ListChecks, Check, BarChart3, DollarSign, Repeat as RepeatIcon, ArrowUpCircle, ArrowDownCircle, MinusCircle, Clock, Users } from 'lucide-react';
 import {
   BarChart as RechartsBarChart,
   Bar,
@@ -34,7 +34,7 @@ const seasonalInsightsData = {
   weatherDriven: {
     rainy: {
       title: "Rainy Day Comforts",
-      items: ["Pizzas (higher delivery rates)", "Pasta Bakes", "Warm Desserts (e.g., Apple Crumble)", "Hot Drinks (Tea, Coffee)", "Comfort Food Combos"],
+      items: ["Pizzas (higher delivery rates)", "Pasta Bakes", "Warm Desserts (e.g., Apple Crumble)", "Hot Drinks (Tea, Coffee)", "Comfort Food Combos", "Increased delivery orders (fewer walk-ins/collections)"],
       icon: CloudRain,
     },
     hot: {
@@ -89,7 +89,7 @@ const averageOrderValueBySeason = {
   spring: { value: 22.50, trend: "stable", icon: MinusCircle, color: "text-yellow-500" },
   summer: { value: 25.75, trend: "up", icon: ArrowUpCircle, color: "text-green-500" },
   autumn: { value: 23.00, trend: "stable", icon: MinusCircle, color: "text-yellow-500" },
-  winter: { value: 28.50, trend: "down", icon: ArrowDownCircle, color: "text-red-500" }, // Example with a down trend
+  winter: { value: 28.50, trend: "down", icon: ArrowDownCircle, color: "text-red-500" }, 
 };
 
 const reorderGapByQuarter = {
@@ -118,7 +118,6 @@ export default function SeasonalTrendsPage() {
         </CardHeader>
         <CardContent className="space-y-8">
           
-          {/* Summer vs. Winter */}
           <section>
             <h2 className="text-xl font-semibold text-primary mb-3 flex items-center">
               <Sun className="mr-2 h-5 w-5 text-amber-500" /> / <Snowflake className="mr-2 h-5 w-5 text-blue-400" />
@@ -164,7 +163,6 @@ export default function SeasonalTrendsPage() {
 
           <Separator />
 
-          {/* Weather-Driven Demand */}
           <section>
             <h2 className="text-xl font-semibold text-primary mb-3 flex items-center">
               <CloudRain className="mr-2 h-5 w-5 text-sky-500" /> / <Sun className="mr-2 h-5 w-5 text-orange-500" />
@@ -210,7 +208,6 @@ export default function SeasonalTrendsPage() {
 
           <Separator />
 
-          {/* Festive Period Peaks */}
           <section>
             <h2 className="text-xl font-semibold text-primary mb-4 flex items-center">
               <Gift className="mr-2 h-5 w-5 text-pink-500" />
@@ -243,7 +240,6 @@ export default function SeasonalTrendsPage() {
 
           <Separator />
 
-          {/* Seasonal Customer Behavior */}
           <section>
             <h2 className="text-xl font-semibold text-primary mb-4 flex items-center">
               <TrendingUp className="mr-2 h-5 w-5 text-green-600" />
@@ -284,7 +280,7 @@ export default function SeasonalTrendsPage() {
                 </CardContent>
               </Card>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center">
@@ -328,13 +324,49 @@ export default function SeasonalTrendsPage() {
                     ))}
                   </CardContent>
                 </Card>
+                 <Card className="lg:col-span-1 md:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center">
+                       <Clock className="mr-2 h-5 w-5 text-accent" />
+                      Ordering Time & Method Shifts
+                    </CardTitle>
+                    <CardDescription>How ordering patterns change with seasons and weather.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3 text-sm">
+                      <li className="flex items-start">
+                        <Sun className="mr-2.5 mt-0.5 h-4 w-4 text-amber-500 flex-shrink-0" />
+                        <div>
+                          <span className="font-semibold">Summer Lunch Boost:</span> Increased orders around midday. Consider promoting lunch specials.
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <Moon className="mr-2.5 mt-0.5 h-4 w-4 text-blue-400 flex-shrink-0" />
+                         <div>
+                          <span className="font-semibold">Winter Evening Surge:</span> Higher demand for dinner and late-night deliveries. Ensure staffing and stock for evening peak.
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <CloudRain className="mr-2.5 mt-0.5 h-4 w-4 text-sky-500 flex-shrink-0" />
+                        <div>
+                          <span className="font-semibold">Rainy Day Delivery Preference:</span> Significant shift from walk-in/collection to delivery. Optimize delivery fleet and times.
+                        </div>
+                      </li>
+                       <li className="flex items-start">
+                        <Users className="mr-2.5 mt-0.5 h-4 w-4 text-green-500 flex-shrink-0" />
+                        <div>
+                          <span className="font-semibold">Weekend Group Orders (Summer):</span> Summer weekends often see larger group orders. Offer family/group meal deals.
+                        </div>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </section>
 
           <Separator />
           
-          {/* General Seasonal Tips */}
           <section>
             <h2 className="text-xl font-semibold text-primary mb-3 flex items-center">
               <ListChecks className="mr-2 h-5 w-5 text-blue-600" />
@@ -366,6 +398,3 @@ export default function SeasonalTrendsPage() {
     </div>
   );
 }
-
-
-    

@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   TrendingUp,
   ClipboardList,
+  Megaphone, // Added Megaphone icon
 } from 'lucide-react';
 
 interface InsightCardItem {
@@ -85,6 +86,13 @@ export default function DashboardOverviewPage() {
       icon: Brain,
       description: 'Get smart insights like ad boost times and combo meal ideas powered by generative AI.',
       dataAiHint: 'brain artificial intelligence suggestions',
+    },
+    {
+      title: 'Offer Banner Promotions',
+      href: '/dashboard/offer-banner-promotions',
+      icon: Megaphone,
+      description: 'Create eye-catching promotional banners with AI for your website and app.',
+      dataAiHint: 'megaphone banner promotion ai',
     },
     {
       title: 'Actions & Revenue Optimisation',

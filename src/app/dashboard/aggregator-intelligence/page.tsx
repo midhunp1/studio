@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 const platformPerformanceData = [
   { platform: "Foodhub", orders: 120, avgOrderValue: "£22.50", commission: "2%", netRevenue: "£2646" },
   { platform: "JustEat", orders: 95, avgOrderValue: "£25.00", commission: "18%", netRevenue: "£1947.50" },
-  { platform: "Own Website", orders: 150, avgOrderValue: "£20.00", commission: "0%", netRevenue: "£3000" },
+  { platform: "Own Website", orders: 130, avgOrderValue: "£20.00", commission: "0%", netRevenue: "£2600" },
   { platform: "UberEats", orders: 70, avgOrderValue: "£28.00", commission: "25%", netRevenue: "£1470" },
 ];
 
@@ -116,7 +116,7 @@ export default function AggregatorIntelligencePage() {
               Aggregator Commission Impact
             </CardTitle>
             <CardDescription>
-              How commissions affect your profit. Foodhub's significantly lower rate often means much more in your pocket.
+              How commissions affect your profit. Foodhub's significantly lower rate (now 2% in this example) often means much more in your pocket.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

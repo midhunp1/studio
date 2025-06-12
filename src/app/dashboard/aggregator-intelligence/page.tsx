@@ -12,7 +12,7 @@ import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend 
 import { Button } from '@/components/ui/button';
 
 const platformPerformanceData = [
-  { platform: "Foodhub", orders: 120, avgOrderValue: "£22.50", commission: "15%", netRevenue: "£2295" },
+  { platform: "Foodhub", orders: 120, avgOrderValue: "£22.50", commission: "10%", netRevenue: "£2430" },
   { platform: "JustEat", orders: 95, avgOrderValue: "£25.00", commission: "18%", netRevenue: "£1947.50" },
   { platform: "Own Website", orders: 150, avgOrderValue: "£20.00", commission: "0%", netRevenue: "£3000" },
   { platform: "UberEats", orders: 70, avgOrderValue: "£28.00", commission: "25%", netRevenue: "£1470" },
@@ -63,7 +63,7 @@ export default function AggregatorIntelligencePage() {
     <div>
       <PageHeader
         title="Aggregator Intelligence"
-        description="Benchmark performance, track churn, and get market alerts for your restaurants."
+        description="Benchmark performance and get market alerts for your restaurants. This information is typically based on public data sources or aggregated market trends."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -140,7 +140,7 @@ export default function AggregatorIntelligencePage() {
               </RechartsBarChart>
             </ChartContainer>
             <p className="text-xs text-muted-foreground text-center pt-2 border-t">
-              Foodhub (15% commission) often yields higher net profit than platforms like JustEat (18%) or UberEats (25%).
+              Foodhub (10% commission) often yields higher net profit than platforms like JustEat (18%) or UberEats (25%).
             </p>
           </CardContent>
         </Card>

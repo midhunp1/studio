@@ -12,7 +12,7 @@ import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend 
 import { Button } from '@/components/ui/button';
 
 const platformPerformanceData = [
-  { platform: "Foodhub", orders: 120, avgOrderValue: "£22.50", commission: "10%", netRevenue: "£2430" },
+  { platform: "Foodhub", orders: 120, avgOrderValue: "£22.50", commission: "2%", netRevenue: "£2646" },
   { platform: "JustEat", orders: 95, avgOrderValue: "£25.00", commission: "18%", netRevenue: "£1947.50" },
   { platform: "Own Website", orders: 150, avgOrderValue: "£20.00", commission: "0%", netRevenue: "£3000" },
   { platform: "UberEats", orders: 70, avgOrderValue: "£28.00", commission: "25%", netRevenue: "£1470" },
@@ -73,7 +73,7 @@ export default function AggregatorIntelligencePage() {
               <BarChart2 className="mr-2 h-6 w-6 text-primary" />
               Platform Benchmarking
             </CardTitle>
-            <CardDescription>Performance across aggregators and competitor distribution.</CardDescription>
+            <CardDescription>Performance across aggregators and competitor distribution. This information is typically based on public data sources or aggregated market trends.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
@@ -116,7 +116,7 @@ export default function AggregatorIntelligencePage() {
               Aggregator Commission Impact
             </CardTitle>
             <CardDescription>
-              How commissions affect your profit. Foodhub's lower rate often means more in your pocket.
+              How commissions affect your profit. Foodhub's significantly lower rate often means much more in your pocket.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -140,7 +140,7 @@ export default function AggregatorIntelligencePage() {
               </RechartsBarChart>
             </ChartContainer>
             <p className="text-xs text-muted-foreground text-center pt-2 border-t">
-              Foodhub (10% commission) often yields higher net profit than platforms like JustEat (18%) or UberEats (25%).
+              Foodhub (now just 2% commission in this example) yields substantially higher net profit compared to platforms like JustEat (18%) or UberEats (25%).
             </p>
           </CardContent>
         </Card>

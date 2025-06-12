@@ -74,23 +74,20 @@ export default function AggregatorIntelligencePage() {
                     axisLine={false}
                     width={80}
                     className="text-xs"
-                    id="platformYAxis" 
                   />
-                  <XAxis type="number" id="ordersXAxis" yAxisId="platformYAxis" />
-                  <XAxis type="number" id="revenueXAxis" yAxisId="platformYAxis" orientation="top" className="text-xs" />
+                  <XAxis type="number" id="ordersXAxis" />
+                  <XAxis type="number" id="revenueXAxis" orientation="top" className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
                   <Bar
                     dataKey="orders"
-                    xAxisId="ordersXAxis" 
-                    yAxisId="platformYAxis" 
+                    xAxisId="ordersXAxis"
                     fill="var(--color-orders)"
                     radius={[0, 4, 4, 0]}
                   />
                   <Bar
                     dataKey="netRevenue"
-                    xAxisId="revenueXAxis" 
-                    yAxisId="platformYAxis" 
+                    xAxisId="revenueXAxis"
                     fill="var(--color-netRevenue)"
                     radius={[0, 4, 4, 0]}
                   />

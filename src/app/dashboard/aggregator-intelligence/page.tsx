@@ -5,9 +5,8 @@ import React from 'react';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { InteractiveHeatmapPlaceholder } from '@/components/dashboard/interactive-heatmap-placeholder';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { BarChart2, BellRing, Briefcase, ExternalLink, ShieldAlert, Users2, LineChart } from 'lucide-react';
+import { BarChart2, BellRing, Briefcase, DollarSign, ExternalLink, ShieldAlert, Users2, LineChart } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,6 @@ const platformPerformanceData = [
   { platform: "UberEats", orders: 70, avgOrderValue: "£28.00", commission: "25%", netRevenue: "£1470" },
 ];
 
-// Simplified chart config to only show orders
 const platformPerformanceChartConfig = {
   orders: { label: "Orders", color: "hsl(var(--chart-1))" },
 } satisfies ChartConfig;
@@ -34,6 +32,31 @@ const competitorActivity = [
   { id: "comp2", name: "Curry Corner", postcode: "M1 3YZ", activity: "Expanded delivery radius to include M2.", date: "5 days ago", platform: "UberEats" },
   { id: "comp3", name: "Burger Bistro", postcode: "M2 1AB", activity: "New restaurant launched on Foodhub.", date: "1 week ago", platform: "Foodhub" },
 ];
+
+// Helper function to parse currency string to number, removing £ and commas
+const parseCurrencyToNum = (value: string): number => {
+  if (!value) return 0;
+  return parseFloat(value.replace(/£|,/g, ''));
+};
+
+const commissionImpactData = platformPerformanceData.map(p => {
+  const avgOrderValueNum = parseCurrencyToNum(p.avgOrderValue);
+  const grossRevenue = p.orders * avgOrderValueNum;
+  const netRevenueNum = parseCurrencyToNum(p.netRevenue);
+  const commissionPaid = grossRevenue - netRevenueNum;
+
+  return {
+    platform: p.platform,
+    commissionPaid: commissionPaid,
+    netRevenue: netRevenueNum,
+  };
+});
+
+const commissionImpactChartConfig = {
+  netRevenue: { label: "Your Net Revenue", color: "hsl(var(--chart-1))" }, // Primary color for what you earn
+  commissionPaid: { label: "Aggregator Commission", color: "hsl(var(--chart-4))" }, // A distinct color for cost
+} satisfies ChartConfig;
+
 
 export default function AggregatorIntelligencePage() {
   return (
@@ -86,7 +109,41 @@ export default function AggregatorIntelligencePage() {
           </CardContent>
         </Card>
 
-        {/* Churn & Exclusivity Analytics Card Removed */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="font-headline flex items-center">
+              <DollarSign className="mr-2 h-6 w-6 text-primary" />
+              Aggregator Commission Impact
+            </CardTitle>
+            <CardDescription>
+              How commissions affect your profit. Foodhub's lower rate often means more in your pocket.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ChartContainer config={commissionImpactChartConfig} className="h-[250px] w-full">
+              <RechartsBarChart data={commissionImpactData} layout="vertical">
+                <CartesianGrid horizontal={false} />
+                <YAxis
+                  dataKey="platform"
+                  type="category"
+                  tickLine={false}
+                  tickMargin={5}
+                  axisLine={false}
+                  width={80}
+                  className="text-xs"
+                />
+                <XAxis type="number" unit="£" />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Legend />
+                <Bar dataKey="netRevenue" fill="var(--color-netRevenue)" stackId="a" radius={[4, 0, 0, 4]} />
+                <Bar dataKey="commissionPaid" fill="var(--color-commissionPaid)" stackId="a" radius={[0, 4, 4, 0]} />
+              </RechartsBarChart>
+            </ChartContainer>
+            <p className="text-xs text-muted-foreground text-center pt-2 border-t">
+              Foodhub (15% commission) often yields higher net profit than platforms like JustEat (18%) or UberEats (25%).
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>

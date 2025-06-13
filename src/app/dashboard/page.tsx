@@ -19,6 +19,7 @@ import {
   Megaphone,
   CloudSun, // Added for Weather Demand Forecast
   CalendarClock, // Added for Seasonal Trend Insights
+  Star, // Added for Review Analyzer
 } from 'lucide-react';
 
 interface InsightCardItem {
@@ -81,6 +82,13 @@ export default function DashboardOverviewPage() {
       icon: BadgePercent,
       description: 'Analyze which discounts worked best and where to optimize your promotion strategies.',
       dataAiHint: 'discount promotion success',
+    },
+     {
+      title: 'Review Analyzer',
+      href: '/dashboard/review-analyzer',
+      icon: Star,
+      description: 'Analyze customer review sentiment and keywords from Google, JustEat, etc., to identify actionable feedback.',
+      dataAiHint: 'review star sentiment',
     },
     {
       title: 'AI Suggestions',

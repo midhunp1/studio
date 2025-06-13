@@ -16,6 +16,7 @@ import {
   Megaphone, // Added for Offer Banner Promotions
   CloudSun, // Added for Weather Demand Forecast
   CalendarClock, // Added for Seasonal Trend Insights
+  Star, // Added for Review Analyzer
 } from 'lucide-react';
 
 export interface NavItem {
@@ -69,9 +70,15 @@ export const dashboardNavItems: NavItem[] = [
     group: 'Insights',
   },
   {
+    href: '/dashboard/review-analyzer',
+    label: 'Review Analyzer',
+    icon: Star,
+    group: 'Insights',
+  },
+  {
     href: '/dashboard/aggregator-intelligence',
     label: 'Aggregator Intelligence',
-    icon: LayoutDashboard, 
+    icon: LayoutDashboard,
     group: 'Market Analysis',
   },
   {
@@ -124,3 +131,4 @@ export const dashboardNavItems: NavItem[] = [
   //   group: 'Configuration',
   // },
 ];
+

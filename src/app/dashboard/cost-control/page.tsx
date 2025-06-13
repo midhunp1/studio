@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -10,12 +11,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from '@/components/ui/textarea';
-import { LineChart, BarChartHorizontalBig, Trash2, Edit3, DollarSign, Package, TrendingDown, TrendingUp as TrendingUpIcon, FileText, PlusCircle, AlertCircle, ShoppingBasket } from 'lucide-react';
+import { LineChart, BarChartHorizontalBig, Trash2, Edit3, DollarSign, Package, TrendingDown, TrendingUp as TrendingUpIcon, FileText, PlusCircle, AlertCircle, ShoppingBasket, CalendarCheck, Bell } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Line, LineChart as RechartsLineChart, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer, Bar, BarChart as RechartsBarChart } from "recharts";
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const cogsData = [
   { month: "Jan", cogsPercentage: 32 },
@@ -94,7 +97,7 @@ const recipeCostData: RecipeItem[] = [
       { name: "Croutons", cost: 0.30 },
       { name: "Parmesan Cheese", cost: 0.50 },
       { name: "Caesar Dressing", cost: 0.40 },
-      { name: "Optional Chicken", cost: 0.00 }, // Placeholder if chicken is extra
+      { name: "Optional Chicken", cost: 0.00 }, 
     ]
   },
   { 
@@ -122,6 +125,15 @@ const supplierPriceData = [
   { id: "sup3", ingredient: "Pizza Flour (Type 00)", supplier: "Millers Choice", lastPrice: 15.00, prevPrice: 14.50, unit: "25kg bag", lastUpdated: "2024-07-15" },
   { id: "sup4", ingredient: "Tomatoes (Plum)", supplier: "FarmFresh Co.", lastPrice: 2.20, prevPrice: 2.50, unit: "kg", lastUpdated: "2024-07-28" },
 ];
+
+const batchExpiryData = [
+  { id: "batch1", ingredientName: "Chicken Breast", batchId: "CB240730A", purchaseDate: "2024-07-30", expiryDate: "2024-08-05", quantity: "10 kg", status: "Fresh" },
+  { id: "batch2", ingredientName: "Fresh Cream", batchId: "CRM240728B", purchaseDate: "2024-07-28", expiryDate: "2024-08-02", quantity: "2 L", status: "Nearing Expiry" },
+  { id: "batch3", ingredientName: "Tomatoes", batchId: "TOM240725C", purchaseDate: "2024-07-25", expiryDate: "2024-07-31", quantity: "5 kg", status: "Use Soon" },
+  { id: "batch4", ingredientName: "Pizza Dough Mix", batchId: "PDM240701D", purchaseDate: "2024-07-01", expiryDate: "2024-12-01", quantity: "1 bag", status: "Good" },
+  { id: "batch5", ingredientName: "Cheddar Cheese", batchId: "CH240715E", purchaseDate: "2024-07-15", expiryDate: "2024-07-29", quantity: "1 kg", status: "Expired" },
+];
+
 
 export default function CostControlPage() {
   const { toast } = useToast();
@@ -166,6 +178,28 @@ export default function CostControlPage() {
   };
 
   const totalIngredientCost = selectedDishForIngredients?.ingredients.reduce((sum, ing) => sum + ing.cost, 0) || 0;
+
+  const handleLogNewBatch = () => {
+    toast({
+      title: "Log New Batch (Simulated)",
+      description: "In a real application, this would open a form to log new ingredient batches.",
+    });
+  };
+
+  const getStatusBadgeVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status.toLowerCase()) {
+      case "fresh":
+      case "good":
+        return "default"; // Or a success-like color if you add one
+      case "nearing expiry":
+      case "use soon":
+        return "secondary"; // Yellow-ish
+      case "expired":
+        return "destructive"; // Red
+      default:
+        return "outline";
+    }
+  };
 
 
   return (
@@ -399,6 +433,88 @@ export default function CostControlPage() {
         </Card>
       </div>
       
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="font-headline flex items-center">
+            <CalendarCheck className="mr-2 h-5 w-5 text-primary" />
+            Batch & Expiry Management (Simulated)
+          </CardTitle>
+          <CardDescription>Track ingredient batches and expiry dates to reduce spoilage and ensure freshness.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-lg text-muted-foreground">Current Batch Overview:</h4>
+            <Button variant="outline" onClick={handleLogNewBatch}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Log New Batch
+            </Button>
+          </div>
+          {batchExpiryData.length > 0 ? (
+            <div className="max-h-[300px] overflow-y-auto mb-6">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Ingredient</TableHead>
+                    <TableHead>Batch ID</TableHead>
+                    <TableHead>Purchase Date</TableHead>
+                    <TableHead>Expiry Date</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {batchExpiryData.map((batch) => (
+                    <TableRow key={batch.id}>
+                      <TableCell className="font-medium">{batch.ingredientName}</TableCell>
+                      <TableCell>{batch.batchId}</TableCell>
+                      <TableCell>{batch.purchaseDate}</TableCell>
+                      <TableCell>{batch.expiryDate}</TableCell>
+                      <TableCell>{batch.quantity}</TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusBadgeVariant(batch.status)}>{batch.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">No batch data logged.</p>
+          )}
+          
+          <Separator className="my-4" />
+
+          <div>
+            <h4 className="font-semibold text-lg mb-2 text-muted-foreground flex items-center">
+              <Bell className="mr-2 h-5 w-5 text-destructive" />
+              Expiry Alerts (Simulated)
+            </h4>
+            <div className="space-y-3">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Nearing Expiry: Fresh Cream!</AlertTitle>
+                <AlertDescription>
+                  Batch CRM240728B (2 L) is due to expire on 2024-08-02. Prioritize its use.
+                </AlertDescription>
+              </Alert>
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Use Soon: Tomatoes</AlertTitle>
+                <AlertDescription>
+                  Batch TOM240725C (5 kg) expires on 2024-07-31. Plan recipes accordingly.
+                </AlertDescription>
+              </Alert>
+               <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Expired: Cheddar Cheese</AlertTitle>
+                <AlertDescription>
+                  Batch CH240715E (1 kg) expired on 2024-07-29. Please remove from stock and log as waste.
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="font-headline flex items-center">

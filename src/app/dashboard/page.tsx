@@ -17,9 +17,10 @@ import {
   TrendingUp,
   ClipboardList,
   Megaphone,
-  CloudSun, // Added for Weather Demand Forecast
-  CalendarClock, // Added for Seasonal Trend Insights
-  Star, // Added for Review Analyzer
+  CloudSun, 
+  CalendarClock, 
+  Star, 
+  ShieldAlert, // Added for Allergen Management
 } from 'lucide-react';
 
 interface InsightCardItem {
@@ -119,6 +120,13 @@ export default function DashboardOverviewPage() {
       dataAiHint: 'cost inventory management',
     },
     {
+      title: 'Allergen Management', // New Card
+      href: '/dashboard/allergen-management',
+      icon: ShieldAlert,
+      description: 'Track and manage product allergens, view statistics, and ensure compliance.',
+      dataAiHint: 'allergen shield safety',
+    },
+    {
       title: 'Weather Demand Forecast',
       href: '/dashboard/weather-demand',
       icon: CloudSun,
@@ -158,3 +166,5 @@ export default function DashboardOverviewPage() {
     </div>
   );
 }
+
+    

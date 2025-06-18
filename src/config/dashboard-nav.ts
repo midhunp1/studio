@@ -9,14 +9,15 @@ import {
   Brain,
   AlertTriangle,
   BadgePercent,
-  Replace, // Added for Switch Takeaway
+  Replace, 
   Settings,
-  TrendingUp, // Added for Actions & Revenue Optimisation
-  ClipboardList, // Added for Cost & Inventory Mgmt
-  Megaphone, // Added for Offer Banner Promotions
-  CloudSun, // Added for Weather Demand Forecast
-  CalendarClock, // Added for Seasonal Trend Insights
-  Star, // Added for Review Analyzer
+  TrendingUp, 
+  ClipboardList, 
+  Megaphone, 
+  CloudSun, 
+  CalendarClock, 
+  Star, 
+  ShieldAlert, // Added for Allergen Management
 } from 'lucide-react';
 
 export interface NavItem {
@@ -78,7 +79,7 @@ export const dashboardNavItems: NavItem[] = [
   {
     href: '/dashboard/aggregator-intelligence',
     label: 'Aggregator Intelligence',
-    icon: LayoutDashboard,
+    icon: LayoutDashboard, // Consider a more specific icon if available e.g. 'Network' or 'Briefcase'
     group: 'Market Analysis',
   },
   {
@@ -118,6 +119,12 @@ export const dashboardNavItems: NavItem[] = [
     group: 'Optimisation',
   },
   {
+    href: '/dashboard/allergen-management', // New Allergen Management page
+    label: 'Allergen Management',
+    icon: ShieldAlert,
+    group: 'Optimisation', // Or 'Menu Management' / 'Compliance'
+  },
+  {
     href: '/takeaways',
     label: 'Switch Takeaway',
     icon: Replace,
@@ -132,3 +139,4 @@ export const dashboardNavItems: NavItem[] = [
   // },
 ];
 
+    

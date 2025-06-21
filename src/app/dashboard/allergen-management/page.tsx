@@ -125,7 +125,7 @@ export default function AllergenManagementPage() {
           <CardContent>
             {allergenCounts.length > 0 ? (
                 <ChartContainer config={allergenChartConfig} className="h-[250px] w-full">
-                <RechartsBarChart data={allergenCounts.slice(0, 5)} layout="vertical" margin={{ right: 20, left:20 }}>
+                <RechartsBarChart data={allergenCounts.slice(0, 5)} layout="vertical" margin={{ right: 20, left: 20 }}>
                     <CartesianGrid horizontal={false} />
                     <XAxis type="number" dataKey="count" />
                     <YAxis dataKey="allergen" type="category" width={80} className="text-xs"/>
@@ -231,5 +231,3 @@ export default function AllergenManagementPage() {
     </div>
   );
 }
-
-    

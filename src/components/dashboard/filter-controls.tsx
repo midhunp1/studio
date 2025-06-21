@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Filter } from "lucide-react";
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 interface FilterControlsProps {
   onApplyFilters?: (filters: any) => void; // Replace any with specific filter type
@@ -122,7 +123,3 @@ export function FilterControls({ onApplyFilters }: FilterControlsProps) {
     </Card>
   );
 }
-
-// Re-add Card components as they are used within FilterControls
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";

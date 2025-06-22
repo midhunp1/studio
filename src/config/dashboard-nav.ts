@@ -29,7 +29,7 @@ export interface NavItem {
 
 export const dashboardNavItems: NavItem[] = [
   {
-    href: '/dashboard',
+    href: '/',
     label: 'Overview',
     icon: LayoutDashboard,
     group: 'Insights',
@@ -138,5 +138,3 @@ export const dashboardNavItems: NavItem[] = [
   //   group: 'Configuration',
   // },
 ];
-
-    
